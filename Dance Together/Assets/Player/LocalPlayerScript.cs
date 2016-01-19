@@ -2,16 +2,17 @@
 using System.Collections;
 
 public class LocalPlayerScript : MonoBehaviour {
-    public float movement_speed; // How fast does it snap back to the center?
-
     [System.NonSerialized] // Don't need to save the isDragging state
     public bool isDragging; // Is the player object currently being dragged somewhere?
 
-    private Vector3 starting_location; // Where the player object starts
+    private Vector3 startingLocation; // Where the player object starts
+
+    [SerializeField] //Make this seen in the editor, but still private/local to this class.
+    private float movementSpeed = 10; // How fast does it snap back to the center?
 
     void Start()
     {
-        starting_location = transform.position;
+        startingLocation = transform.position;
     }
 
     void OnMouseDown()
@@ -39,8 +40,8 @@ public class LocalPlayerScript : MonoBehaviour {
             // Player object is NOT being dragged
 
             // Move back to the center.
-            float step = movement_speed * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, starting_location, step);
+            float step = movementSpeed * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, startingLocation, step);
         }
     }
 }
