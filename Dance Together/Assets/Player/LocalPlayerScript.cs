@@ -73,6 +73,8 @@ public class LocalPlayerScript : MonoBehaviour {
             isDragging = false;
 
             ToggleLight(false);
+
+            networkedPScript.CmdStartGame();
         //}
     }
 
@@ -82,7 +84,7 @@ public class LocalPlayerScript : MonoBehaviour {
 
     void Update()
     {
-        countdownText.text = ""+networkedPScript.countDown;
+        countdownText.text = ""+networkedPScript.GetSongID();
         if (isDragging) {
             // Player object is being dragged right now
         }

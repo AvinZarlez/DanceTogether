@@ -22,6 +22,7 @@ public class RemotePlayerScript : MonoBehaviour {
 
     void Update()
     {
+        // Move towards desired location
         float step = movementSpeed * Time.deltaTime;
         Vector3 goal = localPlayerStartingPosition;
         float degreeMath;
@@ -34,6 +35,7 @@ public class RemotePlayerScript : MonoBehaviour {
 
     public void SetLocalPlayerStart(Vector3 p)
     {
+        // Store where the local player starts, and also immidately move there so that we can move "from" there
         localPlayerStartingPosition = p;
 
         transform.position = localPlayerStartingPosition;
@@ -41,6 +43,7 @@ public class RemotePlayerScript : MonoBehaviour {
 
     public void SetPosition(int p, int numPlayers)
     {
+        // Set our position, starts at 1 and goes up to (and including) numPlayers
         position = p;
         numberOfPlayers = numPlayers;
     }
