@@ -37,7 +37,9 @@ public class RemotePlayerScript : MonoBehaviour {
     {
         float step = movementSpeed * Time.deltaTime;
         Vector3 goal = localPlayerStartingPosition;
-        float degreeMath = position * (2 * Mathf.PI) / (numberOfPlayers - 1);
+        float degreeMath;
+        if (numberOfPlayers > 2) degreeMath = position * (2 * Mathf.PI) / (numberOfPlayers - 1);
+        else degreeMath = Mathf.PI;
         goal.x += distance * Mathf.Cos(degreeMath);
         goal.y += distance * Mathf.Sin(degreeMath);
         transform.position = Vector3.MoveTowards(transform.position, goal, step);
