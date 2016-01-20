@@ -5,9 +5,9 @@ using System.Collections;
 public class LocalPlayerScript : MonoBehaviour {
     [System.NonSerialized] // Don't need to save the isDragging state
     public bool isDragging; // Is the player object currently being dragged somewhere?
+    public Vector3 startingLocation; // Where the player object starts
 
     private Text countdownText; // UI text object named "UI_Countdown"
-    private Vector3 startingLocation; // Where the player object starts
 
     [SerializeField] //Make this seen in the editor, but still private/local to this class.
     private float movementSpeed = 10; // How fast does it snap back to the center?

@@ -7,6 +7,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
     public RemotePlayerScript remotePScript;
     //public Camera mainCamera; //Not sure if I need to mess with camera?
 
+    [SyncVar]
     public int playerNum = 0;
 
     public override void OnStartLocalPlayer()
@@ -16,15 +17,33 @@ public class NetworkedPlayerScript : NetworkBehaviour
         remotePScript.enabled = false;
 
         gameObject.name = "LOCAL Player";
-        
+
         base.OnStartLocalPlayer();
     }
 
-    void Start()
+    public override void OnStartClient()
     {
-        if (!isLocalPlayer)
+        SortPlayers();
+        base.OnStartClient();
+    }
+
+    public override void OnStartServer()
+    {
+        SortPlayers();
+        base.OnStartServer();
+    }
+
+    void SortPlayers()
+    {
+        GameObject[] players;
+        players = GameObject.FindGameObjectsWithTag("Player");
+        int i = 0;
+        foreach (GameObject player in players)
         {
-            remotePScript.MovePlayer();
+            if (player.name != "LOCAL Player")
+            {
+                player.GetComponent<RemotePlayerScript>().position = ++i;
+            }
         }
     }
 }
