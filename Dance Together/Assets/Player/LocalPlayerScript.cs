@@ -26,8 +26,6 @@ public class LocalPlayerScript : MonoBehaviour {
         if (isActiveAndEnabled)
         {
             isDragging = true;
-
-
         }
     }
 
@@ -44,7 +42,12 @@ public class LocalPlayerScript : MonoBehaviour {
     {
         //if (isActiveAndEnabled) {
             isDragging = false;
+        GetComponent<NetworkedPlayerScript>().CmdStartGame();
         //}
+    }
+
+    bool GetIsGameStarted() {
+        return GetComponent<NetworkedPlayerScript>().GetIsGameStarted();
     }
 
     void Update()
