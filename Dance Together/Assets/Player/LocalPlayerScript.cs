@@ -53,7 +53,6 @@ public class LocalPlayerScript : MonoBehaviour {
     {
         //if (isActiveAndEnabled) {
             isDragging = false;
-        GetComponent<NetworkedPlayerScript>().CmdStartGame();
         //}
     }
 
