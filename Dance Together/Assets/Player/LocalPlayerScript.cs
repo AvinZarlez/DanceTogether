@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class LocalPlayerScript : MonoBehaviour {
     [System.NonSerialized] // Don't need to save the isDragging state
     public bool isDragging; // Is the player object currently being dragged somewhere?
 
+    private Text countdownText; // UI text object named "UI_Countdown"
     private Vector3 startingLocation; // Where the player object starts
 
     [SerializeField] //Make this seen in the editor, but still private/local to this class.
@@ -12,6 +14,8 @@ public class LocalPlayerScript : MonoBehaviour {
 
     void Start()
     {
+        GameObject obj = GameObject.Find("UI_Countdown");
+        countdownText = obj.GetComponent<Text>();
         startingLocation = transform.position;
     }
 
@@ -43,6 +47,7 @@ public class LocalPlayerScript : MonoBehaviour {
 
     void Update()
     {
+        countdownText.text = "It's :"+this.GetComponent<NetworkedPlayerScript>().playerNum;
         if (isDragging) {
             // Player object is being dragged right now
         }
