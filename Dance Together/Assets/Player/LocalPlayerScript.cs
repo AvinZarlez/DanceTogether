@@ -85,6 +85,26 @@ public class LocalPlayerScript : MonoBehaviour {
     void Update()
     {
         countdownText.text = ""+networkedPScript.GetSongID();
+
+        if (networkedPScript.countDown > 0)
+        {
+            networkedPScript.countDown -= Time.deltaTime;
+
+            if (networkedPScript.countDown <= 0)
+            {
+                countdownText.text = "";
+            }
+            else if (networkedPScript.countDown < 1)
+            {
+                countdownText.text = "DANCE!";
+
+            }
+            else
+            {
+                countdownText.text = "" + Mathf.Floor(networkedPScript.countDown);
+            }
+        }
+
         if (isDragging) {
             // Player object is being dragged right now
         }

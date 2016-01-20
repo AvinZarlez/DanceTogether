@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections.Generic;
+using UnityEngine.Assertions;
 
 public class NetworkedPlayerScript : NetworkBehaviour
 {
+    private const float countDownTimerStartValue = 3f; //Three second start
+
     [SerializeField]
     private int numberOfSongs; //Temp? Better way to load songs than number, some kind of list?
 
@@ -15,7 +18,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
     //public Camera mainCamera; //Not sure if I need to mess with camera?
 
     // Count down timer for game start. Public so other scripts can monitor.
-    [SyncVar]
+    [SyncVar,HideInInspector]
     public float countDown;
 
     [SyncVar]
@@ -25,7 +28,8 @@ public class NetworkedPlayerScript : NetworkBehaviour
     private Color color;
 
     [SyncVar]
-    private bool isGameStarted;
+    private byte currentGameState;
+    // 200+ means the game is running
 
     [Command]
     void CmdSetColor(Color c)
@@ -72,6 +76,8 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
         CmdSetColor(new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f)));
 
+        countDown = -1;
+
         base.OnStartLocalPlayer();
     }
 
@@ -83,7 +89,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
     public bool GetIsGameStarted()
     {
-        return isGameStarted;
+        return (currentGameState >= 200);
     }
 
     public Color GetColor()
@@ -103,6 +109,8 @@ public class NetworkedPlayerScript : NetworkBehaviour
         players = GameObject.FindGameObjectsWithTag("Player");
 
         int length = players.Length;
+
+        Assert.IsTrue(length > 1); //TEMP - Should be at least 3 or 4 players.
 
         int numSongsToPick = (length / 2);
 
@@ -155,7 +163,9 @@ public class NetworkedPlayerScript : NetworkBehaviour
     public void RpcStartGame(int s)
     {
         songID = s;
-        isGameStarted = true;
+        currentGameState = 200;
+
+        countDown = countDownTimerStartValue + 0.999999999f;
     }
 
     [Command]
@@ -172,7 +182,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
     [ClientRpc]
     public void RpcEndGame()
     {
-        isGameStarted = false;
+        currentGameState = 0;
     }
 
 }
