@@ -8,7 +8,10 @@ public class NetworkedPlayerScript : NetworkBehaviour
     //public Camera mainCamera; //Not sure if I need to mess with camera?
 
     [SyncVar]
-    public int playerNum = 0;
+    public Color color;
+
+    [SyncVar]
+    public float countDown;
 
     public override void OnStartLocalPlayer()
     {
@@ -18,13 +21,30 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
         gameObject.name = "LOCAL Player";
 
+        CmdSetColor();
+
         base.OnStartLocalPlayer();
     }
 
     public override void OnStartClient()
     {
         SortPlayers();
+        GetComponent<Renderer>().material.color = color;
         base.OnStartClient();
+    }
+
+    [Command]
+    void CmdSetColor()
+    {
+        Debug.Log("Command is being called");
+        RpcSetColor(new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f)));
+    }
+
+    [ClientRpc]
+    void RpcSetColor(Color c)
+    {
+        Debug.Log("RPC is being called");
+        color = c;
     }
 
     public override void OnStartServer()

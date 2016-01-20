@@ -17,6 +17,8 @@ public class RemotePlayerScript : MonoBehaviour {
     {
         GameObject localPlayer = GameObject.Find("LOCAL Player");
         localPlayerStartingPosition = localPlayer.GetComponent<LocalPlayerScript>().startingLocation;
+
+        transform.position = localPlayerStartingPosition;
     }
 
     public void SetPosition(int p, int numPlayers)

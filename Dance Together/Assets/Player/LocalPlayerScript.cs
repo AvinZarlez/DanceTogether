@@ -47,7 +47,7 @@ public class LocalPlayerScript : MonoBehaviour {
 
     void Update()
     {
-        countdownText.text = "It's :"+this.GetComponent<NetworkedPlayerScript>().playerNum;
+        countdownText.text = ""+this.GetComponent<NetworkedPlayerScript>().countDown;
         if (isDragging) {
             // Player object is being dragged right now
         }
