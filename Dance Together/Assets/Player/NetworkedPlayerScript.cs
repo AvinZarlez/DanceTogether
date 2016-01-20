@@ -26,8 +26,8 @@ public class NetworkedPlayerScript : NetworkBehaviour
         gameObject.name = "LOCAL Player";
 
         //mainCamera.enabled = true; //Not sure if I need to mess with camera?
-        localPScript.enabled = true;
         remotePScript.enabled = false;
+        localPScript.enabled = true;
 
         CmdSetColor(new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f)));
 

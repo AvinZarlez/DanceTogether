@@ -19,6 +19,17 @@ public class LocalPlayerScript : MonoBehaviour {
         GameObject obj = GameObject.Find("UI_Countdown");
         countdownText = obj.GetComponent<Text>();
         startingLocation = transform.position;
+
+
+        GameObject[] players;
+        players = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject player in players)
+        {
+            RemotePlayerScript rps = player.GetComponent<RemotePlayerScript>();
+            if (rps.enabled) {
+                rps.SetLocalPlayerStart(startingLocation);
+            }
+        }
     }
 
     void OnMouseDown()
