@@ -29,7 +29,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        SortPlayers();
+        //SortPlayers();
         base.OnStartServer();
     }
 
@@ -38,11 +38,12 @@ public class NetworkedPlayerScript : NetworkBehaviour
         GameObject[] players;
         players = GameObject.FindGameObjectsWithTag("Player");
         int i = 0;
+        int size = players.Length;
         foreach (GameObject player in players)
         {
             if (player.name != "LOCAL Player")
             {
-                player.GetComponent<RemotePlayerScript>().position = ++i;
+                player.GetComponent<RemotePlayerScript>().SetPosition(++i, size);
             }
         }
     }

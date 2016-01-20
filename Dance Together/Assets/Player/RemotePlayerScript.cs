@@ -2,7 +2,11 @@
 using System.Collections;
 
 public class RemotePlayerScript : MonoBehaviour {
-    public int position;
+    [SerializeField]
+    int distance = 3; 
+
+    int position;
+    int numberOfPlayers;
 
     //GameObject localPlayer;
     Vector3 localPlayerStartingPosition;
@@ -13,11 +17,19 @@ public class RemotePlayerScript : MonoBehaviour {
         localPlayerStartingPosition = localPlayer.GetComponent<LocalPlayerScript>().startingLocation;
     }
 
+    public void SetPosition(int p, int numPlayers)
+    {
+        position = p;
+        numberOfPlayers = numPlayers;
+    }
+
     void Update()
     {
         float step = Time.deltaTime; //Add a speed?
-        Vector3 pos = localPlayerStartingPosition;
-        pos.x += position;
-        transform.position = Vector3.MoveTowards(transform.position, pos, step);
+        Vector3 goal = localPlayerStartingPosition;
+        float degreeMath = position * (2 * Mathf.PI) / (numberOfPlayers - 1);
+        goal.x += distance * Mathf.Cos(degreeMath);
+        goal.y += distance * Mathf.Sin(degreeMath);
+        transform.position = Vector3.MoveTowards(transform.position, goal, step);
     }
 }
