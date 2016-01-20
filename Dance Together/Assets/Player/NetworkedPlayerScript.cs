@@ -7,38 +7,21 @@ public class NetworkedPlayerScript : NetworkBehaviour
     private LocalPlayerScript localPScript;
     [SerializeField]
     private RemotePlayerScript remotePScript;
+    
     //public Camera mainCamera; //Not sure if I need to mess with camera?
 
-    [SyncVar,HideInInspector]
-    public int songID;
-
+    // Count down timer for game start. Public so other scripts can monitor.
     [SyncVar]
-    public Color color;
-
-    [SyncVar,HideInInspector]
     public float countDown;
 
     [SyncVar]
-    public bool isGameStarted;
+    private int songID;
 
-    public override void OnStartLocalPlayer()
-    {
-        gameObject.name = "LOCAL Player";
+    [SyncVar]
+    private Color color;
 
-        //mainCamera.enabled = true; //Not sure if I need to mess with camera?
-        remotePScript.enabled = false;
-        localPScript.enabled = true;
-
-        CmdSetColor(new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f)));
-
-        base.OnStartLocalPlayer();
-    }
-
-    public override void OnStartClient()
-    {
-        SortPlayers();
-        base.OnStartClient();
-    }
+    [SyncVar]
+    private bool isGameStarted;
 
     [Command]
     void CmdSetColor(Color c)
@@ -75,9 +58,38 @@ public class NetworkedPlayerScript : NetworkBehaviour
         }
     }
 
+    public override void OnStartLocalPlayer()
+    {
+        gameObject.name = "LOCAL Player";
+
+        //mainCamera.enabled = true; //Not sure if I need to mess with camera?
+        remotePScript.enabled = false;
+        localPScript.enabled = true;
+
+        CmdSetColor(new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f)));
+
+        base.OnStartLocalPlayer();
+    }
+
+    public override void OnStartClient()
+    {
+        SortPlayers();
+        base.OnStartClient();
+    }
+
     public bool GetIsGameStarted()
     {
         return isGameStarted;
+    }
+
+    public Color GetColor()
+    {
+        return color;
+    }
+
+    public int GetSongID()
+    {
+        return songID;
     }
 
     [Command]
