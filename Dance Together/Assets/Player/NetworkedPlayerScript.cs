@@ -21,7 +21,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
         gameObject.name = "LOCAL Player";
 
-        CmdSetColor();
+        CmdSetColor(new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f)));
 
         base.OnStartLocalPlayer();
     }
@@ -29,28 +29,25 @@ public class NetworkedPlayerScript : NetworkBehaviour
     public override void OnStartClient()
     {
         SortPlayers();
-        GetComponent<Renderer>().material.color = color;
         base.OnStartClient();
     }
 
     [Command]
-    void CmdSetColor()
+    void CmdSetColor(Color c)
     {
-        Debug.Log("Command is being called");
-        RpcSetColor(new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f)));
+        RpcSetColor(c);
     }
 
     [ClientRpc]
     void RpcSetColor(Color c)
     {
-        Debug.Log("RPC is being called");
         color = c;
+        SetColor();
     }
 
-    public override void OnStartServer()
+    void SetColor()
     {
-        //SortPlayers();
-        base.OnStartServer();
+        GetComponent<Renderer>().material.color = color;
     }
 
     void SortPlayers()
@@ -65,6 +62,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
             {
                 player.GetComponent<RemotePlayerScript>().SetPosition(++i, size);
             }
+            player.GetComponent<NetworkedPlayerScript>().SetColor();
         }
     }
 }
