@@ -17,18 +17,28 @@ public class LocalPlayerScript : MonoBehaviour {
 
     void OnMouseDown()
     {
-        isDragging = true;
+        if (isActiveAndEnabled)
+        {
+            isDragging = true;
+
+
+        }
     }
 
     void OnMouseDrag()
     {
-        Vector3 mouse_position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        transform.position = new Vector3(mouse_position.x, mouse_position.y, transform.position.z);
+        if (isActiveAndEnabled)
+        {
+            Vector3 mouse_position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            transform.position = new Vector3(mouse_position.x, mouse_position.y, transform.position.z);
+        }
     }
 
     void OnMouseUp()
     {
-        isDragging = false;
+        //if (isActiveAndEnabled) {
+            isDragging = false;
+        //}
     }
 
     void Update()
