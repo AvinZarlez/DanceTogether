@@ -5,6 +5,8 @@ using System.Collections;
 public class LocalPlayerScript : MonoBehaviour {
     [System.NonSerialized] // Don't need to save the isDragging state
     public bool isDragging; // Is the player object currently being dragged somewhere?
+
+    [HideInInspector] // Don't need to see the starting location
     public Vector3 startingLocation; // Where the player object starts
 
     private Text countdownText; // UI text object named "UI_Countdown"
