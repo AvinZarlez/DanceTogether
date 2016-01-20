@@ -14,12 +14,19 @@ public class NetworkedPlayerScript : NetworkBehaviour
     private LocalPlayerScript localPScript;
     [SerializeField]
     private RemotePlayerScript remotePScript;
+
+    [SerializeField]
+    private GameObject playerParent;
     
     //public Camera mainCamera; //Not sure if I need to mess with camera?
 
     // Count down timer for game start. Public so other scripts can monitor.
     [SyncVar,HideInInspector]
     public float countDown;
+
+    // Am I ready to start the game?
+    [SyncVar, HideInInspector]
+    public bool playerReady;
 
     [SyncVar]
     private int songID;
@@ -30,6 +37,9 @@ public class NetworkedPlayerScript : NetworkBehaviour
     [SyncVar]
     private byte currentGameState;
     // 200+ means the game is running
+
+    // To make referencing easier/less calls.
+    private Light playerLight;
 
     [Command]
     void CmdSetColor(Color c)
@@ -66,6 +76,27 @@ public class NetworkedPlayerScript : NetworkBehaviour
         }
     }
 
+    void Start ()
+    {
+        playerLight = GetComponentInChildren<Light>();
+        if (!isLocalPlayer)
+        {
+            playerParent = GameObject.FindWithTag("PlayerParent");
+            transform.parent = playerParent.transform;
+            transform.localPosition = Vector3.zero;
+            Debug.Log("This ran");
+        }
+    }
+
+    void ToggleLight(bool enable)
+    {
+        if (enable)
+        {
+            playerLight.color = color;
+        }
+        playerLight.enabled = enable;
+    }
+
     public override void OnStartLocalPlayer()
     {
         gameObject.name = "LOCAL Player";
@@ -74,9 +105,10 @@ public class NetworkedPlayerScript : NetworkBehaviour
         remotePScript.enabled = false;
         localPScript.enabled = true;
 
-        CmdSetColor(new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f)));
-
         countDown = -1;
+        playerReady = false;
+
+        CmdSetColor(new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f)));
 
         base.OnStartLocalPlayer();
     }
@@ -92,14 +124,26 @@ public class NetworkedPlayerScript : NetworkBehaviour
         return (currentGameState >= 200);
     }
 
-    public Color GetColor()
+    /*public Color GetColor()
     {
         return color;
-    }
+    }*/
 
     public int GetSongID()
     {
         return songID;
+    }
+
+    [Command]
+    public void CmdToggleReady(bool ready)
+    {
+        RpcToggleReady(ready);
+    }
+    [ClientRpc]
+    public void RpcToggleReady(bool ready)
+    {
+        playerReady = ready;
+        ToggleLight(ready);
     }
 
     [Command]
@@ -158,7 +202,6 @@ public class NetworkedPlayerScript : NetworkBehaviour
             playerSongChoice.RemoveAt(j);
         }
     }
-
     [ClientRpc]
     public void RpcStartGame(int s)
     {
@@ -178,7 +221,6 @@ public class NetworkedPlayerScript : NetworkBehaviour
             player.GetComponent<NetworkedPlayerScript>().RpcEndGame();
         }
     }
-
     [ClientRpc]
     public void RpcEndGame()
     {

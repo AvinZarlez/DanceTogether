@@ -16,7 +16,6 @@ public class LocalPlayerScript : MonoBehaviour {
 
     // To make referencing easier/less calls.
     private NetworkedPlayerScript networkedPScript;
-    private Light playerLight;
 
     void Start()
     {
@@ -26,9 +25,7 @@ public class LocalPlayerScript : MonoBehaviour {
         countdownText = obj.GetComponent<Text>();
         startingLocation = transform.position;
 
-        playerLight = GetComponentInChildren<Light>();
-
-        GameObject[] players;
+        /*GameObject[] players;
         players = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject player in players)
         {
@@ -36,16 +33,9 @@ public class LocalPlayerScript : MonoBehaviour {
             if (rps.enabled) {
                 rps.SetLocalPlayerStart(startingLocation);
             }
-        }
-    }
-
-    void ToggleLight(bool enable)
-    {
-        if (enable)
-        {
-            playerLight.color = networkedPScript.GetColor();
-        }
-        playerLight.enabled = enable;
+        }*/
+        //GameObject playerParent = GameObject.FindWithTag("PlayerParent");
+        //playerParent.transform.position = transform.position;
     }
 
     void OnMouseDown()
@@ -54,7 +44,7 @@ public class LocalPlayerScript : MonoBehaviour {
         {
             isDragging = true;
 
-            ToggleLight(true);
+            networkedPScript.CmdToggleReady(true);
         }
     }
 
@@ -72,7 +62,7 @@ public class LocalPlayerScript : MonoBehaviour {
         //if (isActiveAndEnabled) {
             isDragging = false;
 
-            ToggleLight(false);
+            networkedPScript.CmdToggleReady(false);
 
             networkedPScript.CmdStartGame();
         //}
