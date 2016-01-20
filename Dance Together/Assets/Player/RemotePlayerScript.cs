@@ -3,7 +3,9 @@ using System.Collections;
 
 public class RemotePlayerScript : MonoBehaviour {
     [SerializeField]
-    int distance = 3; 
+    int distance = 3;
+    [SerializeField]
+    int movementSpeed = 5;
 
     int position;
     int numberOfPlayers;
@@ -25,7 +27,7 @@ public class RemotePlayerScript : MonoBehaviour {
 
     void Update()
     {
-        float step = Time.deltaTime; //Add a speed?
+        float step = movementSpeed * Time.deltaTime;
         Vector3 goal = localPlayerStartingPosition;
         float degreeMath = position * (2 * Mathf.PI) / (numberOfPlayers - 1);
         goal.x += distance * Mathf.Cos(degreeMath);
