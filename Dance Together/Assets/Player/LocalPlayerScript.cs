@@ -24,18 +24,6 @@ public class LocalPlayerScript : MonoBehaviour {
         GameObject obj = GameObject.Find("UI_Countdown");
         countdownText = obj.GetComponent<Text>();
         startingLocation = transform.position;
-
-        /*GameObject[] players;
-        players = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject player in players)
-        {
-            RemotePlayerScript rps = player.GetComponent<RemotePlayerScript>();
-            if (rps.enabled) {
-                rps.SetLocalPlayerStart(startingLocation);
-            }
-        }*/
-        //GameObject playerParent = GameObject.FindWithTag("PlayerParent");
-        //playerParent.transform.position = transform.position;
     }
 
     void OnMouseDown()
@@ -76,23 +64,27 @@ public class LocalPlayerScript : MonoBehaviour {
     {
         countdownText.text = ""+networkedPScript.GetSongID();
 
-        if (networkedPScript.countDown > 0)
-        {
-            networkedPScript.countDown -= Time.deltaTime;
+        float countDown = networkedPScript.countDown;
 
-            if (networkedPScript.countDown <= 0)
+        if (countDown > 0)
+        {
+            countDown -= Time.deltaTime;
+
+            if (countDown <= 0)
             {
                 countdownText.text = "";
             }
-            else if (networkedPScript.countDown < 1)
+            else if (countDown < 1)
             {
                 countdownText.text = "DANCE!";
 
             }
             else
             {
-                countdownText.text = "" + Mathf.Floor(networkedPScript.countDown);
+                countdownText.text = "" + Mathf.Floor(countDown);
             }
+
+            networkedPScript.countDown = countDown;
         }
 
         if (isDragging) {

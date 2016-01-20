@@ -17,8 +17,6 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
     [SerializeField]
     private GameObject playerParent;
-    
-    //public Camera mainCamera; //Not sure if I need to mess with camera?
 
     // Count down timer for game start. Public so other scripts can monitor.
     [SyncVar,HideInInspector]
@@ -100,8 +98,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         gameObject.name = "LOCAL Player";
-
-        //mainCamera.enabled = true; //Not sure if I need to mess with camera?
+        
         remotePScript.enabled = false;
         localPScript.enabled = true;
 

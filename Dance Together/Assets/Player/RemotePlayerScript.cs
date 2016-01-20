@@ -9,16 +9,7 @@ public class RemotePlayerScript : MonoBehaviour {
 
     int position;
     int numberOfPlayers;
-
-    void Start()
-    {
-        /*GameObject localPlayer = GameObject.Find("LOCAL Player");
-        if (localPlayer)
-        {
-            transform.position = localPlayer.GetComponent<LocalPlayerScript>().startingLocation;
-        }*/
-    }
-
+    
     void Update()
     {
         // Move towards desired location
