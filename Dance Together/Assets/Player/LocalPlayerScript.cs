@@ -45,55 +45,11 @@ public class LocalPlayerScript : MonoBehaviour {
 
     void Update()
     {
-        bool gameStarted = GetIsGameStarted();
-        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        
-        if (Input.GetButtonDown("Fire1"))
-        {
-            if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
-            {
-                isHit = true;
-                if (gameStarted)
-                {
-                    isDragging = true;
-                }
-                else
-                {
-                    networkedPScript.CmdToggleReady();
-                }
-            }
-        }
-        else if (Input.GetButtonUp("Fire1"))
-        {
-            if (gameStarted)
-            {
-                if (GetComponent<Collider2D>().IsTouching(lastCollidedWith.GetComponent<Collider2D>()) && isHit)
-                {
-                    networkedPScript.CmdStartGame();
-                }
-            }
-            else if (GetComponent<Collider2D>().OverlapPoint(mousePosition) && isHit)
-            {
-                networkedPScript.CmdStartGame();
-            }
-            //Always false after mouse up
-            isHit = false; 
-            isDragging = false;
-        }
-        else if (Input.GetButton("Fire1"))
-        {
-            if (isDragging)
-            {
-                Vector3 mouse_position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                transform.position = new Vector3(mouse_position.x, mouse_position.y, transform.position.z);
-            }
-        }
-
         countdownText.text = ""+networkedPScript.GetSongID();
 
         float countDown = networkedPScript.countDown;
 
-        if (countDown > 0)
+        if (countDown > 0) //No interaction during count down
         {
             countDown -= Time.deltaTime;
 
@@ -105,12 +61,63 @@ public class LocalPlayerScript : MonoBehaviour {
             {
                 countdownText.text = "DANCE!";
             }
+            else if (countDown >= (4f)) //Plus one second for the "Dance" end 
+            {
+                countdownText.text = "Ready?";
+            }
             else
             {
                 countdownText.text = "" + Mathf.Floor(countDown);
             }
 
             networkedPScript.countDown = countDown;
+        }
+        else
+        {
+            // No count down, so let's check input
+            bool gameStarted = GetIsGameStarted();
+            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+            if (Input.GetButtonDown("Fire1"))
+            {
+                if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
+                {
+                    isHit = true;
+                    if (gameStarted)
+                    {
+                        isDragging = true;
+                    }
+                    else
+                    {
+                        networkedPScript.CmdToggleReady();
+                    }
+                }
+            }
+            else if (Input.GetButtonUp("Fire1"))
+            {
+                if (gameStarted)
+                {
+                    if (GetComponent<Collider2D>().IsTouching(lastCollidedWith.GetComponent<Collider2D>()) && isHit)
+                    {
+                        networkedPScript.CmdStartGame();
+                    }
+                }
+                else if (GetComponent<Collider2D>().OverlapPoint(mousePosition) && isHit)
+                {
+                    networkedPScript.CmdStartGame();
+                }
+                //Always false after mouse up
+                isHit = false;
+                isDragging = false;
+            }
+            else if (Input.GetButton("Fire1"))
+            {
+                if (isDragging)
+                {
+                    Vector3 mouse_position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    transform.position = new Vector3(mouse_position.x, mouse_position.y, transform.position.z);
+                }
+            }
         }
 
         if (isDragging) {

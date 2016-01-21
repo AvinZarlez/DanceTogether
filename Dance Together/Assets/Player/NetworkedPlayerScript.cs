@@ -5,7 +5,6 @@ using UnityEngine.Assertions;
 
 public class NetworkedPlayerScript : NetworkBehaviour
 {
-    private const float countDownTimerStartValue = 3f; //Three second start
     private const float playerLightRange = 2f;
 
     private float playerRangeMultiplier = 1;
@@ -80,9 +79,9 @@ public class NetworkedPlayerScript : NetworkBehaviour
     void Start ()
     {
         playerLight = GetComponentInChildren<Light>();
+        playerParent = GameObject.FindWithTag("PlayerParent");
         if (!isLocalPlayer)
         {
-            playerParent = GameObject.FindWithTag("PlayerParent");
             transform.parent = playerParent.transform;
             transform.localPosition = Vector3.zero;
         }
@@ -264,7 +263,9 @@ public class NetworkedPlayerScript : NetworkBehaviour
         songID = s;
         currentGameState = 200;
 
-        countDown = countDownTimerStartValue + 0.999999999f;
+        playerParent.GetComponent<PlayerParentScript>().LockAndSpin();
+
+        countDown = 5f;
     }
 
     [Command]
