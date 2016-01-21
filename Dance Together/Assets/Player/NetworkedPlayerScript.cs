@@ -195,6 +195,10 @@ public class NetworkedPlayerScript : NetworkBehaviour
         GameObject[] players;
         players = GameObject.FindGameObjectsWithTag("Player");
 
+        int length = players.Length;
+
+        Assert.IsTrue(length >= 4, "There must be >=4 players!");
+
         bool allPlayersReady = true;
         foreach (GameObject player in players)
         {
@@ -207,10 +211,6 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
         if (allPlayersReady)
         {
-            int length = players.Length;
-
-            Assert.IsTrue(length >= 4,"There must be >=4 players!");
-
             int numSongsToPick = (length / 2);
 
             List<int> songs = new List<int>(); //List of the songID's we'll use this game.
