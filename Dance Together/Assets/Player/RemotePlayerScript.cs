@@ -9,7 +9,13 @@ public class RemotePlayerScript : MonoBehaviour {
 
     int position;
     int numberOfPlayers;
-    
+
+    public bool growing;
+
+    void Start()
+    {
+    }
+
     void Update()
     {
         // Move towards desired location
@@ -22,6 +28,24 @@ public class RemotePlayerScript : MonoBehaviour {
         goal.y += distance * Mathf.Sin(degreeMath);
         goal.z -= 1;
         transform.localPosition = Vector3.MoveTowards(transform.localPosition, goal, step);
+    }
+
+    void FixedUpdate()
+    {
+        // Grow as player overlaps
+        if (growing)
+        {
+            if (transform.localScale.x < 2)
+            {
+                transform.localScale += new Vector3(0.1f, 0.1f, 0.1f);
+            }
+        }
+        else
+        {
+            if (transform.localScale.x > 1) {
+                transform.localScale -= new Vector3(0.15f, 0.15f, 0.15f);
+            }
+        }
     }
 
     public void SetPosition(int p, int numPlayers)

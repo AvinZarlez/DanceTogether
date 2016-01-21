@@ -6,6 +6,9 @@ using UnityEngine.Assertions;
 public class NetworkedPlayerScript : NetworkBehaviour
 {
     private const float countDownTimerStartValue = 3f; //Three second start
+    private const float playerLightRange = 2f;
+
+    private float playerRangeMultiplier = 1;
 
     [SerializeField]
     private int numberOfSongs; //Temp? Better way to load songs than number, some kind of list?
@@ -85,7 +88,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
         }
         else
         {
-            playerLight.range += playerLight.range;
+            playerRangeMultiplier = 1.5f;
         }
     }
 
@@ -95,7 +98,47 @@ public class NetworkedPlayerScript : NetworkBehaviour
         {
             playerLight.color = color;
         }
-        playerLight.enabled = enable;
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "Player" && !isLocalPlayer && GetIsGameStarted())
+        {
+            remotePScript.growing = true;
+            playerRangeMultiplier = 1.5f;
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (!isLocalPlayer)
+        {
+            remotePScript.growing = false;
+            playerRangeMultiplier = 1f;
+        }
+    }
+
+    void FixedUpdate()
+    {
+        // Grow as player overlaps
+        if (playerReady)
+        {
+            if (playerLight.range < (playerLightRange * playerRangeMultiplier))
+            {
+                playerLight.range += 0.1f;
+            }
+            if (playerLight.range > (playerLightRange * playerRangeMultiplier))
+            {
+                playerLight.range -= 0.1f;
+            }
+        }
+        else
+        {
+            if (playerLight.range > 0)
+            {
+                playerLight.range -= 0.1f;
+            }
+        }
     }
 
     public override void OnStartLocalPlayer()
@@ -166,7 +209,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
         {
             int length = players.Length;
 
-            Assert.IsTrue(length >= 4);
+            Assert.IsTrue(length >= 4,"There must be >=4 players!");
 
             int numSongsToPick = (length / 2);
 
