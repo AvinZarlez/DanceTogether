@@ -82,7 +82,6 @@ public class NetworkedPlayerScript : NetworkBehaviour
             playerParent = GameObject.FindWithTag("PlayerParent");
             transform.parent = playerParent.transform;
             transform.localPosition = Vector3.zero;
-            Debug.Log("This ran");
         }
     }
 
@@ -151,7 +150,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
         int length = players.Length;
 
-        Assert.IsTrue(length > 1); //TEMP - Should be at least 3 or 4 players.
+        Assert.IsTrue(length >= 4);
 
         int numSongsToPick = (length / 2);
 

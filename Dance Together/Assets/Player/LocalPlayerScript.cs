@@ -23,37 +23,9 @@ public class LocalPlayerScript : MonoBehaviour {
 
         GameObject obj = GameObject.Find("UI_Countdown");
         countdownText = obj.GetComponent<Text>();
+
+        transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
         startingLocation = transform.position;
-    }
-
-    void OnMouseDown()
-    {
-        if (isActiveAndEnabled)
-        {
-            isDragging = true;
-
-            networkedPScript.CmdToggleReady(true);
-        }
-    }
-
-    void OnMouseDrag()
-    {
-        if (isActiveAndEnabled)
-        {
-            Vector3 mouse_position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            transform.position = new Vector3(mouse_position.x, mouse_position.y, transform.position.z);
-        }
-    }
-
-    void OnMouseUp()
-    {
-        //if (isActiveAndEnabled) {
-            isDragging = false;
-
-            networkedPScript.CmdToggleReady(false);
-
-            networkedPScript.CmdStartGame();
-        //}
     }
 
     bool GetIsGameStarted() {
@@ -62,6 +34,32 @@ public class LocalPlayerScript : MonoBehaviour {
 
     void Update()
     {
+        foreach (Touch t in Input.touches)
+        {
+            if (t.phase == TouchPhase.Began)
+            {
+                isDragging = true;
+
+                networkedPScript.CmdToggleReady(true);
+            }
+            else if (t.phase == TouchPhase.Moved)
+            {
+                Vector3 mouse_position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                transform.position = new Vector3(mouse_position.x, mouse_position.y, transform.position.z);
+            }
+            else if (t.phase == TouchPhase.Ended)
+            {
+                isDragging = false; 
+                networkedPScript.CmdToggleReady(false);
+
+                networkedPScript.CmdStartGame();
+            }
+            else if (t.phase == TouchPhase.Canceled)
+            {
+                isDragging = false;
+            }
+        }
+
         countdownText.text = ""+networkedPScript.GetSongID();
 
         float countDown = networkedPScript.countDown;
@@ -77,7 +75,6 @@ public class LocalPlayerScript : MonoBehaviour {
             else if (countDown < 1)
             {
                 countdownText.text = "DANCE!";
-
             }
             else
             {
