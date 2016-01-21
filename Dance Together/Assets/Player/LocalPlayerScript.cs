@@ -34,29 +34,33 @@ public class LocalPlayerScript : MonoBehaviour {
 
     void Update()
     {
-        foreach (Touch t in Input.touches)
+        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        
+        if (Input.GetButtonDown("Fire1"))
         {
-            if (t.phase == TouchPhase.Began)
+            if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
             {
                 isDragging = true;
 
                 networkedPScript.CmdToggleReady(true);
             }
-            else if (t.phase == TouchPhase.Moved)
+        }
+        else if (Input.GetButtonUp("Fire1"))
+        {
+            isDragging = false; //Always false on mouse up
+            if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
             {
-                Vector3 mouse_position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                transform.position = new Vector3(mouse_position.x, mouse_position.y, transform.position.z);
-            }
-            else if (t.phase == TouchPhase.Ended)
-            {
-                isDragging = false; 
                 networkedPScript.CmdToggleReady(false);
 
                 networkedPScript.CmdStartGame();
             }
-            else if (t.phase == TouchPhase.Canceled)
+        }
+        else if (Input.GetButton("Fire1"))
+        {
+            if (isDragging)
             {
-                isDragging = false;
+                Vector3 mouse_position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                transform.position = new Vector3(mouse_position.x, mouse_position.y, transform.position.z);
             }
         }
 

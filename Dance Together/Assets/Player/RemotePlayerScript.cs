@@ -20,6 +20,7 @@ public class RemotePlayerScript : MonoBehaviour {
         else degreeMath = Mathf.PI; //Cheat if 2 players. If theory this won't happen if only one player, but just in case also prevents divide by 0.
         goal.x += distance * Mathf.Cos(degreeMath);
         goal.y += distance * Mathf.Sin(degreeMath);
+        goal.z -= 1;
         transform.localPosition = Vector3.MoveTowards(transform.localPosition, goal, step);
     }
 
