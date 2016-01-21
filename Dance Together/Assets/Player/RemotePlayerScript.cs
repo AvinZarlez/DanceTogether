@@ -12,8 +12,11 @@ public class RemotePlayerScript : MonoBehaviour {
 
     public bool growing;
 
+    private Transform body; //The Sphere
+
     void Start()
     {
+        body = transform.Find("Sphere");
     }
 
     void Update()
@@ -35,15 +38,15 @@ public class RemotePlayerScript : MonoBehaviour {
         // Grow as player overlaps
         if (growing)
         {
-            if (transform.localScale.x < 2)
+            if (body.localScale.x < 2)
             {
-                transform.localScale += new Vector3(0.1f, 0.1f, 0.1f);
+                body.localScale += new Vector3(0.1f, 0.1f, 0.1f);
             }
         }
         else
         {
-            if (transform.localScale.x > 1) {
-                transform.localScale -= new Vector3(0.15f, 0.15f, 0.15f);
+            if (body.localScale.x > 1) {
+                body.localScale -= new Vector3(0.15f, 0.15f, 0.15f);
             }
         }
     }

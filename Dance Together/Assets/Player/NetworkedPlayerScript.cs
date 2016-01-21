@@ -57,7 +57,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
     void SetColor()
     {
-        GetComponent<Renderer>().material.color = color;
+        GetComponentInChildren<Renderer>().material.color = color;
     }
 
     void SortPlayers()

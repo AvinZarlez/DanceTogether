@@ -16,6 +16,8 @@ public class LocalPlayerScript : MonoBehaviour {
 
     private bool isHit; //Did the TouchDown event happen?
 
+    private NetworkedPlayerScript lastCollidedWith; //Direct link to the NetworkedPlayerScript of the object we last collided with.\
+
     // To make referencing easier/less calls.
     private NetworkedPlayerScript networkedPScript;
 
@@ -34,6 +36,11 @@ public class LocalPlayerScript : MonoBehaviour {
 
     bool GetIsGameStarted() {
         return networkedPScript.GetIsGameStarted();
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        lastCollidedWith = other.GetComponent<NetworkedPlayerScript>();
     }
 
     void Update()
@@ -60,7 +67,10 @@ public class LocalPlayerScript : MonoBehaviour {
         {
             if (gameStarted)
             {
-
+                if (GetComponent<Collider2D>().IsTouching(lastCollidedWith.GetComponent<Collider2D>()) && isHit)
+                {
+                    networkedPScript.CmdStartGame();
+                }
             }
             else if (GetComponent<Collider2D>().OverlapPoint(mousePosition) && isHit)
             {
