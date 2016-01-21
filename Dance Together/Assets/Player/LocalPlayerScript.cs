@@ -14,6 +14,8 @@ public class LocalPlayerScript : MonoBehaviour {
     [SerializeField] //Make this seen in the editor, but still private/local to this class.
     private float movementSpeed = 10; // How fast does it snap back to the center?
 
+    private bool isHit; //Did the TouchDown event happen?
+
     // To make referencing easier/less calls.
     private NetworkedPlayerScript networkedPScript;
 
@@ -26,6 +28,8 @@ public class LocalPlayerScript : MonoBehaviour {
 
         transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
         startingLocation = transform.position;
+
+        transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
     }
 
     bool GetIsGameStarted() {
@@ -34,26 +38,37 @@ public class LocalPlayerScript : MonoBehaviour {
 
     void Update()
     {
+        bool gameStarted = GetIsGameStarted();
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         
         if (Input.GetButtonDown("Fire1"))
         {
             if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
             {
-                isDragging = true;
-
-                networkedPScript.CmdToggleReady(true);
+                isHit = true;
+                if (gameStarted)
+                {
+                    isDragging = true;
+                }
+                else
+                {
+                    networkedPScript.CmdToggleReady();
+                }
             }
         }
         else if (Input.GetButtonUp("Fire1"))
         {
-            isDragging = false; //Always false on mouse up
-            if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
+            if (gameStarted)
             {
-                networkedPScript.CmdToggleReady(false);
 
+            }
+            else if (GetComponent<Collider2D>().OverlapPoint(mousePosition) && isHit)
+            {
                 networkedPScript.CmdStartGame();
             }
+            //Always false after mouse up
+            isHit = false; 
+            isDragging = false;
         }
         else if (Input.GetButton("Fire1"))
         {

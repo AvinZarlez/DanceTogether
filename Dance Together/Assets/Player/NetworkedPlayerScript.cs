@@ -83,6 +83,10 @@ public class NetworkedPlayerScript : NetworkBehaviour
             transform.parent = playerParent.transform;
             transform.localPosition = Vector3.zero;
         }
+        else
+        {
+            playerLight.range += playerLight.range;
+        }
     }
 
     void ToggleLight(bool enable)
@@ -131,15 +135,15 @@ public class NetworkedPlayerScript : NetworkBehaviour
     }
 
     [Command]
-    public void CmdToggleReady(bool ready)
+    public void CmdToggleReady()
     {
-        RpcToggleReady(ready);
+        RpcToggleReady();
     }
     [ClientRpc]
-    public void RpcToggleReady(bool ready)
+    public void RpcToggleReady()
     {
-        playerReady = ready;
-        ToggleLight(ready);
+        playerReady = !playerReady;
+        ToggleLight(playerReady);
     }
 
     [Command]
@@ -148,54 +152,67 @@ public class NetworkedPlayerScript : NetworkBehaviour
         GameObject[] players;
         players = GameObject.FindGameObjectsWithTag("Player");
 
-        int length = players.Length;
-
-        Assert.IsTrue(length >= 4);
-
-        int numSongsToPick = (length / 2);
-
-        List<int> songs = new List<int>(); //List of the songID's we'll use this game.
-
-        for (int i=0; i<numSongsToPick; i++)
-        {
-            int rand;
-            do
-            {
-                rand = Random.Range(0, numberOfSongs);
-            }
-            while (songs.Contains(rand));
-            songs.Add(rand);
-        }
-
-        List<int> playerSongChoice = new List<int>(); // Final list will pull from
-
-        // Remember, final list will have at least 2 of every choice!
-        int j = 0;
-        if (length % 2 != 0) { j = -1; }
-        for (int k=0; k < length; k++)
-        {
-            if (j == -1)
-            {
-                playerSongChoice.Add(songs[Random.Range(0, numSongsToPick)]);
-            }
-            else
-            {
-                playerSongChoice.Add(songs[(int)(j / 2)]);
-            }
-            j++;
-        }
-        
+        bool allPlayersReady = true;
         foreach (GameObject player in players)
         {
-            //Recycle local J variable, don't care about last value
-            j = Random.Range(0, playerSongChoice.Count);
+            if (!player.GetComponent<NetworkedPlayerScript>().playerReady)
+            {
+                allPlayersReady = false;
+                break;
+            }
+        }
 
-            //Tell the player which song they got
-            NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
-            nps.RpcStartGame(playerSongChoice[j]);
+        if (allPlayersReady)
+        {
+            int length = players.Length;
 
-            //Remove that entry from list. 
-            playerSongChoice.RemoveAt(j);
+            Assert.IsTrue(length >= 4);
+
+            int numSongsToPick = (length / 2);
+
+            List<int> songs = new List<int>(); //List of the songID's we'll use this game.
+
+            for (int i = 0; i < numSongsToPick; i++)
+            {
+                int rand;
+                do
+                {
+                    rand = Random.Range(0, numberOfSongs);
+                }
+                while (songs.Contains(rand));
+                songs.Add(rand);
+            }
+
+            List<int> playerSongChoice = new List<int>(); // Final list will pull from
+
+            // Remember, final list will have at least 2 of every choice!
+            int j = 0;
+            if (length % 2 != 0) { j = -1; }
+            for (int k = 0; k < length; k++)
+            {
+                if (j == -1)
+                {
+                    playerSongChoice.Add(songs[Random.Range(0, numSongsToPick)]);
+                }
+                else
+                {
+                    playerSongChoice.Add(songs[(int)(j / 2)]);
+                }
+                j++;
+            }
+
+            foreach (GameObject player in players)
+            {
+                //Recycle local J variable, don't care about last value
+                j = Random.Range(0, playerSongChoice.Count);
+
+                //Tell the player which song they got
+                NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
+                nps.RpcStartGame(playerSongChoice[j]);
+
+                //Remove that entry from list. 
+                playerSongChoice.RemoveAt(j);
+            }
         }
     }
     [ClientRpc]
