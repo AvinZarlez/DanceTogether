@@ -44,23 +44,21 @@ public class NetworkedPlayerScript : NetworkBehaviour
     // To make referencing easier/less calls.
     private Light playerLight;
 
-    [Command]
-    void CmdSetColor(Color c)
-    {
-        RpcSetColor(c);
-    }
-
-    [ClientRpc]
-    void RpcSetColor(Color c)
-    {
-        color = c;
-        SetColor();
-    }
-
     void SetColor()
     {
         GetComponentInChildren<Renderer>().material.color = color;
     }
+
+    void SetReady(bool ready)
+    {
+        playerReady = ready;
+        ToggleLight(playerReady);
+
+        if (AreAllPlayersReady()) //TEMP! Add a start button?
+        {
+            CmdStartGame();
+        }
+}
 
     void SortPlayers()
     {
@@ -79,6 +77,14 @@ public class NetworkedPlayerScript : NetworkBehaviour
         }
     }
 
+    void ToggleLight(bool enable)
+    {
+        if (enable)
+        {
+            playerLight.color = color;
+        }
+    }
+
     void Start ()
     {
         playerLight = GetComponentInChildren<Light>();
@@ -91,14 +97,6 @@ public class NetworkedPlayerScript : NetworkBehaviour
         else
         {
             playerRangeMultiplier = 1.5f;
-        }
-    }
-
-    void ToggleLight(bool enable)
-    {
-        if (enable)
-        {
-            playerLight.color = color;
         }
     }
 
@@ -188,6 +186,19 @@ public class NetworkedPlayerScript : NetworkBehaviour
     }
 
     [Command]
+    void CmdSetColor(Color c)
+    {
+        RpcSetColor(c);
+    }
+
+    [ClientRpc]
+    void RpcSetColor(Color c)
+    {
+        color = c;
+        SetColor();
+    }
+
+    [Command]
     public void CmdToggleReady()
     {
         RpcToggleReady();
@@ -195,13 +206,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
     [ClientRpc]
     public void RpcToggleReady()
     {
-        playerReady = !playerReady;
-        ToggleLight(playerReady);
-
-        if (AreAllPlayersReady()) //TEMP! Add a start button?
-        {
-            CmdStartGame();
-        }
+        SetReady(!playerReady);
     }
 
     bool AreAllPlayersReady()
@@ -299,8 +304,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
         {
             Assert.IsFalse(playerReady, "Player wasn't ready, but the server thought they were!");
             // Oh noes! What do we do? Let's cheat:
-            playerReady = true;
-            ToggleLight(true);
+            SetReady(true);
             // See buddy, you were ready the whole time, right?
         }
     }
@@ -320,6 +324,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
     {
         //Temp - Move to singleton object?
         currentGameState = 0;
+        SetReady(false);
     }
 
 }

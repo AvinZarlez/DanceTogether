@@ -50,36 +50,50 @@ public class LocalPlayerScript : MonoBehaviour {
 
             if (networkedPScript.GetIsGameStarted())
             {
-                countdownText.text = "" + networkedPScript.GetSongID();
 
-                Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-                if (Input.GetButtonDown("Fire1"))
+                if (countDown <= 0)
                 {
-                    if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
-                    {
-                        isDragging = true;
-                    }
-                }
-                else if (Input.GetButtonUp("Fire1"))
-                {
-                    if (GetComponent<Collider2D>().IsTouching(lastCollidedWith.GetComponent<Collider2D>()) && isDragging)
-                    {
-                        networkedPScript.CmdStartGame();
-                    }
+                    countdownText.text = "GAME OVER!" + " " + networkedPScript.GetSongID(); ;
+                    // TEMP TODO This gets triggered X times where X is the number of places. Should fix.
+                    networkedPScript.CmdEndGame(); //Let's stop this party
 
-                    //Always false after mouse up
+                    //Always false when time is up
                     isHit = false;
                     isDragging = false;
                 }
-                else if (Input.GetButton("Fire1"))
+                else
                 {
-                    if (isDragging)
+                    countdownText.text = "" + Mathf.Floor(countDown);
+
+                    if (Input.GetButtonDown("Fire1"))
                     {
-                        Vector3 mouse_position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                        transform.position = new Vector3(mouse_position.x, mouse_position.y, transform.position.z);
+                        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                        if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
+                        {
+                            isDragging = true;
+                        }
+                    }
+                    else if (Input.GetButtonUp("Fire1"))
+                    {
+                        if (GetComponent<Collider2D>().IsTouching(lastCollidedWith.GetComponent<Collider2D>()) && isDragging)
+                        {
+                            networkedPScript.CmdStartGame();
+                        }
+
+                        //Always false after mouse up
+                        isHit = false;
+                        isDragging = false;
+                    }
+                    else if (Input.GetButton("Fire1"))
+                    {
+                        if (isDragging)
+                        {
+                            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                            transform.position = new Vector3(mousePosition.x, mousePosition.y, transform.position.z);
+                        }
                     }
                 }
+
             }
             else // countDown was > 0 AND Game is not started yet.
             {
@@ -111,10 +125,9 @@ public class LocalPlayerScript : MonoBehaviour {
         {
             isDragging = false; //Always false if no countdown.
 
-            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
             if (Input.GetButtonDown("Fire1"))
             {
+                Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
                 {
                     isHit = true;
@@ -122,6 +135,7 @@ public class LocalPlayerScript : MonoBehaviour {
             }
             else if (Input.GetButtonUp("Fire1"))
             {
+                Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 if (GetComponent<Collider2D>().OverlapPoint(mousePosition) && isHit)
                 {
                     networkedPScript.CmdToggleReady();
