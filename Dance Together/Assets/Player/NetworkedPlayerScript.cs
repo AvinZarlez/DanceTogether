@@ -11,6 +11,8 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
     [SerializeField]
     private int numberOfSongs; //Temp? Better way to load songs than number, some kind of list?
+    
+    public float gameLength = 30; // How long the game lasts, in seconds.
 
     [SerializeField]
     private LocalPlayerScript localPScript;
@@ -35,6 +37,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
     private Color color;
 
     [SyncVar]
+    //Temp - Move to singleton object?
     private byte currentGameState;
     // 200+ means the game is running
 
@@ -101,8 +104,9 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player" && !isLocalPlayer && GetIsGameStarted())
+        if (other.name == "Player" && !isLocalPlayer && (currentGameState >= 200)) //Temp! Change to singleton?
         {
+            Debug.Log("Hit a player!");
             remotePScript.growing = true;
             playerRangeMultiplier = 1.5f;
         }
@@ -163,7 +167,15 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
     public bool GetIsGameStarted()
     {
-        return (currentGameState >= 200);
+        //Temp - Move to singleton object?
+        return (currentGameState > 200);
+    }
+
+    public void StartMainGame()
+    {
+        //Temp - Move to singleton object?
+        currentGameState = 201; //NOTE! Only checking on THIS PLAYER, not syncing to every player.
+        countDown = gameLength;
     }
 
     /*public Color GetColor()
@@ -186,17 +198,19 @@ public class NetworkedPlayerScript : NetworkBehaviour
     {
         playerReady = !playerReady;
         ToggleLight(playerReady);
+
+        if (AreAllPlayersReady()) //TEMP! Add a start button?
+        {
+            CmdStartGame();
+        }
     }
 
-    [Command]
-    public void CmdStartGame()
+    bool AreAllPlayersReady()
     {
         GameObject[] players;
         players = GameObject.FindGameObjectsWithTag("Player");
 
-        int length = players.Length;
-
-        Assert.IsTrue(length >= 4, "There must be >=4 players!");
+        Assert.IsTrue(players.Length >= 4, "There must be >=4 players!");
 
         bool allPlayersReady = true;
         foreach (GameObject player in players)
@@ -208,8 +222,18 @@ public class NetworkedPlayerScript : NetworkBehaviour
             }
         }
 
-        if (allPlayersReady)
+        return allPlayersReady;
+    }
+
+    [Command]
+    public void CmdStartGame()
+    {
+        if (AreAllPlayersReady()) //Redundant?
         {
+            GameObject[] players;
+            players = GameObject.FindGameObjectsWithTag("Player");
+
+            int length = players.Length;
             int numSongsToPick = (length / 2);
 
             List<int> songs = new List<int>(); //List of the songID's we'll use this game.
@@ -255,17 +279,30 @@ public class NetworkedPlayerScript : NetworkBehaviour
                 //Remove that entry from list. 
                 playerSongChoice.RemoveAt(j);
             }
-        }
+        } //Close if statement for checking if all players ready
     }
     [ClientRpc]
     public void RpcStartGame(int s)
     {
         songID = s;
+        //Temp - Move to singleton object?
         currentGameState = 200;
 
         playerParent.GetComponent<PlayerParentScript>().LockAndSpin();
 
         countDown = 5f;
+
+        // Bullshit code. Temp? Maybe not?
+        // What is player WAS ready, but now that we're actually starting they are no longer?
+        // Too late for them! Let's double check
+        if (!playerReady)
+        {
+            Assert.IsFalse(playerReady, "Player wasn't ready, but the server thought they were!");
+            // Oh noes! What do we do? Let's cheat:
+            playerReady = true;
+            ToggleLight(true);
+            // See buddy, you were ready the whole time, right?
+        }
     }
 
     [Command]
@@ -281,6 +318,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
     [ClientRpc]
     public void RpcEndGame()
     {
+        //Temp - Move to singleton object?
         currentGameState = 0;
     }
 
