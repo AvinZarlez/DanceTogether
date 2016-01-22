@@ -104,9 +104,8 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.name == "Player" && !isLocalPlayer && (currentGameState >= 200)) //Temp! Change to singleton?
+        if (other.name == "LOCAL Player" && (currentGameState >= 200)) //Temp! Change to singleton?
         {
-            Debug.Log("Hit a player!");
             remotePScript.growing = true;
             playerRangeMultiplier = 1.5f;
         }
@@ -209,9 +208,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
     {
         GameObject[] players;
         players = GameObject.FindGameObjectsWithTag("Player");
-
-        Assert.IsTrue(players.Length >= 4, "There must be >=4 players!");
-
+        
         bool allPlayersReady = true;
         foreach (GameObject player in players)
         {
@@ -222,7 +219,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
             }
         }
 
-        return allPlayersReady;
+        return allPlayersReady; // TODO : Check if there are four players
     }
 
     [Command]
@@ -232,8 +229,11 @@ public class NetworkedPlayerScript : NetworkBehaviour
         {
             GameObject[] players;
             players = GameObject.FindGameObjectsWithTag("Player");
-
+            
             int length = players.Length;
+
+            Assert.IsTrue(length >= 4, "There must be >=4 players!");
+
             int numSongsToPick = (length / 2);
 
             List<int> songs = new List<int>(); //List of the songID's we'll use this game.
@@ -293,7 +293,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
         countDown = 5f;
 
         // Bullshit code. Temp? Maybe not?
-        // What is player WAS ready, but now that we're actually starting they are no longer?
+        // What if player WAS ready, but now that we're actually starting they are no longer?
         // Too late for them! Let's double check
         if (!playerReady)
         {
