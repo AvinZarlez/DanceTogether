@@ -63,7 +63,9 @@ public class LocalPlayerScript : MonoBehaviour {
                 }
                 else
                 {
-                    countdownText.text = "" + Mathf.Floor(countDown);
+                    // The main game, in the middle of game play
+                    // This. is. it. - TIME TO DANCE!
+                    countdownText.text = "" + Mathf.Ceil(countDown);
 
                     if (Input.GetButtonDown("Fire1"))
                     {
