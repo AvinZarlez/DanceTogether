@@ -11,20 +11,13 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
     [SerializeField]
     private int numberOfSongs; //Temp? Better way to load songs than number, some kind of list?
-    
-    public float gameLength = 30; // How long the game lasts, in seconds.
 
     [SerializeField]
     private LocalPlayerScript localPScript;
     [SerializeField]
     private RemotePlayerScript remotePScript;
 
-    [SerializeField]
     private GameObject playerParent;
-
-    // Count down timer for game start. Public so other scripts can monitor.
-    [SyncVar,HideInInspector]
-    public float countDown;
 
     // Am I ready to start the game?
     [SyncVar, HideInInspector]
@@ -36,13 +29,9 @@ public class NetworkedPlayerScript : NetworkBehaviour
     [SyncVar]
     private Color color;
 
-    [SyncVar]
-    //Temp - Move to singleton object?
-    private byte currentGameState;
-    // 200+ means the game is running
-
     // To make referencing easier/less calls.
     private Light playerLight;
+    private GameManagerScript GMScript;
 
     void SetColor()
     {
@@ -57,6 +46,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
         if (AreAllPlayersReady()) //TEMP! Add a start button?
         {
             CmdStartGame();
+            GMScript.CmdStartGame();
         }
 }
 
@@ -89,20 +79,25 @@ public class NetworkedPlayerScript : NetworkBehaviour
     {
         playerLight = GetComponentInChildren<Light>();
         playerParent = GameObject.FindWithTag("PlayerParent");
-        if (!isLocalPlayer)
+
+        GameObject gameManager = GameObject.FindWithTag("GameController");
+        GMScript = gameManager.GetComponent<GameManagerScript>();
+
+        if (isLocalPlayer)
         {
-            transform.parent = playerParent.transform;
-            transform.localPosition = Vector3.zero;
+            playerRangeMultiplier = 1.5f;
+            GMScript.networkedPScript = this;
         }
         else
         {
-            playerRangeMultiplier = 1.5f;
+            transform.parent = playerParent.transform;
+            transform.localPosition = Vector3.zero;
         }
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.name == "LOCAL Player" && (currentGameState >= 200)) //Temp! Change to singleton?
+        if (other.name == "LOCAL Player" && GMScript.IsGameStarted() ) //Temp! Change to singleton?
         {
             remotePScript.growing = true;
             playerRangeMultiplier = 1.5f;
@@ -148,7 +143,6 @@ public class NetworkedPlayerScript : NetworkBehaviour
         remotePScript.enabled = false;
         localPScript.enabled = true;
 
-        countDown = -1;
         playerReady = false;
 
         CmdSetColor(new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f)));
@@ -160,19 +154,6 @@ public class NetworkedPlayerScript : NetworkBehaviour
     {
         SortPlayers();
         base.OnStartClient();
-    }
-
-    public bool GetIsGameStarted()
-    {
-        //Temp - Move to singleton object?
-        return (currentGameState > 200);
-    }
-
-    public void StartMainGame()
-    {
-        //Temp - Move to singleton object?
-        currentGameState = 201; //NOTE! Only checking on THIS PLAYER, not syncing to every player.
-        countDown = gameLength;
     }
 
     /*public Color GetColor()
@@ -284,18 +265,15 @@ public class NetworkedPlayerScript : NetworkBehaviour
                 //Remove that entry from list. 
                 playerSongChoice.RemoveAt(j);
             }
+
         } //Close if statement for checking if all players ready
     }
     [ClientRpc]
     public void RpcStartGame(int s)
     {
         songID = s;
-        //Temp - Move to singleton object?
-        currentGameState = 200;
 
         playerParent.GetComponent<PlayerParentScript>().LockAndSpin();
-
-        countDown = 5f;
 
         // Bullshit code. Temp? Maybe not?
         // What if player WAS ready, but now that we're actually starting they are no longer?
@@ -322,8 +300,6 @@ public class NetworkedPlayerScript : NetworkBehaviour
     [ClientRpc]
     public void RpcEndGame()
     {
-        //Temp - Move to singleton object?
-        currentGameState = 0;
         SetReady(false);
     }
 
