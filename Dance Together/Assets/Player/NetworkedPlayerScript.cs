@@ -13,7 +13,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
     private int numberOfSongs; //Temp? Better way to load songs than number, some kind of list?
 
     [SerializeField]
-    private LocalPlayerScript localPScript;
+    public LocalPlayerScript localPScript; //TEMP made public for checking in sort players
     [SerializeField]
     private RemotePlayerScript remotePScript;
 
@@ -36,19 +36,13 @@ public class NetworkedPlayerScript : NetworkBehaviour
     void SetColor()
     {
         GetComponentInChildren<Renderer>().material.color = color;
+        GetComponentInChildren<Light>().color = color;
     }
 
     void SetReady(bool ready)
     {
         playerReady = ready;
-        ToggleLight(playerReady);
-
-        if (AreAllPlayersReady()) //TEMP! Add a start button?
-        {
-            CmdStartGame();
-            GMScript.CmdStartGame();
-        }
-}
+    }
 
     void SortPlayers()
     {
@@ -59,23 +53,45 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
         foreach (GameObject player in players)
         {
+            NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
             if (player.name != "LOCAL Player")
             {
                 player.GetComponent<RemotePlayerScript>().SetPosition(++i, size);
             }
-            player.GetComponent<NetworkedPlayerScript>().SetColor();
+            else
+            {
+                /*if (size >= 4)
+                {
+                    nps.localPScript.SetButton(true);
+                }
+                else
+                {
+                    nps.localPScript.SetButton(false);
+                }*/
+            }
+            nps.SetColor();
         }
     }
 
-    void ToggleLight(bool enable)
+    bool AreAllPlayersReady()
     {
-        if (enable)
+        GameObject[] players;
+        players = GameObject.FindGameObjectsWithTag("Player");
+
+        bool allPlayersReady = true;
+        foreach (GameObject player in players)
         {
-            playerLight.color = color;
+            if (!player.GetComponent<NetworkedPlayerScript>().playerReady)
+            {
+                allPlayersReady = false;
+                break;
+            }
         }
+
+        return allPlayersReady; // TODO : Check if there are four players
     }
 
-    void Start ()
+    void Start()
     {
         playerLight = GetComponentInChildren<Light>();
         playerParent = GameObject.FindWithTag("PlayerParent");
@@ -97,7 +113,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.name == "LOCAL Player" && GMScript.IsGameStarted() ) //Temp! Change to singleton?
+        if (other.name == "LOCAL Player" && GMScript.IsGameStarted()) //Temp! Change to singleton?
         {
             remotePScript.growing = true;
             playerRangeMultiplier = 1.5f;
@@ -139,7 +155,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         gameObject.name = "LOCAL Player";
-        
+
         remotePScript.enabled = false;
         localPScript.enabled = true;
 
@@ -190,24 +206,6 @@ public class NetworkedPlayerScript : NetworkBehaviour
         SetReady(!playerReady);
     }
 
-    bool AreAllPlayersReady()
-    {
-        GameObject[] players;
-        players = GameObject.FindGameObjectsWithTag("Player");
-        
-        bool allPlayersReady = true;
-        foreach (GameObject player in players)
-        {
-            if (!player.GetComponent<NetworkedPlayerScript>().playerReady)
-            {
-                allPlayersReady = false;
-                break;
-            }
-        }
-
-        return allPlayersReady; // TODO : Check if there are four players
-    }
-
     [Command]
     public void CmdStartGame()
     {
@@ -215,7 +213,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
         {
             GameObject[] players;
             players = GameObject.FindGameObjectsWithTag("Player");
-            
+
             int length = players.Length;
 
             Assert.IsTrue(length >= 4, "There must be >=4 players!");

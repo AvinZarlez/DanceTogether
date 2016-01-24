@@ -17,7 +17,9 @@ public class GameManagerScript : NetworkBehaviour
     private Text countdownText; // UI text object named "UI_Countdown"
 
     [System.NonSerialized]
-    public NetworkedPlayerScript networkedPScript;
+    public NetworkedPlayerScript networkedPScript; //Public so it can set itself
+
+    private Button gameButtonScript;
 
     void Start()
     {
@@ -25,59 +27,10 @@ public class GameManagerScript : NetworkBehaviour
 
         GameObject obj = GameObject.Find("UI_Countdown");
         countdownText = obj.GetComponent<Text>();
-    }
 
-    [Command]
-    public void CmdStartGame()
-    {
-        RpcStartGame();
-    }
-
-    [ClientRpc]
-    void RpcStartGame()
-    {
-        currentGameState = 200;
-        countDown = 5f;
-    }
-
-    [Command]
-    public void CmdStartMainCountdown()
-    {
-        RpcStartMainCountdown();
-    }
-
-    [ClientRpc]
-    void RpcStartMainCountdown()
-    {
-        currentGameState = 201;
-        countDown = gameLength;
-    }
-
-    [Command]
-    public void CmdEndGame()
-    {
-        RpcEndGame();
-    }
-
-    [ClientRpc]
-    public void RpcEndGame()
-    {
-        currentGameState = 210;
-    }
-
-    public bool IsGameStarted()
-    {
-        return (currentGameState >= 200);
-    }
-
-    public bool IsInMainGameplay()
-    {
-        return (currentGameState > 200);
-    }
-
-    public bool IsInPostGame()
-    {
-        return (currentGameState >= 210);
+        /*GameObject obj = GameObject.Find("UI_GameButton");
+        gameButtonScript = obj.GetComponent<Button>();
+        obj.SetActive(false);*/
     }
 
     void Update()
@@ -125,4 +78,69 @@ public class GameManagerScript : NetworkBehaviour
             }
         }
     }
+
+    public void SetButton(bool enabled)
+    {
+        gameButtonScript.gameObject.SetActive(enabled);
+    }
+
+    public void StartGame()
+    {
+        networkedPScript.CmdStartGame();
+        CmdStartGame();
+    }
+
+    public bool IsGameStarted()
+    {
+        return (currentGameState >= 200);
+    }
+
+    public bool IsInMainGameplay()
+    {
+        return (currentGameState > 200);
+    }
+
+    public bool IsInPostGame()
+    {
+        return (currentGameState >= 210);
+    }
+
+    [Command]
+    public void CmdStartGame()
+    {
+        RpcStartGame();
+    }
+
+    [ClientRpc]
+    void RpcStartGame()
+    {
+        currentGameState = 200;
+        countDown = 5f;
+    }
+
+    [Command]
+    public void CmdStartMainCountdown()
+    {
+        RpcStartMainCountdown();
+    }
+
+    [ClientRpc]
+    void RpcStartMainCountdown()
+    {
+        currentGameState = 201;
+        countDown = gameLength;
+    }
+
+    [Command]
+    public void CmdEndGame()
+    {
+        RpcEndGame();
+    }
+
+    [ClientRpc]
+    public void RpcEndGame()
+    {
+        currentGameState = 210;
+    }
+
 }
