@@ -28,9 +28,9 @@ public class GameManagerScript : NetworkBehaviour
         GameObject obj = GameObject.Find("UI_Countdown");
         countdownText = obj.GetComponent<Text>();
 
-        /*GameObject obj = GameObject.Find("UI_GameButton");
+        obj = GameObject.Find("UI_GameButton");
         gameButtonScript = obj.GetComponent<Button>();
-        obj.SetActive(false);*/
+        //obj.SetActive(false);
     }
 
     void Update()
@@ -82,6 +82,11 @@ public class GameManagerScript : NetworkBehaviour
     public void SetButton(bool enabled)
     {
         gameButtonScript.gameObject.SetActive(enabled);
+    }
+
+    public void SetButtonInteractable(bool enabled)
+    {
+        gameButtonScript.interactable = enabled;
     }
 
     public void StartGame()

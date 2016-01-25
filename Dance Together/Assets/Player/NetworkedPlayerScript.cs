@@ -42,6 +42,15 @@ public class NetworkedPlayerScript : NetworkBehaviour
     void SetReady(bool ready)
     {
         playerReady = ready;
+
+        if (AreAllPlayersReady())
+        {
+            GMScript.SetButtonInteractable(true);
+        }
+        else
+        {
+            GMScript.SetButtonInteractable(false);
+        }
     }
 
     void SortPlayers()
