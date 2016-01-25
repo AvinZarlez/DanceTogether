@@ -45,11 +45,11 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
         if (AreAllPlayersReady())
         {
-            GMScript.SetButtonInteractable(true);
+            GUIManagerScript.SetButtonInteractable(true);
         }
         else
         {
-            GMScript.SetButtonInteractable(false);
+            GUIManagerScript.SetButtonInteractable(false);
         }
     }
 
@@ -62,23 +62,22 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
         foreach (GameObject player in players)
         {
-            NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
             if (player.name != "LOCAL Player")
             {
                 player.GetComponent<RemotePlayerScript>().SetPosition(++i, size);
             }
             else
             {
-                /*if (size >= 4)
+                if (size >= 4)
                 {
-                    nps.localPScript.SetButton(true);
+                    GUIManagerScript.SetButton(true);
                 }
                 else
                 {
-                    nps.localPScript.SetButton(false);
-                }*/
+                    GUIManagerScript.SetButton(false);
+                }
             }
-            nps.SetColor();
+            player.GetComponent<NetworkedPlayerScript>().SetColor();
         }
     }
 

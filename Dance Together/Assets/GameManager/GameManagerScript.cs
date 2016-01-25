@@ -19,18 +19,12 @@ public class GameManagerScript : NetworkBehaviour
     [System.NonSerialized]
     public NetworkedPlayerScript networkedPScript; //Public so it can set itself
 
-    private Button gameButtonScript;
-
     void Start()
     {
         countDown = -1;
 
         GameObject obj = GameObject.Find("UI_Countdown");
         countdownText = obj.GetComponent<Text>();
-
-        obj = GameObject.Find("UI_GameButton");
-        gameButtonScript = obj.GetComponent<Button>();
-        //obj.SetActive(false);
     }
 
     void Update()
@@ -77,16 +71,6 @@ public class GameManagerScript : NetworkBehaviour
                 }
             }
         }
-    }
-
-    public void SetButton(bool enabled)
-    {
-        gameButtonScript.gameObject.SetActive(enabled);
-    }
-
-    public void SetButtonInteractable(bool enabled)
-    {
-        gameButtonScript.interactable = enabled;
     }
 
     public void StartGame()
