@@ -7,6 +7,8 @@ public class GameManagerScript : NetworkBehaviour
     // Count down timer for game start. Public so other scripts can monitor.
     [SyncVar, HideInInspector]
     public float countDown;
+    
+    static public GameManagerScript instance = null;
 
     [SyncVar]
     private byte currentGameState;
@@ -15,9 +17,16 @@ public class GameManagerScript : NetworkBehaviour
     private const float gameLength = 30; // How long the game lasts, in seconds.
 
     private Text countdownText; // UI text object named "UI_Countdown"
+    
+    private NetworkedPlayerScript networkedPScript; //Public so it can set itself
 
-    [System.NonSerialized]
-    public NetworkedPlayerScript networkedPScript; //Public so it can set itself
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+    }
 
     void Start()
     {
@@ -37,6 +46,7 @@ public class GameManagerScript : NetworkBehaviour
         {
 
             countDown -= Time.deltaTime;
+            countdownText.text = "What? " + Mathf.Ceil(countDown);
 
             if (IsInMainGameplay())
             {
@@ -73,12 +83,6 @@ public class GameManagerScript : NetworkBehaviour
         }
     }
 
-    public void StartGame()
-    {
-        networkedPScript.CmdStartGame();
-        CmdStartGame();
-    }
-
     public bool IsGameStarted()
     {
         return (currentGameState >= 200);
@@ -92,6 +96,19 @@ public class GameManagerScript : NetworkBehaviour
     public bool IsInPostGame()
     {
         return (currentGameState >= 210);
+    }
+
+    [Command]
+    public void CmdSetNPS()
+    {
+        RpcSetNPS();
+    }
+
+    [ClientRpc]
+    void RpcSetNPS()
+    {
+        GameObject player = GameObject.Find("LOCAL Player");
+        networkedPScript = player.GetComponent<NetworkedPlayerScript>();
     }
 
     [Command]

@@ -16,6 +16,8 @@ public class NetworkedPlayerScript : NetworkBehaviour
     public LocalPlayerScript localPScript; //TEMP made public for checking in sort players
     [SerializeField]
     private RemotePlayerScript remotePScript;
+    [SerializeField]
+    private GameObject gameManagerPrefab;
 
     private GameObject playerParent;
 
@@ -31,7 +33,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
     // To make referencing easier/less calls.
     private Light playerLight;
-    private GameManagerScript GMScript;
+
 
     void SetColor()
     {
@@ -104,13 +106,9 @@ public class NetworkedPlayerScript : NetworkBehaviour
         playerLight = GetComponentInChildren<Light>();
         playerParent = GameObject.FindWithTag("PlayerParent");
 
-        GameObject gameManager = GameObject.FindWithTag("GameController");
-        GMScript = gameManager.GetComponent<GameManagerScript>();
-
         if (isLocalPlayer)
         {
             playerRangeMultiplier = 1.5f;
-            GMScript.networkedPScript = this;
         }
         else
         {
@@ -121,7 +119,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.name == "LOCAL Player" && GMScript.IsGameStarted()) //Temp! Change to singleton?
+        if (other.name == "LOCAL Player" && GameManagerScript.instance.IsGameStarted()) //Temp! Change to singleton?
         {
             remotePScript.growing = true;
             playerRangeMultiplier = 1.5f;
@@ -163,6 +161,10 @@ public class NetworkedPlayerScript : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         gameObject.name = "LOCAL Player";
+        
+        SetUpGMScript();
+
+        GameManagerScript.instance.CmdSetNPS();
 
         remotePScript.enabled = false;
         localPScript.enabled = true;
@@ -188,6 +190,23 @@ public class NetworkedPlayerScript : NetworkBehaviour
     public int GetSongID()
     {
         return songID;
+    }
+
+    public void StartGame()
+    {
+        CmdStartGame();
+        GameManagerScript.instance.CmdStartGame();
+    }
+
+    //[Server]
+    void SetUpGMScript()
+    {
+        GameObject gms;
+        if (GameManagerScript.instance == null)
+        {
+            gms = Instantiate(gameManagerPrefab);
+            NetworkServer.Spawn(gms);
+        }
     }
 
     [Command]

@@ -17,14 +17,10 @@ public class LocalPlayerScript : MonoBehaviour {
 
     // To make referencing easier/less calls.
     private NetworkedPlayerScript networkedPScript;
-    private GameManagerScript GMScript;
 
     void Start()
     {
         networkedPScript = GetComponent<NetworkedPlayerScript>();
-
-        GameObject gameManager = GameObject.FindWithTag("GameController");
-        GMScript = gameManager.GetComponent<GameManagerScript>();
 
         transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
         startingLocation = transform.position;
@@ -39,11 +35,11 @@ public class LocalPlayerScript : MonoBehaviour {
 
     void Update()
     {
-        float countDown = GMScript.countDown;
+        float countDown = GameManagerScript.instance.countDown;
 
         if (countDown > 0) //No interaction during count down
         {
-            if (GMScript.IsInMainGameplay())
+            if (GameManagerScript.instance.IsInMainGameplay())
             {
                 // The main game, in the middle of game play
                 // This. is. it. - TIME TO DANCE!
