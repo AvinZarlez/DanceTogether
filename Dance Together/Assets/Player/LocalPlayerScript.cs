@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
-public class LocalPlayerScript : MonoBehaviour {
+public class LocalPlayerScript : MonoBehaviour
+{
     [System.NonSerialized] // Don't need to save the isDragging state
     public bool isDragging; // Is the player object currently being dragged somewhere?
 
@@ -17,10 +19,14 @@ public class LocalPlayerScript : MonoBehaviour {
 
     // To make referencing easier/less calls.
     private NetworkedPlayerScript networkedPScript;
+    private Text countdownText; // UI text object named "UI_Countdown"
 
     void Start()
     {
         networkedPScript = GetComponent<NetworkedPlayerScript>();
+
+        GameObject obj = GameObject.Find("UI_Countdown");
+        countdownText = obj.GetComponent<Text>();
 
         transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
         startingLocation = transform.position;
@@ -33,14 +39,22 @@ public class LocalPlayerScript : MonoBehaviour {
         lastCollidedWith = other.GetComponent<NetworkedPlayerScript>();
     }
 
+
+
     void Update()
     {
         float countDown = GameManagerScript.instance.countDown;
 
-        if (countDown > 0) //No interaction during count down
+        if (GameManagerScript.instance.IsInPostGame())
+        {
+            countdownText.text = "GAME OVER!" + " " + networkedPScript.GetSongID();
+        }
+        else if (countDown > 0)
         {
             if (GameManagerScript.instance.IsInMainGameplay())
             {
+                countdownText.text = "" + Mathf.Ceil(countDown);
+
                 // The main game, in the middle of game play
                 // This. is. it. - TIME TO DANCE!
 
@@ -71,15 +85,26 @@ public class LocalPlayerScript : MonoBehaviour {
                         transform.position = new Vector3(mousePosition.x, mousePosition.y, transform.position.z);
                     }
                 }
-
             }
-            else // countDown was > 0 AND Game is not in main gameplay
+            else
             {
                 //Always false during intro countdown.
                 isHit = false;
                 isDragging = false;
-            }
 
+                if (countDown < 1)
+                {
+                    countdownText.text = "DANCE!";
+                }
+                else if (countDown >= (4f)) //Plus one second for the "Dance" end 
+                {
+                    countdownText.text = "Ready?";
+                }
+                else
+                {
+                    countdownText.text = "" + Mathf.Floor(countDown);
+                }
+            }
         }
         else
         {
@@ -106,7 +131,8 @@ public class LocalPlayerScript : MonoBehaviour {
             }
         }
 
-        if (isDragging) {
+        if (isDragging)
+        {
             // Player object is being dragged right now
         }
         else {

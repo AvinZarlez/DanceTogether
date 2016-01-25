@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.UI;
 
 public class GameManagerScript : NetworkBehaviour
 {
@@ -15,8 +14,6 @@ public class GameManagerScript : NetworkBehaviour
     // 200+ means the game is running
 
     private const float gameLength = 30; // How long the game lasts, in seconds.
-
-    private Text countdownText; // UI text object named "UI_Countdown"
     
     private NetworkedPlayerScript networkedPScript; //Public so it can set itself
 
@@ -31,53 +28,27 @@ public class GameManagerScript : NetworkBehaviour
     void Start()
     {
         countDown = -1;
-
-        GameObject obj = GameObject.Find("UI_Countdown");
-        countdownText = obj.GetComponent<Text>();
     }
 
     void Update()
     {
-        if (IsInPostGame())
+        if (countDown > 0)
         {
-            countdownText.text = "GAME OVER!" + " " + networkedPScript.GetSongID();
-        }
-        else if (countDown > 0)
-        {
-
             countDown -= Time.deltaTime;
-            countdownText.text = "What? " + Mathf.Ceil(countDown);
 
-            if (IsInMainGameplay())
+            if (GameManagerScript.instance.IsInMainGameplay())
             {
                 if (countDown <= 0)
                 {
                     CmdEndGame();
                     networkedPScript.CmdEndGame(); //Let's stop this party
                 }
-                else
-                {
-                    countdownText.text = "" + Mathf.Ceil(countDown);
-                }
             }
             else
             {
                 if (countDown <= 0)
                 {
-                    countdownText.text = "";
                     CmdStartMainCountdown(); //Let's get this party started;
-                }
-                else if (countDown < 1)
-                {
-                    countdownText.text = "DANCE!";
-                }
-                else if (countDown >= (4f)) //Plus one second for the "Dance" end 
-                {
-                    countdownText.text = "Ready?";
-                }
-                else
-                {
-                    countdownText.text = "" + Mathf.Floor(countDown);
                 }
             }
         }

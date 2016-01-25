@@ -19,6 +19,12 @@ public class GUIManagerScript : MonoBehaviour {
 
     }
 
+    public void StartGame()
+    {
+        GameObject gm = GameObject.Find("LOCAL Player");
+        gm.GetComponent<NetworkedPlayerScript>().CmdStartGame();
+    }
+
     public static void SetButton(bool enabled)
     {
         gameButtonObject.SetActive(enabled);

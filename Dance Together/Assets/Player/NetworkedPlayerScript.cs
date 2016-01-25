@@ -192,12 +192,6 @@ public class NetworkedPlayerScript : NetworkBehaviour
         return songID;
     }
 
-    public void StartGame()
-    {
-        CmdStartGame();
-        GameManagerScript.instance.CmdStartGame();
-    }
-
     //[Server]
     void SetUpGMScript()
     {
@@ -238,6 +232,8 @@ public class NetworkedPlayerScript : NetworkBehaviour
     {
         if (AreAllPlayersReady()) //Redundant?
         {
+            GameManagerScript.instance.CmdStartGame();
+
             GameObject[] players;
             players = GameObject.FindGameObjectsWithTag("Player");
 
