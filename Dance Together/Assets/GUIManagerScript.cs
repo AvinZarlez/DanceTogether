@@ -12,6 +12,8 @@ public class GUIManagerScript : MonoBehaviour {
     void Start () {
         gameButtonObject = GameObject.Find("UI_GameButton");
         gameButton = gameButtonObject.GetComponent<Button>();
+
+        SetButton(false);
     }
 	
 	// Update is called once per frame

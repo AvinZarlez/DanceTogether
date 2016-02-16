@@ -68,18 +68,16 @@ public class NetworkedPlayerScript : NetworkBehaviour
             {
                 player.GetComponent<RemotePlayerScript>().SetPosition(++i, size);
             }
-            else
-            {
-                if (size >= 4)
-                {
-                    GUIManagerScript.SetButton(true);
-                }
-                else
-                {
-                    GUIManagerScript.SetButton(false);
-                }
-            }
             player.GetComponent<NetworkedPlayerScript>().SetColor();
+        }
+
+        if (size >= 4)
+        {
+            GUIManagerScript.SetButton(true);
+        }
+        else
+        {
+            GUIManagerScript.SetButton(false);
         }
     }
 
@@ -171,7 +169,8 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
         playerReady = false;
 
-        CmdSetColor(new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f)));
+        CmdSetColor(ColorScript.GetNewColor());
+            // Old way: new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f)));
 
         base.OnStartLocalPlayer();
     }
@@ -306,6 +305,8 @@ public class NetworkedPlayerScript : NetworkBehaviour
             SetReady(true);
             // See buddy, you were ready the whole time, right?
         }
+
+        GUIManagerScript.SetButton(false);
     }
 
     [Command]
@@ -322,6 +323,9 @@ public class NetworkedPlayerScript : NetworkBehaviour
     public void RpcEndGame()
     {
         SetReady(false);
+
+        //TO DO - Remove until after end game?
+        GUIManagerScript.SetButton(true);
     }
 
 }
