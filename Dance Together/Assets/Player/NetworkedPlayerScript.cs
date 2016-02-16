@@ -37,10 +37,11 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
     void SetColor()
     {
-        Color c;
-        if (color == -1) { c = Color.black; } else { c = ColorScript.GetColor(color); }
-        GetComponentInChildren<Renderer>().material.color = c;
-        GetComponentInChildren<Light>().color = c;
+        if (color != -1) {
+            Color c = ColorScript.GetColor(color);
+            GetComponentInChildren<Renderer>().material.color = c;
+            GetComponentInChildren<Light>().color = c;
+        }
     }
 
     void SetReady(bool ready)
