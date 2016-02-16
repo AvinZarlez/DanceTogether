@@ -29,7 +29,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
     private int songID;
 
     [SyncVar]
-    private Color color;
+    private int color = -1;
 
     // To make referencing easier/less calls.
     private Light playerLight;
@@ -37,8 +37,10 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
     void SetColor()
     {
-        GetComponentInChildren<Renderer>().material.color = color;
-        GetComponentInChildren<Light>().color = color;
+        Color c;
+        if (color == -1) { c = Color.black; } else { c = ColorScript.GetColor(color); }
+        GetComponentInChildren<Renderer>().material.color = c;
+        GetComponentInChildren<Light>().color = c;
     }
 
     void SetReady(bool ready)
@@ -169,8 +171,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
         playerReady = false;
 
-        CmdSetColor(ColorScript.GetNewColor());
-            // Old way: new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f)));
+        CmdSetColor();
 
         base.OnStartLocalPlayer();
     }
@@ -181,10 +182,10 @@ public class NetworkedPlayerScript : NetworkBehaviour
         base.OnStartClient();
     }
 
-    /*public Color GetColor()
+    public int GetColor()
     {
         return color;
-    }*/
+    }
 
     public int GetSongID()
     {
@@ -203,13 +204,29 @@ public class NetworkedPlayerScript : NetworkBehaviour
     }
 
     [Command]
-    void CmdSetColor(Color c)
+    void CmdSetColor()
     {
-        RpcSetColor(c);
+        List<int> playerColors = new List<int>();
+
+        int length = ColorScript.colors.Length;
+        for (int i = 0; i < length; i++)
+        {
+            playerColors.Add(i);
+        }
+
+        GameObject[] players;
+        players = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject player in players)
+        {
+            NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
+            playerColors.Remove(nps.GetColor());
+        }
+        
+        RpcSetColor(playerColors[Random.Range(0, playerColors.Count)]);
     }
 
     [ClientRpc]
-    void RpcSetColor(Color c)
+    void RpcSetColor(int c)
     {
         color = c;
         SetColor();

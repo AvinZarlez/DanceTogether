@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class ColorScript : MonoBehaviour {
-    private Color[] colors = new Color[] {
+    static public Color[] colors = new Color[] {
             //Color.gray,
             //Color.black,
             //new Color(0.33f,0.5f,0.5f), //Jade Green
@@ -22,15 +22,8 @@ public class ColorScript : MonoBehaviour {
             new Color(0.25f,0f,1f) //Ultramarine (Bright Purple)
         };
 
-    private List<Color> unusedColors;
-
-    void Start ()
+    static public Color GetColor(int index)
     {
-        unusedColors;
-    }
-
-    static public Color GetNewColor()
-    {
-        return colors[Random.Range(0, ColorScript.colors.Length)];
+        return colors[index];
     }
 }
