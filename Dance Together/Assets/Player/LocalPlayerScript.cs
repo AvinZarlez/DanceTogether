@@ -32,6 +32,8 @@ public class LocalPlayerScript : MonoBehaviour
         startingLocation = transform.position;
 
         transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+
+        countdownText.enabled = false;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -47,10 +49,12 @@ public class LocalPlayerScript : MonoBehaviour
 
         if (GameManagerScript.instance.IsInPostGame())
         {
+            //countdownText.enabled = true; //Redundent?
             countdownText.text = "GAME OVER!" + " " + networkedPScript.GetSongID();
         }
         else if (countDown > 0)
         {
+            countdownText.enabled = true;
             if (GameManagerScript.instance.IsInMainGameplay())
             {
                 countdownText.text = "" + Mathf.Ceil(countDown);
