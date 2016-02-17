@@ -20,20 +20,25 @@ public class LocalPlayerScript : MonoBehaviour
     // To make referencing easier/less calls.
     private NetworkedPlayerScript networkedPScript;
     private Text countdownText; // UI text object named "UI_Countdown"
+    private Text infoText; // UI text object named "UI_InfoText"
 
     void Start()
     {
         networkedPScript = GetComponent<NetworkedPlayerScript>();
 
-        GameObject obj = GameObject.Find("UI_Countdown");
-        countdownText = obj.GetComponent<Text>();
+        GameObject obj1 = GameObject.Find("UI_Countdown");
+        countdownText = obj1.GetComponent<Text>();
+        countdownText.enabled = false;
+
+        GameObject obj2 = GameObject.Find("UI_InfoText");
+        infoText = obj2.GetComponent<Text>();
+        infoText.enabled = false;
 
         transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
         startingLocation = transform.position;
 
         transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
 
-        countdownText.enabled = false;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -49,14 +54,16 @@ public class LocalPlayerScript : MonoBehaviour
 
         if (GameManagerScript.instance.IsInPostGame())
         {
-            //countdownText.enabled = true; //Redundent?
-            countdownText.text = "GAME OVER!" + " " + networkedPScript.GetSongID();
+            countdownText.enabled = false;
+            infoText.enabled = true; // Redundent?
+            infoText.text = "GAME OVER!" + " " + networkedPScript.GetSongID();
         }
         else if (countDown > 0)
         {
-            countdownText.enabled = true;
             if (GameManagerScript.instance.IsInMainGameplay())
             {
+                infoText.enabled = false;
+                countdownText.enabled = true;
                 countdownText.text = "" + Mathf.Ceil(countDown);
 
                 // The main game, in the middle of game play
@@ -92,21 +99,23 @@ public class LocalPlayerScript : MonoBehaviour
             }
             else
             {
+                infoText.enabled = true;
+
                 //Always false during intro countdown.
                 isHit = false;
                 isDragging = false;
 
                 if (countDown < 1)
                 {
-                    countdownText.text = "DANCE!";
+                    infoText.text = "DANCE!";
                 }
                 else if (countDown >= (4f)) //Plus one second for the "Dance" end 
                 {
-                    countdownText.text = "Ready?";
+                    infoText.text = "Ready?";
                 }
                 else
                 {
-                    countdownText.text = "" + Mathf.Floor(countDown);
+                    infoText.text = "" + Mathf.Floor(countDown);
                 }
             }
         }
