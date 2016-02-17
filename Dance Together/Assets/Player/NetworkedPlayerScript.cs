@@ -231,6 +231,13 @@ public class NetworkedPlayerScript : NetworkBehaviour
     {
         color = c;
         SetColor();
+
+        if (isLocalPlayer)
+        {
+            Color clr = ColorScript.GetColor(c);
+            clr = clr*0.25f;
+            Camera.main.backgroundColor = clr;
+        }
     }
 
     [Command]
