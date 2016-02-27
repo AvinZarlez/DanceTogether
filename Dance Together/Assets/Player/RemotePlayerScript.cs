@@ -5,46 +5,25 @@ public class RemotePlayerScript : MonoBehaviour {
     [SerializeField]
     int distance = 3;
     [SerializeField]
-    int movementSpeed = 5;
+    int movementSpeed = 1;
 
     int position;
     int numberOfPlayers;
 
+    [HideInInspector]
     public bool growing;
+    [HideInInspector]
     public bool highlighted = false;
+    [HideInInspector]
     public GameObject localPlayer;
+
+    private Vector3 startLocation;
 
     private Transform body; //The Sphere
 
     void Start()
     {
         body = transform.Find("Sphere");
-    }
-
-    void Update()
-    {
-        // Move towards desired location
-        float step = movementSpeed * Time.deltaTime;
-        if (highlighted)
-        {
-            Vector3 goal = new Vector3(-distance + (distance * (position/(numberOfPlayers - 1))), 3);
-            if (localPlayer != null)
-            {
-                goal = new Vector3(-1*(distance/2), -distance);
-            }
-            transform.position = Vector3.MoveTowards(transform.position, goal, step*100);
-        }
-        else
-        {
-            Vector3 goal = Vector3.zero;
-            float degreeMath;
-            if (numberOfPlayers > 2) degreeMath = position * (2 * Mathf.PI) / (numberOfPlayers - 1);
-            else degreeMath = Mathf.PI; //Cheat if 2 players. If theory this won't happen if only one player, but just in case also prevents divide by 0.
-            goal.x += distance * Mathf.Cos(degreeMath);
-            goal.y += distance * Mathf.Sin(degreeMath);
-            goal.z -= 1;
-            transform.localPosition = Vector3.MoveTowards(transform.localPosition, goal, step);
-        }
     }
 
     void FixedUpdate()
@@ -62,6 +41,31 @@ public class RemotePlayerScript : MonoBehaviour {
             if (body.localScale.x > 1) {
                 body.localScale -= new Vector3(0.15f, 0.15f, 0.15f);
             }
+        }
+
+        if (highlighted)
+        {
+            Vector3 goal;
+            if (localPlayer != null)
+            {
+                goal = new Vector3(0,-distance);
+            }
+            else
+            {
+                goal = new Vector3(-(((numberOfPlayers - 2) * 1.25f) / 2) + (1.25f * (position - 1f)), 3);
+            }
+            transform.position = Vector3.MoveTowards(transform.position, goal, movementSpeed);
+        }
+        else
+        {
+            Vector3 goal = Vector3.zero;
+            float degreeMath;
+            if (numberOfPlayers > 2) degreeMath = position * (2 * Mathf.PI) / (numberOfPlayers - 1);
+            else degreeMath = Mathf.PI; //Cheat if 2 players. If theory this won't happen if only one player, but just in case also prevents divide by 0.
+            goal.x += distance * Mathf.Cos(degreeMath);
+            goal.y += distance * Mathf.Sin(degreeMath);
+            goal.z -= 1;
+            transform.localPosition = Vector3.MoveTowards(transform.localPosition, goal, movementSpeed);
         }
     }
 

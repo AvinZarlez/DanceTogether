@@ -14,16 +14,23 @@ public class LocalPlayerScript : MonoBehaviour
     private float movementSpeed = 10; // How fast does it snap back to the center?
 
     private bool isHit; //Did the TouchDown event happen?
+    private bool locked;
 
-    private NetworkedPlayerScript lastCollidedWith; //Direct link to the NetworkedPlayerScript of the object we last collided with.\
+    private NetworkedPlayerScript lastCollidedWith; //Direct link to the NetworkedPlayerScript of the object we last collided with.
+
+    [HideInInspector]
+    public NetworkedPlayerScript playerMatch; // The player this player is thinking about being a match.
 
     // To make referencing easier/less calls.
+    private PlayerParentScript playerParentScript;
     private NetworkedPlayerScript networkedPScript;
     private Text countdownText; // UI text object named "UI_Countdown"
     private Text infoText; // UI text object named "UI_InfoText"
 
     void Start()
     {
+        playerParentScript = GameObject.FindWithTag("PlayerParent").GetComponent<PlayerParentScript>();
+
         networkedPScript = GetComponent<NetworkedPlayerScript>();
 
         GameObject obj1 = GameObject.Find("UI_Countdown");
@@ -39,6 +46,7 @@ public class LocalPlayerScript : MonoBehaviour
 
         transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
 
+        locked = false;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -46,7 +54,29 @@ public class LocalPlayerScript : MonoBehaviour
         lastCollidedWith = other.GetComponent<NetworkedPlayerScript>();
     }
 
+    public bool WasMatchedPressed()
+    {
+        if (locked)
+        {
+            return true;
+        }
+        return false;
+    }
+    
+    public void BackButtonPressed()
+    {
+        GameObject[] players;
+        players = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject player in players)
+        {
+            player.GetComponent<RemotePlayerScript>().Reset();
+        }
 
+        playerParentScript.Unlock();
+
+        locked = false;
+        GUIManagerScript.SetMatchButton(false);
+    }
 
     void Update()
     {
@@ -69,38 +99,48 @@ public class LocalPlayerScript : MonoBehaviour
                 // The main game, in the middle of game play
                 // This. is. it. - TIME TO DANCE!
 
-                if (Input.GetButtonDown("Fire1"))
+                if (!locked)
                 {
-                    Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
-                    {
-                        isDragging = true;
-                    }
-                }
-                else if (Input.GetButtonUp("Fire1"))
-                {
-                    if (GetComponent<Collider2D>().IsTouching(lastCollidedWith.GetComponent<Collider2D>()) && isDragging)
-                    {
-                        lastCollidedWith.GetComponent<RemotePlayerScript>().localPlayer = this.gameObject;
-
-                        GameObject[] players;
-                        players = GameObject.FindGameObjectsWithTag("Player");
-                        foreach (GameObject player in players)
-                        {
-                            player.GetComponent<RemotePlayerScript>().highlighted = true;
-                        }
-                    }
-
-                    //Always false after mouse up
-                    isHit = false;
-                    isDragging = false;
-                }
-                else if (Input.GetButton("Fire1"))
-                {
-                    if (isDragging)
+                    if (Input.GetButtonDown("Fire1"))
                     {
                         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                        transform.position = new Vector3(mousePosition.x, mousePosition.y, transform.position.z);
+                        if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
+                        {
+                            isDragging = true;
+                        }
+                    }
+                    else if (Input.GetButtonUp("Fire1"))
+                    {
+                        if (GetComponent<Collider2D>().IsTouching(lastCollidedWith.GetComponent<Collider2D>()) && isDragging)
+                        {
+                            playerMatch = lastCollidedWith.GetComponent<NetworkedPlayerScript>();
+
+                            lastCollidedWith.remotePScript.localPlayer = this.gameObject;
+
+                            GameObject[] players;
+                            players = GameObject.FindGameObjectsWithTag("Player");
+                            foreach (GameObject player in players)
+                            {
+                                player.GetComponent<RemotePlayerScript>().highlighted = true;
+                            }
+
+                            playerParentScript.GetComponent<PlayerParentScript>().Lock();
+
+                            locked = true;
+                            GUIManagerScript.SetMatchButton(true);
+                        }
+
+                        //Always false after mouse up
+                        isHit = false;
+                        isDragging = false;
+                    }
+                    else if (Input.GetButton("Fire1"))
+                    {
+                        if (isDragging)
+                        {
+                            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                            transform.position = new Vector3(mousePosition.x, mousePosition.y, transform.position.z);
+                        }
                     }
                 }
             }

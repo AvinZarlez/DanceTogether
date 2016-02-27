@@ -22,11 +22,15 @@ public class PlayerParentScript : MonoBehaviour
     {
         if (spinLocked >= 0)
         {
-            if (spinning) { transform.Rotate(new Vector3(0, 0, 180) * Time.deltaTime); }
-            spinLocked += Time.deltaTime;
-            if (spinLocked > 4) {
-                spinLocked = -1;
-                spinning = false;
+            if (spinning)
+            {
+                transform.Rotate(new Vector3(0, 0, 180) * Time.deltaTime);
+                spinLocked += Time.deltaTime;
+                if (spinLocked > 4)
+                {
+                    spinLocked = -1;
+                    spinning = false;
+                }
             }
         }
         else
@@ -69,5 +73,17 @@ public class PlayerParentScript : MonoBehaviour
     {
         spinLocked = 0;
         spinning = true;
+    }
+
+    public void Lock()
+    {
+        spinLocked = 0;
+        spinning = false;
+    }
+
+    public void Unlock()
+    {
+        spinLocked = -1;
+        spinning = false;
     }
 }

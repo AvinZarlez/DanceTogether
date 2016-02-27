@@ -6,7 +6,8 @@ public class GameManagerScript : NetworkBehaviour
     // Count down timer for game start. Public so other scripts can monitor.
     [SyncVar, HideInInspector]
     public float countDown;
-    
+
+    [HideInInspector]
     static public GameManagerScript instance = null;
 
     [SyncVar]

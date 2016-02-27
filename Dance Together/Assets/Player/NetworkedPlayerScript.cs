@@ -14,8 +14,8 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
     [SerializeField]
     public LocalPlayerScript localPScript; //TEMP made public for checking in sort players
-    [SerializeField]
-    private RemotePlayerScript remotePScript;
+    [HideInInspector]
+    public RemotePlayerScript remotePScript;
     [SerializeField]
     private GameObject gameManagerPrefab;
 
@@ -27,6 +27,9 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
     [SyncVar]
     private int songID;
+    
+    [SyncVar]
+    private NetworkedPlayerScript playerMatch; // The other player this player has picked as a match
 
     [SyncVar]
     private int color = -1;
@@ -259,64 +262,72 @@ public class NetworkedPlayerScript : NetworkBehaviour
             GameManagerScript.instance.CmdReplyGame();
             RpcReplyGame();
         }
-        else if (AreAllPlayersReady()) //Redundant?
+        else
         {
-            GameManagerScript.instance.CmdStartGame();
-
-            GameObject[] players;
-            players = GameObject.FindGameObjectsWithTag("Player");
-
-            int length = players.Length;
-
-            Assert.IsTrue(length >= 4, "There must be >=4 players!");
-
-            int numSongsToPick = (length / 2);
-
-            List<int> songs = new List<int>(); //List of the songID's we'll use this game.
-
-            for (int i = 0; i < numSongsToPick; i++)
+            if (localPScript.WasMatchedPressed())
             {
-                int rand;
-                do
-                {
-                    rand = Random.Range(0, numberOfSongs);
-                }
-                while (songs.Contains(rand));
-                songs.Add(rand);
+                playerMatch = localPScript.playerMatch;
+                GUIManagerScript.SetMatchButton(false);
             }
-
-            List<int> playerSongChoice = new List<int>(); // Final list will pull from
-
-            // Remember, final list will have at least 2 of every choice!
-            int j = 0;
-            if (length % 2 != 0) { j = -1; }
-            for (int k = 0; k < length; k++)
+            else if (AreAllPlayersReady()) //Redundant?
             {
-                if (j == -1)
+                GameManagerScript.instance.CmdStartGame();
+
+                GameObject[] players;
+                players = GameObject.FindGameObjectsWithTag("Player");
+
+                int length = players.Length;
+
+                Assert.IsTrue(length >= 4, "There must be >=4 players!");
+
+                int numSongsToPick = (length / 2);
+
+                List<int> songs = new List<int>(); //List of the songID's we'll use this game.
+
+                for (int i = 0; i < numSongsToPick; i++)
                 {
-                    playerSongChoice.Add(songs[Random.Range(0, numSongsToPick)]);
+                    int rand;
+                    do
+                    {
+                        rand = Random.Range(0, numberOfSongs);
+                    }
+                    while (songs.Contains(rand));
+                    songs.Add(rand);
                 }
-                else
+
+                List<int> playerSongChoice = new List<int>(); // Final list will pull from
+
+                // Remember, final list will have at least 2 of every choice!
+                int j = 0;
+                if (length % 2 != 0) { j = -1; }
+                for (int k = 0; k < length; k++)
                 {
-                    playerSongChoice.Add(songs[(int)(j / 2)]);
+                    if (j == -1)
+                    {
+                        playerSongChoice.Add(songs[Random.Range(0, numSongsToPick)]);
+                    }
+                    else
+                    {
+                        playerSongChoice.Add(songs[(int)(j / 2)]);
+                    }
+                    j++;
                 }
-                j++;
-            }
 
-            foreach (GameObject player in players)
-            {
-                //Recycle local J variable, don't care about last value
-                j = Random.Range(0, playerSongChoice.Count);
+                foreach (GameObject player in players)
+                {
+                    //Recycle local J variable, don't care about last value
+                    j = Random.Range(0, playerSongChoice.Count);
 
-                //Tell the player which song they got
-                NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
-                nps.RpcStartGame(playerSongChoice[j]);
+                    //Tell the player which song they got
+                    NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
+                    nps.RpcStartGame(playerSongChoice[j]);
 
-                //Remove that entry from list. 
-                playerSongChoice.RemoveAt(j);
-            }
+                    //Remove that entry from list. 
+                    playerSongChoice.RemoveAt(j);
+                }
 
-        } //Close if statement for checking if all players ready
+            } //Close if statement for checking if all players ready
+        }
     }
     [ClientRpc]
     public void RpcReplyGame()
@@ -340,7 +351,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
             SetReady(true);
             // See buddy, you were ready the whole time, right?
         }
-
+        playerMatch = null;
         GUIManagerScript.SetButton(false);
     }
 
