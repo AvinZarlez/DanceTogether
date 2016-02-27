@@ -81,7 +81,7 @@ public class LocalPlayerScript : MonoBehaviour
                 {
                     if (GetComponent<Collider2D>().IsTouching(lastCollidedWith.GetComponent<Collider2D>()) && isDragging)
                     {
-                        networkedPScript.CmdStartGame();
+                        //networkedPScript.CmdStartGame();
                     }
 
                     //Always false after mouse up

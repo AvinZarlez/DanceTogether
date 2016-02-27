@@ -252,9 +252,14 @@ public class NetworkedPlayerScript : NetworkBehaviour
     }
 
     [Command]
-    public void CmdStartGame()
+    public void CmdMainButtonPressed()
     {
-        if (AreAllPlayersReady()) //Redundant?
+        if (GameManagerScript.instance.IsInPostGame())
+        {
+            GameManagerScript.instance.CmdReplyGame();
+            RpcReplyGame();
+        }
+        else if (AreAllPlayersReady()) //Redundant?
         {
             GameManagerScript.instance.CmdStartGame();
 
@@ -314,6 +319,11 @@ public class NetworkedPlayerScript : NetworkBehaviour
         } //Close if statement for checking if all players ready
     }
     [ClientRpc]
+    public void RpcReplyGame()
+    {
+        GUIManagerScript.SetReplyButton(false);
+    }
+    [ClientRpc]
     public void RpcStartGame(int s)
     {
         songID = s;
@@ -349,8 +359,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
     {
         SetReady(false);
 
-        //TO DO - Remove until after end game?
-        GUIManagerScript.SetButton(true);
+        GUIManagerScript.SetReplyButton(true);
     }
 
 }

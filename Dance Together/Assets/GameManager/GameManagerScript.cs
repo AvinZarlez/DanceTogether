@@ -120,4 +120,16 @@ public class GameManagerScript : NetworkBehaviour
         currentGameState = 210;
     }
 
+    [Command]
+    public void CmdReplyGame()
+    {
+        RpcReplyGame();
+    }
+
+    [ClientRpc]
+    public void RpcReplyGame()
+    {
+        currentGameState = 0;
+    }
+
 }
