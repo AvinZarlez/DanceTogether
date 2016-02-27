@@ -361,5 +361,4 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
         GUIManagerScript.SetReplyButton(true);
     }
-
 }

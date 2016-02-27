@@ -81,7 +81,14 @@ public class LocalPlayerScript : MonoBehaviour
                 {
                     if (GetComponent<Collider2D>().IsTouching(lastCollidedWith.GetComponent<Collider2D>()) && isDragging)
                     {
-                        //networkedPScript.CmdStartGame();
+                        lastCollidedWith.GetComponent<RemotePlayerScript>().localPlayer = this.gameObject;
+
+                        GameObject[] players;
+                        players = GameObject.FindGameObjectsWithTag("Player");
+                        foreach (GameObject player in players)
+                        {
+                            player.GetComponent<RemotePlayerScript>().highlighted = true;
+                        }
                     }
 
                     //Always false after mouse up
