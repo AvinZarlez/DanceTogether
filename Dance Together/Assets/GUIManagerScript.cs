@@ -32,7 +32,7 @@ public class GUIManagerScript : MonoBehaviour {
     public void MainButtonPressed()
     {
         GameObject gm = GameObject.Find("LOCAL Player");
-        gm.GetComponent<NetworkedPlayerScript>().CmdMainButtonPressed();
+        gm.GetComponent<NetworkedPlayerScript>().MainButtonPressed();
     }
 
     public void BackButtonPressed()

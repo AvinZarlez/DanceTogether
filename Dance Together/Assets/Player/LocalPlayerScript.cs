@@ -89,7 +89,19 @@ public class LocalPlayerScript : MonoBehaviour
         {
             countdownText.enabled = false;
             infoText.enabled = true; // Redundent?
-            infoText.text = "GAME OVER!" + " " + networkedPScript.GetSongID();
+
+            int song = networkedPScript.GetSongID();
+            int match = networkedPScript.GetMatchSongID();
+            infoText.text = "GAME OVER!" + " Was:" + song + " Picked:" + match + " ";
+            if (song == match)
+            {
+                infoText.text = infoText.text + "You Win!!!";
+            }
+            else
+            {
+                infoText.text = infoText.text + "Fail!!!";
+            }
+
         }
         else if (countDown > 0)
         {

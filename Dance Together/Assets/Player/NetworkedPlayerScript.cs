@@ -196,6 +196,11 @@ public class NetworkedPlayerScript : NetworkBehaviour
         return songID;
     }
 
+    public int GetMatchSongID()
+    {
+        return matchSongID;
+    }
+
     //[Server]
     void SetUpGMScript()
     {
@@ -254,13 +259,11 @@ public class NetworkedPlayerScript : NetworkBehaviour
         SetReady(!playerReady);
     }
 
-    [Command]
-    public void CmdMainButtonPressed()
+    public void MainButtonPressed()
     {
         if (GameManagerScript.instance.IsInPostGame())
         {
             GameManagerScript.instance.CmdReplyGame();
-            RpcReplyGame();
         }
         else
         {
@@ -270,7 +273,23 @@ public class NetworkedPlayerScript : NetworkBehaviour
                 Assert.AreNotEqual<int>(-1, matchSongID, "No player was matched");
                 GUIManagerScript.SetMatchButton(false);
             }
-            else if (AreAllPlayersReady()) //Redundant?
+            else
+            {
+                CmdMainButtonPressed();
+            }
+        }
+    }
+        
+    [ClientRpc]
+    public void RpcReplyGame()
+    {
+        GUIManagerScript.SetReplyButton(false);
+    }
+
+    [Command]
+    public void CmdMainButtonPressed()
+    {
+            if (AreAllPlayersReady()) //Redundant?
             {
                 GameManagerScript.instance.CmdStartGame();
 
@@ -328,12 +347,6 @@ public class NetworkedPlayerScript : NetworkBehaviour
                 }
 
             } //Close if statement for checking if all players ready
-        }
-    }
-    [ClientRpc]
-    public void RpcReplyGame()
-    {
-        GUIManagerScript.SetReplyButton(false);
     }
     [ClientRpc]
     public void RpcStartGame(int s)

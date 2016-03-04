@@ -125,6 +125,13 @@ public class GameManagerScript : NetworkBehaviour
     public void CmdReplyGame()
     {
         RpcReplyGame();
+
+        GameObject[] players;
+        players = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject player in players)
+        {
+            player.GetComponent<NetworkedPlayerScript>().RpcReplyGame();
+        }
     }
 
     [ClientRpc]
