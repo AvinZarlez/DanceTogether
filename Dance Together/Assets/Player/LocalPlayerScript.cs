@@ -19,7 +19,7 @@ public class LocalPlayerScript : MonoBehaviour
     private NetworkedPlayerScript lastCollidedWith; //Direct link to the NetworkedPlayerScript of the object we last collided with.
 
     [HideInInspector]
-    public NetworkedPlayerScript playerMatch; // The player this player is thinking about being a match.
+    public int choiceSongID; // The player this player is thinking about being a match.
 
     // To make referencing easier/less calls.
     private PlayerParentScript playerParentScript;
@@ -46,6 +46,7 @@ public class LocalPlayerScript : MonoBehaviour
 
         transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
 
+        choiceSongID = -1;
         locked = false;
     }
 
@@ -73,6 +74,8 @@ public class LocalPlayerScript : MonoBehaviour
         }
 
         playerParentScript.Unlock();
+
+        choiceSongID = -1;
 
         locked = false;
         GUIManagerScript.SetMatchButton(false);
@@ -111,23 +114,26 @@ public class LocalPlayerScript : MonoBehaviour
                     }
                     else if (Input.GetButtonUp("Fire1"))
                     {
-                        if (GetComponent<Collider2D>().IsTouching(lastCollidedWith.GetComponent<Collider2D>()) && isDragging)
+                        if (lastCollidedWith != null)
                         {
-                            playerMatch = lastCollidedWith.GetComponent<NetworkedPlayerScript>();
-
-                            lastCollidedWith.remotePScript.localPlayer = this.gameObject;
-
-                            GameObject[] players;
-                            players = GameObject.FindGameObjectsWithTag("Player");
-                            foreach (GameObject player in players)
+                            if (GetComponent<Collider2D>().IsTouching(lastCollidedWith.GetComponent<Collider2D>()) && isDragging)
                             {
-                                player.GetComponent<RemotePlayerScript>().highlighted = true;
+                                choiceSongID = lastCollidedWith.GetComponent<NetworkedPlayerScript>().GetSongID();
+
+                                lastCollidedWith.remotePScript.localPlayer = this.gameObject;
+
+                                GameObject[] players;
+                                players = GameObject.FindGameObjectsWithTag("Player");
+                                foreach (GameObject player in players)
+                                {
+                                    player.GetComponent<RemotePlayerScript>().highlighted = true;
+                                }
+
+                                playerParentScript.Lock();
+
+                                locked = true;
+                                GUIManagerScript.SetMatchButton(true);
                             }
-
-                            playerParentScript.GetComponent<PlayerParentScript>().Lock();
-
-                            locked = true;
-                            GUIManagerScript.SetMatchButton(true);
                         }
 
                         //Always false after mouse up

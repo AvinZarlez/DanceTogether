@@ -29,7 +29,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
     private int songID;
     
     [SyncVar]
-    private NetworkedPlayerScript playerMatch; // The other player this player has picked as a match
+    private int matchSongID; // The other player this player has picked as a match
 
     [SyncVar]
     private int color = -1;
@@ -266,7 +266,8 @@ public class NetworkedPlayerScript : NetworkBehaviour
         {
             if (localPScript.WasMatchedPressed())
             {
-                playerMatch = localPScript.playerMatch;
+                matchSongID = localPScript.choiceSongID;
+                Assert.AreNotEqual<int>(-1, matchSongID, "No player was matched");
                 GUIManagerScript.SetMatchButton(false);
             }
             else if (AreAllPlayersReady()) //Redundant?
@@ -351,7 +352,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
             SetReady(true);
             // See buddy, you were ready the whole time, right?
         }
-        playerMatch = null;
+        matchSongID = -1;
         GUIManagerScript.SetButton(false);
     }
 
