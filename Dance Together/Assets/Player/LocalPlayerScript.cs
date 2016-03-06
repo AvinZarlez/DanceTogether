@@ -26,6 +26,7 @@ public class LocalPlayerScript : MonoBehaviour
     private NetworkedPlayerScript networkedPScript;
     private Text countdownText; // UI text object named "UI_Countdown"
     private Text infoText; // UI text object named "UI_InfoText"
+    private Text detailsText; // UI text object named "UI_DetailsText"
 
     void Start()
     {
@@ -40,6 +41,10 @@ public class LocalPlayerScript : MonoBehaviour
         GameObject obj2 = GameObject.Find("UI_InfoText");
         infoText = obj2.GetComponent<Text>();
         infoText.enabled = false;
+
+        GameObject obj3 = GameObject.Find("UI_DetailsText");
+        detailsText = obj3.GetComponent<Text>();
+        detailsText.enabled = false;
 
         transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
         startingLocation = transform.position;
@@ -89,123 +94,129 @@ public class LocalPlayerScript : MonoBehaviour
         {
             countdownText.enabled = false;
             infoText.enabled = true; // Redundent?
+            detailsText.enabled = true;
 
             int song = networkedPScript.GetSongID();
             int match = networkedPScript.GetMatchSongID();
-            infoText.text = "GAME OVER!" + " Was:" + song + " Picked:" + match + " ";
             if (song == match)
             {
-                infoText.text = infoText.text + "You Win!!!";
+                infoText.text = "You Won!";
+                detailsText.text = "You both were dancing to " + song.ToString();
             }
             else
             {
-                infoText.text = infoText.text + "Fail!!!";
-            }
-
-        }
-        else if (countDown > 0)
-        {
-            if (GameManagerScript.instance.IsInMainGameplay())
-            {
-                infoText.enabled = false;
-                countdownText.enabled = true;
-                countdownText.text = "" + Mathf.Ceil(countDown);
-
-                // The main game, in the middle of game play
-                // This. is. it. - TIME TO DANCE!
-
-                if (!locked)
-                {
-                    if (Input.GetButtonDown("Fire1"))
-                    {
-                        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                        if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
-                        {
-                            isDragging = true;
-                        }
-                    }
-                    else if (Input.GetButtonUp("Fire1"))
-                    {
-                        if (lastCollidedWith != null)
-                        {
-                            if (GetComponent<Collider2D>().IsTouching(lastCollidedWith.GetComponent<Collider2D>()) && isDragging)
-                            {
-                                choiceSongID = lastCollidedWith.GetComponent<NetworkedPlayerScript>().GetSongID();
-
-                                lastCollidedWith.remotePScript.localPlayer = this.gameObject;
-
-                                GameObject[] players;
-                                players = GameObject.FindGameObjectsWithTag("Player");
-                                foreach (GameObject player in players)
-                                {
-                                    player.GetComponent<RemotePlayerScript>().highlighted = true;
-                                }
-
-                                playerParentScript.Lock();
-
-                                locked = true;
-                                GUIManagerScript.SetMatchButton(true);
-                            }
-                        }
-
-                        //Always false after mouse up
-                        isHit = false;
-                        isDragging = false;
-                    }
-                    else if (Input.GetButton("Fire1"))
-                    {
-                        if (isDragging)
-                        {
-                            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                            transform.position = new Vector3(mousePosition.x, mousePosition.y, transform.position.z);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                infoText.enabled = true;
-
-                //Always false during intro countdown.
-                isHit = false;
-                isDragging = false;
-
-                if (countDown < 1)
-                {
-                    infoText.text = "DANCE!";
-                }
-                else if (countDown >= (4f)) //Plus one second for the "Dance" end 
-                {
-                    infoText.text = "Ready?";
-                }
-                else
-                {
-                    infoText.text = "" + Mathf.Floor(countDown);
-                }
+                infoText.text = "You Lost!";
+                detailsText.text = "You danced to " + song.ToString() + "\nThey danced to " + match.ToString();
             }
         }
         else
         {
-            isDragging = false; //Always false if no countdown.
+            detailsText.enabled = false;
 
-            if (Input.GetButtonDown("Fire1"))
+            if (countDown > 0)
             {
-                Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
+                if (GameManagerScript.instance.IsInMainGameplay())
                 {
-                    isHit = true;
+                    infoText.enabled = false;
+                    countdownText.enabled = true;
+                    countdownText.text = "" + Mathf.Ceil(countDown);
+
+                    // The main game, in the middle of game play
+                    // This. is. it. - TIME TO DANCE!
+
+                    if (!locked)
+                    {
+                        if (Input.GetButtonDown("Fire1"))
+                        {
+                            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                            if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
+                            {
+                                isDragging = true;
+                            }
+                        }
+                        else if (Input.GetButtonUp("Fire1"))
+                        {
+                            if (lastCollidedWith != null)
+                            {
+                                if (GetComponent<Collider2D>().IsTouching(lastCollidedWith.GetComponent<Collider2D>()) && isDragging)
+                                {
+                                    choiceSongID = lastCollidedWith.GetComponent<NetworkedPlayerScript>().GetSongID();
+
+                                    lastCollidedWith.remotePScript.localPlayer = this.gameObject;
+
+                                    GameObject[] players;
+                                    players = GameObject.FindGameObjectsWithTag("Player");
+                                    foreach (GameObject player in players)
+                                    {
+                                        player.GetComponent<RemotePlayerScript>().highlighted = true;
+                                    }
+
+                                    playerParentScript.Lock();
+
+                                    locked = true;
+                                    GUIManagerScript.SetMatchButton(true);
+                                }
+                            }
+
+                            //Always false after mouse up
+                            isHit = false;
+                            isDragging = false;
+                        }
+                        else if (Input.GetButton("Fire1"))
+                        {
+                            if (isDragging)
+                            {
+                                Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                                transform.position = new Vector3(mousePosition.x, mousePosition.y, transform.position.z);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    infoText.enabled = true;
+
+                    //Always false during intro countdown.
+                    isHit = false;
+                    isDragging = false;
+
+                    if (countDown < 1)
+                    {
+                        infoText.text = "DANCE!";
+                    }
+                    else if (countDown >= (4f)) //Plus one second for the "Dance" end 
+                    {
+                        infoText.text = "Ready?";
+                    }
+                    else
+                    {
+                        infoText.text = "" + Mathf.Floor(countDown);
+                    }
                 }
             }
-            else if (Input.GetButtonUp("Fire1"))
+            else
             {
-                Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                if (GetComponent<Collider2D>().OverlapPoint(mousePosition) && isHit)
+                isDragging = false; //Always false if no countdown.
+
+                if (Input.GetButtonDown("Fire1"))
                 {
-                    networkedPScript.CmdToggleReady();
+                    Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
+                    {
+                        isHit = true;
+                    }
                 }
-                //Always false after mouse up
-                isHit = false;
-                //isDragging = false; //Set above, always not dragging.
+                else if (Input.GetButtonUp("Fire1"))
+                {
+                    Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    if (GetComponent<Collider2D>().OverlapPoint(mousePosition) && isHit)
+                    {
+                        networkedPScript.CmdToggleReady();
+                    }
+                    //Always false after mouse up
+                    isHit = false;
+                    //isDragging = false; //Set above, always not dragging.
+                }
             }
         }
 
