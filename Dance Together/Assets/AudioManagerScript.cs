@@ -7,7 +7,9 @@ public class AudioManagerScript : MonoBehaviour {
     public AudioMixerSnapshot inMenu;
     public AudioMixerSnapshot inGameStarted;
     public AudioMixerSnapshot inGameplay;
-    
+
+    public AudioClip[] gameMusic;
+
     public AudioSource gameplaySource;
     public float bpm = 120;
 
@@ -31,7 +33,7 @@ public class AudioManagerScript : MonoBehaviour {
 
         m_QuarterNote = 60 / bpm;
         m_TransitionIn = m_QuarterNote;
-        m_TransitionOut = m_QuarterNote * 16;
+        m_TransitionOut = m_QuarterNote * 8;
 
     }
 	
@@ -39,6 +41,11 @@ public class AudioManagerScript : MonoBehaviour {
 	void Update () {
 	
 	}
+
+    public int GetNumSongs()
+    {
+        return gameMusic.Length;
+    }
 
     public void StartMenuMusic()
     {
@@ -52,6 +59,8 @@ public class AudioManagerScript : MonoBehaviour {
 
     public void StartGameMusic()
     {
+        GameObject gm = GameObject.Find("LOCAL Player");
+        gameplaySource.clip = gameMusic[gm.GetComponent<NetworkedPlayerScript>().GetSongID()];
         gameplaySource.Stop();
         gameplaySource.Play();
         inGameplay.TransitionTo(m_TransitionIn);

@@ -140,6 +140,8 @@ public class GameManagerScript : NetworkBehaviour
     public void RpcReplyGame()
     {
         currentGameState = 0;
+
+        AudioManagerScript.instance.StartMenuMusic();
     }
 
 }

@@ -10,9 +10,6 @@ public class NetworkedPlayerScript : NetworkBehaviour
     private float playerRangeMultiplier = 1;
 
     [SerializeField]
-    private int numberOfSongs; //Temp? Better way to load songs than number, some kind of list?
-
-    [SerializeField]
     public LocalPlayerScript localPScript; //TEMP made public for checking in sort players
     [HideInInspector]
     public RemotePlayerScript remotePScript;
@@ -304,6 +301,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
 
                 List<int> songs = new List<int>(); //List of the songID's we'll use this game.
 
+                int numberOfSongs = AudioManagerScript.instance.GetNumSongs();
                 for (int i = 0; i < numSongsToPick; i++)
                 {
                     int rand;
