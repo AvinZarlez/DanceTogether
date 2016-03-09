@@ -367,6 +367,8 @@ public class NetworkedPlayerScript : NetworkBehaviour
         }
         matchSongID = -1;
         GUIManagerScript.SetButton(false);
+
+        AudioManagerScript.instance.StartGame();
     }
 
     [Command]
@@ -385,5 +387,7 @@ public class NetworkedPlayerScript : NetworkBehaviour
         SetReady(false);
 
         GUIManagerScript.SetReplyButton(true);
+
+        AudioManagerScript.instance.StartGame();
     }
 }

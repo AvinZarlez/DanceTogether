@@ -107,6 +107,8 @@ public class GameManagerScript : NetworkBehaviour
     {
         currentGameState = 201;
         countDown = gameLength;
+        
+        AudioManagerScript.instance.StartGameMusic();
     }
 
     [Command]
