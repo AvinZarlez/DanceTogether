@@ -60,7 +60,7 @@ public class AudioManagerScript : MonoBehaviour {
     public void StartGameMusic()
     {
         GameObject gm = GameObject.Find("LOCAL Player");
-        gameplaySource.clip = gameMusic[gm.GetComponent<NetworkedPlayerScript>().GetSongID()];
+        //gameplaySource.clip = gameMusic[gm.GetComponent<NetworkedPlayerScript>().GetSongID()];
         gameplaySource.Stop();
         gameplaySource.Play();
         inGameplay.TransitionTo(m_TransitionIn);
