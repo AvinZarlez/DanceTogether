@@ -3,7 +3,7 @@ using UnityEngine.Networking;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
 
-public class NetworkedPlayerScript : NetworkBehaviour
+public class NetworkedPlayerScript : CaptainsMessPlayer
 {
     private const float playerLightRange = 2f;
 
@@ -136,8 +136,10 @@ public class NetworkedPlayerScript : NetworkBehaviour
         }
     }
 
-    void FixedUpdate()
+    public override void Update()
     {
+        base.Update();
+
         // Grow as player overlaps
         if (playerReady)
         {
@@ -177,10 +179,12 @@ public class NetworkedPlayerScript : NetworkBehaviour
         base.OnStartLocalPlayer();
     }
 
-    public override void OnStartClient()
+    public override void OnClientEnterLobby()
     {
-        SortPlayers();
-        base.OnStartClient();
+        base.OnClientEnterLobby();
+
+        // Brief delay to let SyncVars propagate
+        Invoke("SortPlayers", 0.5f);
     }
 
     public int GetColor()
