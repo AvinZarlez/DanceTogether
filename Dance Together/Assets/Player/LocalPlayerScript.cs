@@ -21,6 +21,9 @@ public class LocalPlayerScript : MonoBehaviour
     [HideInInspector]
     public int choiceSongID; // The player this player is thinking about being a match.
 
+    [SyncVar,HideInInspector]
+    public float captainsCountdown = 0;
+    
     // To make referencing easier/less calls.
     private PlayerParentScript playerParentScript;
     private NetworkedPlayerScript networkedPScript;
@@ -112,9 +115,11 @@ public class LocalPlayerScript : MonoBehaviour
             detailsText.enabled = false;
 
             float countDown = GameManagerScript.instance.countDown;
-            float introCountDown = networkedPScript.mess.CountdownTimer();
 
-            if (introCountDown > 0)
+            if (networkedPScript.isServer)
+                captainsCountdown = networkedPScript.mess.CountdownTimer();
+
+            if (captainsCountdown > 0)
             {
                 infoText.enabled = true;
 
@@ -122,17 +127,17 @@ public class LocalPlayerScript : MonoBehaviour
                 isHit = false;
                 isDragging = false;
 
-                if (introCountDown < 1)
+                if (captainsCountdown < 1)
                 {
                     infoText.text = "DANCE!";
                 }
-                else if (introCountDown >= (4f)) //Plus one second for the "Dance" end 
+                else if (captainsCountdown >= (4f)) //Plus one second for the "Dance" end 
                 {
                     infoText.text = "Ready?";
                 }
                 else
                 {
-                    infoText.text = "" + Mathf.Floor(introCountDown);
+                    infoText.text = "" + Mathf.Floor(captainsCountdown);
                 }
             }
             else if (countDown > 0)
