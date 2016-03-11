@@ -19,6 +19,9 @@ public class GameManagerScript : NetworkBehaviour
     
     private NetworkedPlayerScript networkedPScript;
 
+    [SerializeField]
+    private GameObject playerParent;
+
     void Awake()
     {
         if (instance == null)
@@ -116,4 +119,14 @@ public class GameManagerScript : NetworkBehaviour
         AudioManagerScript.instance.StartMenuMusic();
     }
 
+
+    [Command]
+    public void CmdRotatePlayers(bool l)
+    {
+        List<CaptainsMessPlayer> players = networkedPScript.GetPlayers();
+        foreach (CaptainsMessPlayer player in players)
+        {
+            player.GetComponent<NetworkedPlayerScript>().RpcRotatePlayers(l);
+        }
+    }
 }

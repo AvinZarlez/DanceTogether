@@ -19,15 +19,11 @@ public class GameListenerScript : CaptainsMessListener
 	public Text networkStateField;
     //public ExampleGameSession gameSession;
 
-    private PlayerParentScript playerParentScript;
-
     public void Start()
 	{
 		networkState = NetworkState.Offline;
 
-        networkStateField = GameObject.Find("UI_NetworkStateField").GetComponent<Text>();
-
-        playerParentScript = GameObject.FindWithTag("PlayerParent").GetComponent<PlayerParentScript>();
+        //networkStateField = GameObject.Find("UI_NetworkStateField").GetComponent<Text>();
     }
 
 	public override void OnStartConnecting()
@@ -60,13 +56,14 @@ public class GameListenerScript : CaptainsMessListener
 
         AudioManagerScript.instance.PrepareGameMusic();
 
-        playerParentScript.LockAndSpin();
+        GameManagerScript.instance.CmdRotatePlayers(true);
     }
 
 	public override void OnCountdownCancelled()
 	{
-		//gameSession.OnCountdownCancelled();
-	}
+        //gameSession.OnCountdownCancelled();
+        GameManagerScript.instance.CmdRotatePlayers(false);
+    }
 
 	public override void OnStartGame(List<CaptainsMessPlayer> aStartingPlayers)
 	{

@@ -13,8 +13,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public LocalPlayerScript localPScript; //TEMP made public for checking in sort players
     [HideInInspector]
     public RemotePlayerScript remotePScript;
-    [SerializeField]
-    private GameObject gameManagerPrefab;
 
     private GameObject playerParent;
     
@@ -148,8 +146,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public override void OnStartLocalPlayer()
     {
         gameObject.name = "LOCAL Player";
-        
-        SetUpGMScript();
 
         GameManagerScript.instance.CmdSetNPS();
 
@@ -187,17 +183,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public int GetMatchSongID()
     {
         return matchSongID;
-    }
-
-    //[Server]
-    void SetUpGMScript()
-    {
-        GameObject gms;
-        if (GameManagerScript.instance == null)
-        {
-            gms = Instantiate(gameManagerPrefab);
-            NetworkServer.Spawn(gms);
-        }
     }
 
     [Command]
@@ -371,5 +356,14 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         GUIManagerScript.SetReplyButton(true);
 
         AudioManagerScript.instance.EndGameMusic();
+    }
+
+    [ClientRpc]
+    public void RpcRotatePlayers(bool l)
+    {
+        if (l)
+            playerParent.GetComponent<PlayerParentScript>().LockAndSpin();
+        else
+            playerParent.GetComponent<PlayerParentScript>().Unlock();
     }
 }
