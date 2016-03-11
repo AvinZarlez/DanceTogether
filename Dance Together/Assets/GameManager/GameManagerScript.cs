@@ -44,7 +44,6 @@ public class GameManagerScript : NetworkBehaviour
                 if (countDown <= 0)
                 {
                     CmdEndGame();
-                    networkedPScript.CmdEndGame(); //Let's stop this party
                 }
         }
     }
@@ -91,6 +90,7 @@ public class GameManagerScript : NetworkBehaviour
     public void CmdEndGame()
     {
         RpcEndGame();
+        networkedPScript.CmdEndGame(); //Let's stop this party
     }
 
     [ClientRpc]
