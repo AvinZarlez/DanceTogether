@@ -37,33 +37,18 @@ public class GameManagerScript : NetworkBehaviour
         if (countDown > 0)
         {
             countDown -= Time.deltaTime;
-
-            if (GameManagerScript.instance.IsInMainGameplay())
-            {
+            
                 if (countDown <= 0)
                 {
                     CmdEndGame();
                     networkedPScript.CmdEndGame(); //Let's stop this party
                 }
-            }
-            else
-            {
-                if (countDown <= 0)
-                {
-                    CmdStartMainCountdown(); //Let's get this party started;
-                }
-            }
         }
     }
 
     public bool IsGameStarted()
     {
         return (currentGameState >= 200);
-    }
-
-    public bool IsInMainGameplay()
-    {
-        return (currentGameState > 200);
     }
 
     public bool IsInPostGame()
@@ -85,28 +70,17 @@ public class GameManagerScript : NetworkBehaviour
     }
 
     [Command]
-    public void CmdStartGame()
-    {
-        RpcStartGame();
-    }
-
-    [ClientRpc]
-    void RpcStartGame()
-    {
-        currentGameState = 200;
-        countDown = 5f;
-    }
-
-    [Command]
     public void CmdStartMainCountdown()
     {
         RpcStartMainCountdown();
+
+        networkedPScript.CmdStartGame();
     }
 
     [ClientRpc]
     void RpcStartMainCountdown()
     {
-        currentGameState = 201;
+        currentGameState = 200;
         countDown = gameLength;
         
         AudioManagerScript.instance.StartGameMusic();

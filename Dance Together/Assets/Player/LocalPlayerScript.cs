@@ -112,10 +112,29 @@ public class LocalPlayerScript : MonoBehaviour
         {
             detailsText.enabled = false;
 
-            if (countDown > 0)
+            if (networkedPScript.mess.CountdownTimer() > 0)
             {
-                if (GameManagerScript.instance.IsInMainGameplay())
+                infoText.enabled = true;
+
+                //Always false during intro countdown.
+                isHit = false;
+                isDragging = false;
+
+                if (countDown < 1)
                 {
+                    infoText.text = "DANCE!";
+                }
+                else if (countDown >= (4f)) //Plus one second for the "Dance" end 
+                {
+                    infoText.text = "Ready?";
+                }
+                else
+                {
+                    infoText.text = "" + Mathf.Floor(countDown);
+                }
+            }
+            else if (countDown > 0)
+            {
                     infoText.enabled = false;
                     countdownText.enabled = true;
                     countdownText.text = "" + Mathf.Ceil(countDown);
@@ -169,28 +188,6 @@ public class LocalPlayerScript : MonoBehaviour
                             }
                         }
                     }
-                }
-                else
-                {
-                    infoText.enabled = true;
-
-                    //Always false during intro countdown.
-                    isHit = false;
-                    isDragging = false;
-
-                    if (countDown < 1)
-                    {
-                        infoText.text = "DANCE!";
-                    }
-                    else if (countDown >= (4f)) //Plus one second for the "Dance" end 
-                    {
-                        infoText.text = "Ready?";
-                    }
-                    else
-                    {
-                        infoText.text = "" + Mathf.Floor(countDown);
-                    }
-                }
             }
             else
             {

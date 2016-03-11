@@ -268,7 +268,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             }
             else
             {
-                CmdMainButtonPressed();
             }
         }
     }
@@ -280,11 +279,10 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     }
 
     [Command]
-    public void CmdMainButtonPressed()
+    public void CmdStartGame()
     {
             if (mess.AreAllPlayersReady()) //Redundant?
             {
-                GameManagerScript.instance.CmdStartGame();
 
                 List<CaptainsMessPlayer> players = GetPlayers();
 

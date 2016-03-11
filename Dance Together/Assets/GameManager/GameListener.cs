@@ -63,8 +63,10 @@ public class GameListener : CaptainsMessListener
 	public override void OnStartGame(List<CaptainsMessPlayer> aStartingPlayers)
 	{
 		Debug.Log("GO!");
-		//gameSession.OnStartGame(aStartingPlayers);
-	}
+        //gameSession.OnStartGame(aStartingPlayers);
+
+        GameManagerScript.instance.CmdStartMainCountdown();
+    }
 
 	public override void OnAbortGame()
 	{
