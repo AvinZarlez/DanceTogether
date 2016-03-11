@@ -234,7 +234,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     {
         if (GameManagerScript.instance.IsInPostGame())
         {
-            GameManagerScript.instance.CmdReplyGame();
+            CmdReplyGame();
         }
         else
         {
@@ -250,7 +250,18 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             }
         }
     }
-        
+
+    [Command]
+    public void CmdReplyGame()
+    {
+        GameManagerScript.instance.CmdReplyGame();
+
+        List<CaptainsMessPlayer> players = GetPlayers();
+        foreach (CaptainsMessPlayer player in players)
+        {
+            player.GetComponent<NetworkedPlayerScript>().RpcReplyGame();
+        }
+    }
     [ClientRpc]
     public void RpcReplyGame()
     {

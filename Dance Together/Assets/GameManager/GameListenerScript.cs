@@ -76,8 +76,10 @@ public class GameListenerScript : CaptainsMessListener
 	public override void OnAbortGame()
 	{
 		Debug.Log("ABORT!");
-		//gameSession.OnAbortGame();
-	}
+        //gameSession.OnAbortGame();
+
+        GameManagerScript.instance.CmdEndGame();
+    }
 
 	void Update()
 	{

@@ -103,12 +103,6 @@ public class GameManagerScript : NetworkBehaviour
     public void CmdReplyGame()
     {
         RpcReplyGame();
-
-        List<CaptainsMessPlayer> players = networkedPScript.GetPlayers();
-        foreach (CaptainsMessPlayer player in players)
-        {
-            player.GetComponent<NetworkedPlayerScript>().RpcReplyGame();
-        }
     }
 
     [ClientRpc]
