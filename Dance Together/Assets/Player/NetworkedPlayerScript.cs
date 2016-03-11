@@ -19,8 +19,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     private GameObject playerParent;
 
     // Am I ready to start the game?
-    [SyncVar, HideInInspector]
-    public bool playerReady;
+    //[SyncVar, HideInInspector]
+    //public bool playerReady;
 
     [SyncVar]
     private int songID;
@@ -84,7 +84,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         }
     }
 
-    bool AreAllPlayersReady()
+    /*bool AreAllPlayersReady()
     {
         GameObject[] players;
         players = GameObject.FindGameObjectsWithTag("Player");
@@ -100,7 +100,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         }
 
         return allPlayersReady; // TODO : Check if there are four players
-    }
+    }*/
 
     void Start()
     {
@@ -231,8 +231,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
             playerColors.Remove(nps.GetColor());
         }
-        
-        RpcSetColor(playerColors[Random.Range(0, playerColors.Count)]);
+
+        RpcSetColor(playerColors[0]);   //<- new, always get first way. Old random way: Random.Range(0, playerColors.Count)]);
     }
 
     [ClientRpc]
@@ -370,7 +370,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         matchSongID = -1;
         GUIManagerScript.SetButton(false);
 
-        AudioManagerScript.instance.PrepareGameMusic(songID);
+        AudioManagerScript.instance.PrepareGameMusic();
     }
 
     [Command]
@@ -387,6 +387,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public void RpcEndGame()
     {
         SetReady(false);
+
+        if (localPScript.WasMatchedPressed())
+        {
+            localPScript.BackButtonPressed();
+        }
 
         GUIManagerScript.SetReplyButton(true);
 

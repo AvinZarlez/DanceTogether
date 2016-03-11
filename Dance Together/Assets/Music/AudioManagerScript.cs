@@ -57,15 +57,16 @@ public class AudioManagerScript : MonoBehaviour {
         inGameStarted.TransitionTo(m_TransitionOut);
     }
 
-    public void PrepareGameMusic(int songID)
+    public void PrepareGameMusic()
     {
         inGameStarted.TransitionTo(m_TransitionOut);
-        gameplaySource.clip = gameMusic[songID];
-        gameplaySource.Stop();
     }
 
     public void StartGameMusic()
     {
+        GameObject gm = GameObject.Find("LOCAL Player");
+        gameplaySource.clip = gameMusic[gm.GetComponent<NetworkedPlayerScript>().GetSongID()];
+        gameplaySource.Stop();
         gameplaySource.Play();
         inGameplay.TransitionTo(m_TransitionIn);
     }

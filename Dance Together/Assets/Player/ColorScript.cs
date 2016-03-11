@@ -11,15 +11,15 @@ public class ColorScript : MonoBehaviour {
             //new Color(0f,0.5f,1f), //Light Blue
 
             Color.white,
-            Color.blue,
-            Color.cyan,
-            Color.green,
-            Color.magenta,
             Color.red,
+            Color.green,
+            Color.blue,
             Color.yellow,
+            Color.magenta,
+            Color.cyan,
             new Color(1f,0.5f,0f), //Orange
             new Color(0.2f,0.3f,0.1f), //Dark Green
-            new Color(0.25f,0f,1f) //Ultramarine (Bright Purple)
+            //new Color(0.25f,0f,1f) //Ultramarine (Bright Purple)
         };
 
     static public Color GetColor(int index)
