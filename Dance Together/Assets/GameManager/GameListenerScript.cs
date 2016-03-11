@@ -54,8 +54,6 @@ public class GameListenerScript : CaptainsMessListener
 	{
         //gameSession.OnCountdownStarted();
 
-        AudioManagerScript.instance.PrepareGameMusic();
-
         GameManagerScript.instance.CmdRotatePlayers(true);
     }
 

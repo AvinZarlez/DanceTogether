@@ -385,8 +385,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public void RpcRotatePlayers(bool l)
     {
         if (l)
+        {
             playerParent.GetComponent<PlayerParentScript>().LockAndSpin();
-        else
+            AudioManagerScript.instance.PrepareGameMusic();
+        }
+        else {
             playerParent.GetComponent<PlayerParentScript>().Unlock();
+        }
     }
 }
