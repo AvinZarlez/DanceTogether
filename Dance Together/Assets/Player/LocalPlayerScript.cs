@@ -210,7 +210,7 @@ public class LocalPlayerScript : MonoBehaviour
                     Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                     if (GetComponent<Collider2D>().OverlapPoint(mousePosition) && isHit)
                     {
-                        networkedPScript.CmdToggleReady();
+                        networkedPScript.ToggleReady();
                     }
                     //Always false after mouse up
                     isHit = false;

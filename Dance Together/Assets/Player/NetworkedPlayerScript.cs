@@ -233,14 +233,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             Camera.main.backgroundColor = clr;
         }
     }
-
-    [Command]
-    public void CmdToggleReady()
-    {
-        RpcToggleReady();
-    }
-    [ClientRpc]
-    public void RpcToggleReady()
+    
+    public void ToggleReady()
     {
         SetReady(!readyToBegin);
     }
@@ -261,7 +255,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             }
             else
             {
-                CmdToggleReady();
+                ToggleReady();
             }
         }
     }
