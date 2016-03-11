@@ -4,7 +4,8 @@ using System.Collections.Generic;
 
 public class CaptainsMessListener : MonoBehaviour
 {
-	public CaptainsMess mess;
+    [HideInInspector]
+    public CaptainsMess mess;
 
 	public void Awake()
 	{
