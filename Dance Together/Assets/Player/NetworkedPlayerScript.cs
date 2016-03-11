@@ -25,6 +25,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     [SyncVar]
     private int color = -1;
 
+    [SyncVar, HideInInspector]
+    public float captainsCountdown = 0;
+
     // To make referencing easier/less calls.
     private Light playerLight;
 
@@ -141,6 +144,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 playerLight.range -= 0.1f;
             }
         }
+
+        if (isServer)
+            captainsCountdown = mess.CountdownTimer();
     }
 
     public override void OnStartLocalPlayer()

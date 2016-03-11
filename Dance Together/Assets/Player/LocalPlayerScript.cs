@@ -20,9 +20,6 @@ public class LocalPlayerScript : MonoBehaviour
 
     [HideInInspector]
     public int choiceSongID; // The player this player is thinking about being a match.
-
-    [SyncVar,HideInInspector]
-    public float captainsCountdown = 0;
     
     // To make referencing easier/less calls.
     private PlayerParentScript playerParentScript;
@@ -116,9 +113,7 @@ public class LocalPlayerScript : MonoBehaviour
 
             float countDown = GameManagerScript.instance.countDown;
 
-            if (networkedPScript.isServer)
-                captainsCountdown = networkedPScript.mess.CountdownTimer();
-
+            float captainsCountdown = networkedPScript.captainsCountdown;
             if (captainsCountdown > 0)
             {
                 infoText.enabled = true;
