@@ -332,6 +332,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         GUIManagerScript.SetButton(false);
 
         AudioManagerScript.instance.StartGameMusic();
+
+        // Disable screen dimming
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
 
     [Command]
@@ -356,6 +359,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         GUIManagerScript.SetReplyButton(true);
 
         AudioManagerScript.instance.EndGameMusic();
+
+        // Enable screen dimming
+        Screen.sleepTimeout = SleepTimeout.SystemSetting;
     }
 
     [ClientRpc]
