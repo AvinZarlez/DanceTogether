@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using System.Collections.Generic;
 
 public class GameManagerScript : NetworkBehaviour
 {
@@ -16,7 +17,7 @@ public class GameManagerScript : NetworkBehaviour
 
     private const float gameLength = 30; // How long the game lasts, in seconds.
     
-    private NetworkedPlayerScript networkedPScript; //Public so it can set itself
+    private NetworkedPlayerScript networkedPScript;
 
     void Awake()
     {
@@ -128,9 +129,8 @@ public class GameManagerScript : NetworkBehaviour
     {
         RpcReplyGame();
 
-        GameObject[] players;
-        players = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject player in players)
+        List<CaptainsMessPlayer> players = networkedPScript.GetPlayers();
+        foreach (CaptainsMessPlayer player in players)
         {
             player.GetComponent<NetworkedPlayerScript>().RpcReplyGame();
         }

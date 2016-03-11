@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using System.Collections.Generic;
 
 public class LocalPlayerScript : MonoBehaviour
 {
@@ -71,9 +71,8 @@ public class LocalPlayerScript : MonoBehaviour
     
     public void BackButtonPressed()
     {
-        GameObject[] players;
-        players = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject player in players)
+        List<CaptainsMessPlayer> players = networkedPScript.GetPlayers();
+        foreach (CaptainsMessPlayer player in players)
         {
             player.GetComponent<RemotePlayerScript>().Reset();
         }
@@ -144,9 +143,8 @@ public class LocalPlayerScript : MonoBehaviour
 
                                     lastCollidedWith.remotePScript.localPlayer = this.gameObject;
 
-                                    GameObject[] players;
-                                    players = GameObject.FindGameObjectsWithTag("Player");
-                                    foreach (GameObject player in players)
+                                    List<CaptainsMessPlayer> players = networkedPScript.GetPlayers();
+                                    foreach (CaptainsMessPlayer player in players)
                                     {
                                         player.GetComponent<RemotePlayerScript>().highlighted = true;
                                     }

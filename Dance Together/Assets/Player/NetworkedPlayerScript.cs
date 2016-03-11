@@ -17,11 +17,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     private GameObject gameManagerPrefab;
 
     private GameObject playerParent;
-
-    // Am I ready to start the game?
-    //[SyncVar, HideInInspector]
-    //public bool playerReady;
-
+    
     [SyncVar]
     private int songID;
     
@@ -34,6 +30,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     // To make referencing easier/less calls.
     private Light playerLight;
 
+    [HideInInspector]
+    public CaptainsMess mess;
+    public void Awake()
+    {
+        mess = FindObjectOfType(typeof(CaptainsMess)) as CaptainsMess;
+    }
 
     void SetColor()
     {
@@ -46,26 +48,33 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
     void SetReady(bool ready)
     {
-        playerReady = ready;
-
-        if (AreAllPlayersReady())
+        if (ready)
         {
-            GUIManagerScript.SetButtonInteractable(true);
+            SendReadyToBeginMessage();
+
+            if (mess.AreAllPlayersReady())
+            {
+                GUIManagerScript.SetButtonInteractable(true);
+            }
+            else
+            {
+                GUIManagerScript.SetButtonInteractable(false);
+            }
         }
         else
         {
+            SendNotReadyToBeginMessage();
             GUIManagerScript.SetButtonInteractable(false);
         }
     }
 
     void SortPlayers()
     {
-        GameObject[] players;
-        players = GameObject.FindGameObjectsWithTag("Player");
+        List<CaptainsMessPlayer> players = mess.Players();
         int i = 0;
-        int size = players.Length;
+        int size = players.Count;
 
-        foreach (GameObject player in players)
+        foreach (CaptainsMessPlayer player in players)
         {
             if (player.name != "LOCAL Player")
             {
@@ -83,24 +92,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             GUIManagerScript.SetButton(false);
         }
     }
-
-    /*bool AreAllPlayersReady()
-    {
-        GameObject[] players;
-        players = GameObject.FindGameObjectsWithTag("Player");
-
-        bool allPlayersReady = true;
-        foreach (GameObject player in players)
-        {
-            if (!player.GetComponent<NetworkedPlayerScript>().playerReady)
-            {
-                allPlayersReady = false;
-                break;
-            }
-        }
-
-        return allPlayersReady; // TODO : Check if there are four players
-    }*/
 
     void Start()
     {
@@ -141,7 +132,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         base.Update();
 
         // Grow as player overlaps
-        if (playerReady)
+        if (readyToBegin)
         {
             if (playerLight.range < (playerLightRange * playerRangeMultiplier))
             {
@@ -172,8 +163,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         remotePScript.enabled = false;
         localPScript.enabled = true;
 
-        playerReady = false;
-
         CmdSetColor();
 
         base.OnStartLocalPlayer();
@@ -185,6 +174,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         // Brief delay to let SyncVars propagate
         Invoke("SortPlayers", 0.5f);
+    }
+
+    public List<CaptainsMessPlayer> GetPlayers()
+    {
+        return mess.Players();
     }
 
     public int GetColor()
@@ -224,12 +218,10 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             playerColors.Add(i);
         }
 
-        GameObject[] players;
-        players = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject player in players)
+        List<CaptainsMessPlayer> players = GetPlayers();
+        foreach (CaptainsMessPlayer player in players)
         {
-            NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
-            playerColors.Remove(nps.GetColor());
+            playerColors.Remove(player.GetComponent<NetworkedPlayerScript>().GetColor());
         }
 
         RpcSetColor(playerColors[0]);   //<- new, always get first way. Old random way: Random.Range(0, playerColors.Count)]);
@@ -257,7 +249,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     [ClientRpc]
     public void RpcToggleReady()
     {
-        SetReady(!playerReady);
+        SetReady(!readyToBegin);
     }
 
     public void MainButtonPressed()
@@ -290,14 +282,13 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     [Command]
     public void CmdMainButtonPressed()
     {
-            if (AreAllPlayersReady()) //Redundant?
+            if (mess.AreAllPlayersReady()) //Redundant?
             {
                 GameManagerScript.instance.CmdStartGame();
 
-                GameObject[] players;
-                players = GameObject.FindGameObjectsWithTag("Player");
+                List<CaptainsMessPlayer> players = GetPlayers();
 
-                int length = players.Length;
+                int length = players.Count;
 
                 Assert.IsTrue(length >= 4, "There must be >=4 players!");
 
@@ -335,14 +326,13 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                     j++;
                 }
 
-                foreach (GameObject player in players)
+                foreach (CaptainsMessPlayer player in players)
                 {
                     //Recycle local J variable, don't care about last value
                     j = Random.Range(0, playerSongChoice.Count);
 
                     //Tell the player which song they got
-                    NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
-                    nps.RpcStartGame(playerSongChoice[j]);
+                    player.GetComponent<NetworkedPlayerScript>().RpcStartGame(playerSongChoice[j]);
 
                     //Remove that entry from list. 
                     playerSongChoice.RemoveAt(j);
@@ -360,9 +350,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         // Bullshit code. Temp? Maybe not?
         // What if player WAS ready, but now that we're actually starting they are no longer?
         // Too late for them! Let's double check
-        if (!playerReady)
+        if (!readyToBegin)
         {
-            Assert.IsFalse(playerReady, "Player wasn't ready, but the server thought they were!");
+            Assert.IsFalse(readyToBegin, "Player wasn't ready, but the server thought they were!");
             // Oh noes! What do we do? Let's cheat:
             SetReady(true);
             // See buddy, you were ready the whole time, right?
@@ -376,9 +366,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     [Command]
     public void CmdEndGame()
     {
-        GameObject[] players;
-        players = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject player in players)
+        List<CaptainsMessPlayer> players = GetPlayers();
+        foreach (CaptainsMessPlayer player in players)
         {
             player.GetComponent<NetworkedPlayerScript>().RpcEndGame();
         }
