@@ -100,13 +100,13 @@ public class GameManagerScript : NetworkBehaviour
     }
 
     [Command]
-    public void CmdReplyGame()
+    public void CmdReplayGame()
     {
-        RpcReplyGame();
+        RpcReplayGame();
     }
 
     [ClientRpc]
-    public void RpcReplyGame()
+    public void RpcReplayGame()
     {
         currentGameState = 0;
 

@@ -234,7 +234,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     {
         if (GameManagerScript.instance.IsInPostGame())
         {
-            CmdReplyGame();
+            CmdReplayGame();
         }
         else
         {
@@ -252,20 +252,20 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     }
 
     [Command]
-    public void CmdReplyGame()
+    public void CmdReplayGame()
     {
-        GameManagerScript.instance.CmdReplyGame();
+        GameManagerScript.instance.CmdReplayGame();
 
         List<CaptainsMessPlayer> players = GetPlayers();
         foreach (CaptainsMessPlayer player in players)
         {
-            player.GetComponent<NetworkedPlayerScript>().RpcReplyGame();
+            player.GetComponent<NetworkedPlayerScript>().RpcReplayGame();
         }
     }
     [ClientRpc]
-    public void RpcReplyGame()
+    public void RpcReplayGame()
     {
-        GUIManagerScript.SetReplyButton(false);
+        GUIManagerScript.SetReplayButton(false);
     }
 
     [Command]
@@ -373,7 +373,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             localPScript.BackButtonPressed();
         }
 
-        GUIManagerScript.SetReplyButton(true);
+        GUIManagerScript.SetReplayButton(true);
 
         AudioManagerScript.instance.EndGameMusic();
 

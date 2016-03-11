@@ -58,13 +58,13 @@ public class GUIManagerScript : MonoBehaviour {
     }
     */
 
-    public static void SetReplyButton(bool enabled)
+    public static void SetReplayButton(bool enabled)
     {
         if (enabled)
         {
             SetButton(true);
             //SetButtonInteractable(true);
-            SetButtonText("Reply");
+            SetButtonText("Replay");
         }
         else
         {
