@@ -52,19 +52,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             SendReadyToBeginMessage();
 
-            if (mess.AreAllPlayersReady())
-            {
-                GUIManagerScript.SetButtonInteractable(true);
-            }
-            else
-            {
-                GUIManagerScript.SetButtonInteractable(false);
-            }
+            GUIManagerScript.SetButtonText("Cancel");
         }
         else
         {
             SendNotReadyToBeginMessage();
-            GUIManagerScript.SetButtonInteractable(false);
+            GUIManagerScript.SetButtonText("Dance");
         }
     }
 
@@ -268,6 +261,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             }
             else
             {
+                CmdToggleReady();
             }
         }
     }
@@ -342,8 +336,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public void RpcStartGame(int s)
     {
         songID = s;
-
-        playerParent.GetComponent<PlayerParentScript>().LockAndSpin();
+        
+        playerParent.GetComponent<PlayerParentScript>().Unlock();
 
         // Bullshit code. Temp? Maybe not?
         // What if player WAS ready, but now that we're actually starting they are no longer?
@@ -358,7 +352,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         matchSongID = -1;
         GUIManagerScript.SetButton(false);
 
-        AudioManagerScript.instance.PrepareGameMusic();
+        AudioManagerScript.instance.StartGameMusic();
     }
 
     [Command]

@@ -46,23 +46,30 @@ public class GUIManagerScript : MonoBehaviour {
         gameButtonObject.SetActive(enabled);
     }
 
+    public static void SetButtonText(string s)
+    {
+        buttonText.text = s;
+    }
+
+    /*
     public static void SetButtonInteractable(bool enabled)
     {
         gameButton.interactable = enabled;
     }
+    */
 
     public static void SetReplyButton(bool enabled)
     {
         if (enabled)
         {
             SetButton(true);
-            SetButtonInteractable(true);
-            buttonText.text = "Reply";
+            //SetButtonInteractable(true);
+            SetButtonText("Reply");
         }
         else
         {
-            SetButtonInteractable(false);
-            buttonText.text = "Dance";
+            //SetButtonInteractable(false);
+            SetButtonText("Dance");
         }
     }
 
@@ -77,14 +84,14 @@ public class GUIManagerScript : MonoBehaviour {
         if (enabled)
         {
             SetButton(true);
-            SetButtonInteractable(true);
-            buttonText.text = "Match";
+            //SetButtonInteractable(true);
+            SetButtonText("Match");
         }
         else
         {
             SetButton(false);
-            SetButtonInteractable(false);
-            buttonText.text = "Dance";
+            //SetButtonInteractable(false);
+            SetButtonText("Dance"); // Not needed? Redundant?
         }
     }
 }

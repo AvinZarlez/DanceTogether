@@ -87,7 +87,6 @@ public class LocalPlayerScript : MonoBehaviour
 
     void Update()
     {
-        float countDown = GameManagerScript.instance.countDown;
 
         if (GameManagerScript.instance.IsInPostGame())
         {
@@ -112,7 +111,10 @@ public class LocalPlayerScript : MonoBehaviour
         {
             detailsText.enabled = false;
 
-            if (networkedPScript.mess.CountdownTimer() > 0)
+            float countDown = GameManagerScript.instance.countDown;
+            float introCountDown = networkedPScript.mess.CountdownTimer();
+
+            if (introCountDown > 0)
             {
                 infoText.enabled = true;
 
@@ -120,17 +122,17 @@ public class LocalPlayerScript : MonoBehaviour
                 isHit = false;
                 isDragging = false;
 
-                if (countDown < 1)
+                if (introCountDown < 1)
                 {
                     infoText.text = "DANCE!";
                 }
-                else if (countDown >= (4f)) //Plus one second for the "Dance" end 
+                else if (introCountDown >= (4f)) //Plus one second for the "Dance" end 
                 {
                     infoText.text = "Ready?";
                 }
                 else
                 {
-                    infoText.text = "" + Mathf.Floor(countDown);
+                    infoText.text = "" + Mathf.Floor(introCountDown);
                 }
             }
             else if (countDown > 0)
@@ -191,6 +193,8 @@ public class LocalPlayerScript : MonoBehaviour
             }
             else
             {
+                infoText.enabled = false;
+
                 isDragging = false; //Always false if no countdown.
 
                 if (Input.GetButtonDown("Fire1"))

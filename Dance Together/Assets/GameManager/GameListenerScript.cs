@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class GameListener : CaptainsMessListener
+public class GameListenerScript : CaptainsMessListener
 {
 	public enum NetworkState
 	{
@@ -17,13 +17,17 @@ public class GameListener : CaptainsMessListener
     [HideInInspector]
     public NetworkState networkState = NetworkState.Init;
 	public Text networkStateField;
-	//public ExampleGameSession gameSession;
+    //public ExampleGameSession gameSession;
 
-	public void Start()
+    private PlayerParentScript playerParentScript;
+
+    public void Start()
 	{
 		networkState = NetworkState.Offline;
 
         networkStateField = GameObject.Find("UI_NetworkStateField").GetComponent<Text>();
+
+        playerParentScript = GameObject.FindWithTag("PlayerParent").GetComponent<PlayerParentScript>();
     }
 
 	public override void OnStartConnecting()
@@ -52,8 +56,12 @@ public class GameListener : CaptainsMessListener
 
 	public override void OnCountdownStarted()
 	{
-		//gameSession.OnCountdownStarted();
-	}
+        //gameSession.OnCountdownStarted();
+
+        AudioManagerScript.instance.PrepareGameMusic();
+
+        playerParentScript.LockAndSpin();
+    }
 
 	public override void OnCountdownCancelled()
 	{

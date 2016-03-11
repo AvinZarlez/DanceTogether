@@ -9,7 +9,7 @@ public class PlayerParentScript : MonoBehaviour
 
     private Collider2D myCollider;
 
-    private float spinLocked = -1;
+    private bool spinLocked = false;
 
     private bool spinning = false;
 
@@ -20,17 +20,11 @@ public class PlayerParentScript : MonoBehaviour
 
     void Update()
     {
-        if (spinLocked >= 0)
+        if (spinLocked)
         {
             if (spinning)
             {
                 transform.Rotate(new Vector3(0, 0, 180) * Time.deltaTime);
-                spinLocked += Time.deltaTime;
-                if (spinLocked > 4)
-                {
-                    spinLocked = -1;
-                    spinning = false;
-                }
             }
         }
         else
@@ -71,19 +65,19 @@ public class PlayerParentScript : MonoBehaviour
 
     public void LockAndSpin()
     {
-        spinLocked = 0;
+        spinLocked = true;
         spinning = true;
     }
 
     public void Lock()
     {
-        spinLocked = 0;
+        spinLocked = true;
         spinning = false;
     }
 
     public void Unlock()
     {
-        spinLocked = -1;
+        spinLocked = false;
         spinning = false;
     }
 }
