@@ -15,10 +15,10 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public RemotePlayerScript remotePScript;
 
     private GameObject playerParent;
-    
+
     [SyncVar]
     private int songID;
-    
+
     [SyncVar]
     private int matchSongID; // The other player this player has picked as a match
 
@@ -40,11 +40,29 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
     void SetColor()
     {
-        if (color != -1) {
+        if (color != -1)
+        {
             Color c = ColorScript.GetColor(color);
             GetComponentInChildren<Renderer>().material.color = c;
             GetComponentInChildren<Light>().color = c;
         }
+    }
+
+    bool AreAllPlayersMatched()
+    {
+        List<CaptainsMessPlayer> players = mess.Players();
+
+        bool allPlayersMatched = true;
+        foreach (CaptainsMessPlayer player in players)
+        {
+            if (player.GetComponent<NetworkedPlayerScript>().GetMatchSongID() == -1)
+            {
+                allPlayersMatched = false;
+                break;
+            }
+        }
+
+        return allPlayersMatched;
     }
 
     void SetReady(bool ready)
@@ -220,11 +238,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         if (isLocalPlayer)
         {
             Color clr = ColorScript.GetColor(c);
-            clr = clr*0.25f;
+            clr = clr * 0.25f;
             Camera.main.backgroundColor = clr;
         }
     }
-    
+
     public void ToggleReady()
     {
         SetReady(!readyToBegin);
@@ -243,6 +261,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 matchSongID = localPScript.choiceSongID;
                 Assert.AreNotEqual<int>(-1, matchSongID, "No player was matched");
                 GUIManagerScript.SetMatchButton(false);
+
+                if (AreAllPlayersMatched())
+                {
+                    //Every player is matched, end the game early.
+                    GameManagerScript.instance.CmdEndGame();
+                }
             }
             else
             {
@@ -271,68 +295,68 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     [Command]
     public void CmdStartGame()
     {
-            if (mess.AreAllPlayersReady()) //Redundant?
+        if (mess.AreAllPlayersReady()) //Redundant?
+        {
+
+            List<CaptainsMessPlayer> players = GetPlayers();
+
+            int length = players.Count;
+
+            Assert.IsTrue(length >= 4, "There must be >=4 players!");
+
+            int numSongsToPick = (length / 2);
+
+            List<int> songs = new List<int>(); //List of the songID's we'll use this game.
+
+            int numberOfSongs = AudioManagerScript.instance.GetNumSongs();
+            for (int i = 0; i < numSongsToPick; i++)
             {
-
-                List<CaptainsMessPlayer> players = GetPlayers();
-
-                int length = players.Count;
-
-                Assert.IsTrue(length >= 4, "There must be >=4 players!");
-
-                int numSongsToPick = (length / 2);
-
-                List<int> songs = new List<int>(); //List of the songID's we'll use this game.
-
-                int numberOfSongs = AudioManagerScript.instance.GetNumSongs();
-                for (int i = 0; i < numSongsToPick; i++)
+                int rand;
+                do
                 {
-                    int rand;
-                    do
-                    {
-                        rand = Random.Range(0, numberOfSongs);
-                    }
-                    while (songs.Contains(rand));
-                    songs.Add(rand);
+                    rand = Random.Range(0, numberOfSongs);
                 }
+                while (songs.Contains(rand));
+                songs.Add(rand);
+            }
 
-                List<int> playerSongChoice = new List<int>(); // Final list will pull from
+            List<int> playerSongChoice = new List<int>(); // Final list will pull from
 
-                // Remember, final list will have at least 2 of every choice!
-                int j = 0;
-                if (length % 2 != 0) { j = -1; }
-                for (int k = 0; k < length; k++)
+            // Remember, final list will have at least 2 of every choice!
+            int j = 0;
+            if (length % 2 != 0) { j = -1; }
+            for (int k = 0; k < length; k++)
+            {
+                if (j == -1)
                 {
-                    if (j == -1)
-                    {
-                        playerSongChoice.Add(songs[Random.Range(0, numSongsToPick)]);
-                    }
-                    else
-                    {
-                        playerSongChoice.Add(songs[(int)(j / 2)]);
-                    }
-                    j++;
+                    playerSongChoice.Add(songs[Random.Range(0, numSongsToPick)]);
                 }
-
-                foreach (CaptainsMessPlayer player in players)
+                else
                 {
-                    //Recycle local J variable, don't care about last value
-                    j = Random.Range(0, playerSongChoice.Count);
-
-                    //Tell the player which song they got
-                    player.GetComponent<NetworkedPlayerScript>().RpcStartGame(playerSongChoice[j]);
-
-                    //Remove that entry from list. 
-                    playerSongChoice.RemoveAt(j);
+                    playerSongChoice.Add(songs[(int)(j / 2)]);
                 }
+                j++;
+            }
 
-            } //Close if statement for checking if all players ready
+            foreach (CaptainsMessPlayer player in players)
+            {
+                //Recycle local J variable, don't care about last value
+                j = Random.Range(0, playerSongChoice.Count);
+
+                //Tell the player which song they got
+                player.GetComponent<NetworkedPlayerScript>().RpcStartGame(playerSongChoice[j]);
+
+                //Remove that entry from list. 
+                playerSongChoice.RemoveAt(j);
+            }
+
+        } //Close if statement for checking if all players ready
     }
     [ClientRpc]
     public void RpcStartGame(int s)
     {
         songID = s;
-        
+
         playerParent.GetComponent<PlayerParentScript>().Unlock();
 
         // Bullshit code. Temp? Maybe not?
