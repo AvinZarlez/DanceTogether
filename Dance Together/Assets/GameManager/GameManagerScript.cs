@@ -22,9 +22,6 @@ public class GameManagerScript : NetworkBehaviour
     [SerializeField]
     private GameObject playerParent;
 
-    [SyncVar]
-    private List<LocalPlayerScript> matchedPlayers; 
-
     void Awake()
     {
         if (instance == null)
@@ -62,20 +59,6 @@ public class GameManagerScript : NetworkBehaviour
     }
 
     [Command]
-    public void CmdSetPlace(LocalPlayerScript player)
-    {
-        RpcSetPlace(player);
-    }
-
-    [ClientRpc]
-    public void RpcSetPlace(LocalPlayerScript player)
-    {
-        matchedPlayers.Add(player);
-
-        player.SetPlace(matchedPlayers.Count);
-    }
-
-    [Command]
     public void CmdSetNPS()
     {
         RpcSetNPS();
@@ -94,8 +77,6 @@ public class GameManagerScript : NetworkBehaviour
         RpcStartMainCountdown();
 
         networkedPScript.CmdStartGame();
-
-        matchedPlayers = new List<LocalPlayerScript>();
     }
 
     [ClientRpc]

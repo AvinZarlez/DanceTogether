@@ -23,6 +23,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     private int matchSongID; // The other player this player has picked as a match
 
     [SyncVar]
+    private float matchTime;
+
+    [SyncVar]
     private int color = -1;
 
     [SyncVar, HideInInspector]
@@ -259,6 +262,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             if (localPScript.WasMatchedPressed())
             {
                 matchSongID = localPScript.choiceSongID;
+                matchTime = GameManagerScript.instance.countDown;
                 Assert.AreNotEqual<int>(-1, matchSongID, "No player was matched");
                 GUIManagerScript.SetMatchButton(false);
 
@@ -370,6 +374,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             // See buddy, you were ready the whole time, right?
         }
         matchSongID = -1;
+        matchTime = -1;
         GUIManagerScript.SetButton(false);
 
         AudioManagerScript.instance.StartGameMusic();

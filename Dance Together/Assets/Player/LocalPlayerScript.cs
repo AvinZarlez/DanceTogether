@@ -16,8 +16,6 @@ public class LocalPlayerScript : MonoBehaviour
     private bool isHit; //Did the TouchDown event happen?
     private bool locked;
 
-    private int place; //First to match, second, third, etc.
-
     private NetworkedPlayerScript lastCollidedWith; //Direct link to the NetworkedPlayerScript of the object we last collided with.
 
     [HideInInspector]
@@ -62,11 +60,6 @@ public class LocalPlayerScript : MonoBehaviour
         lastCollidedWith = other.GetComponent<NetworkedPlayerScript>();
     }
 
-    public void SetPlace(int num)
-    {
-        place = num;
-    }
-
     public bool WasMatchedPressed()
     {
         if (locked)
@@ -105,7 +98,7 @@ public class LocalPlayerScript : MonoBehaviour
             int match = networkedPScript.GetMatchSongID();
             if (song == match)
             {
-                infoText.text = "You Won! #"+ place;
+                infoText.text = "You Won with "+ Mathf.Floor(networkedPScript.matchTime);
                 detailsText.text = "You both were dancing to " + song.ToString();
             }
             else
