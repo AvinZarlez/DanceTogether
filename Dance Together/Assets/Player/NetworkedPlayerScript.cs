@@ -23,7 +23,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     private int matchSongID; // The other player this player has picked as a match
 
     [SyncVar]
-    private float matchTime;
+    public float matchTime;
 
     [SyncVar]
     private int color = -1;
