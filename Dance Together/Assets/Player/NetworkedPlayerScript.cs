@@ -261,21 +261,35 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             if (localPScript.WasMatchedPressed())
             {
-                matchSongID = localPScript.choiceSongID;
-                matchTime = GameManagerScript.instance.countDown;
-                Assert.AreNotEqual<int>(-1, matchSongID, "No player was matched");
-                GUIManagerScript.SetMatchButton(false);
+                CmdSetMatchSongID(localPScript.choiceSongID);
 
-                if (AreAllPlayersMatched())
-                {
-                    //Every player is matched, end the game early.
-                    GameManagerScript.instance.CmdEndGame();
-                }
+                GUIManagerScript.SetMatchButton(false);
             }
             else
             {
                 ToggleReady();
             }
+        }
+    }
+
+    [Command]
+    public void CmdSetMatchSongID(int song)
+    {
+        Assert.AreNotEqual<int>(-1, song, "No player was matched");
+
+        RpcSetMatchSongID(song, GameManagerScript.instance.countDown)
+    }
+
+    [ClientRpc]
+    public void RpcSetMatchSongID(int song, float count)
+    {
+        matchSongID = song;
+        matchTime = count;
+
+        if (AreAllPlayersMatched())
+        {
+            //Every player is matched, end the game early.
+            GameManagerScript.instance.CmdEndGame();
         }
     }
 

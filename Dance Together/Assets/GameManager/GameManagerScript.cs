@@ -89,8 +89,11 @@ public class GameManagerScript : NetworkBehaviour
     [Command]
     public void CmdEndGame()
     {
-        RpcEndGame();
-        networkedPScript.CmdEndGame(); //Let's stop this party
+        if (!IsInPostGame())
+        {
+            RpcEndGame();
+            networkedPScript.CmdEndGame(); //Let's stop this party
+        }
     }
 
     [ClientRpc]
