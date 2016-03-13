@@ -277,7 +277,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     {
         Assert.AreNotEqual<int>(-1, song, "No player was matched");
 
-        RpcSetMatchSongID(song, GameManagerScript.instance.countDown)
+        RpcSetMatchSongID(song, GameManagerScript.instance.countDown);
     }
 
     [ClientRpc]
