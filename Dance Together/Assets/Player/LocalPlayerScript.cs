@@ -22,7 +22,7 @@ public class LocalPlayerScript : MonoBehaviour
     public int choiceSongID; // The player this player is thinking about being a match.
     
     // To make referencing easier/less calls.
-    private PlayerParentScript playerParentScript;
+    //private PlayerParentScript playerParentScript;
     private NetworkedPlayerScript networkedPScript;
     private Text countdownText; // UI text object named "UI_Countdown"
     private Text infoText; // UI text object named "UI_InfoText"
@@ -30,7 +30,7 @@ public class LocalPlayerScript : MonoBehaviour
 
     void Start()
     {
-        playerParentScript = GameObject.FindWithTag("PlayerParent").GetComponent<PlayerParentScript>();
+        //playerParentScript = GameObject.FindWithTag("PlayerParent").GetComponent<PlayerParentScript>();
 
         networkedPScript = GetComponent<NetworkedPlayerScript>();
 
@@ -77,7 +77,7 @@ public class LocalPlayerScript : MonoBehaviour
             player.GetComponent<RemotePlayerScript>().Reset();
         }
 
-        playerParentScript.Unlock();
+        //playerParentScript.Unlock();
 
         choiceSongID = -1;
 
@@ -170,7 +170,7 @@ public class LocalPlayerScript : MonoBehaviour
                                         player.GetComponent<RemotePlayerScript>().highlighted = true;
                                     }
 
-                                    playerParentScript.Lock();
+                                    //playerParentScript.Lock();
 
                                     locked = true;
                                     GUIManagerScript.SetMatchButton(true);
@@ -228,7 +228,7 @@ public class LocalPlayerScript : MonoBehaviour
 
             // Move back to the center.
             float step = movementSpeed * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, startingLocation, step);
+            //transform.position = Vector3.MoveTowards(transform.position, startingLocation, step);
         }
     }
 }

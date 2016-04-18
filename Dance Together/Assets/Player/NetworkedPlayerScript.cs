@@ -2,6 +2,7 @@
 using UnityEngine.Networking;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
+using UnityEngine.UI;
 
 public class NetworkedPlayerScript : CaptainsMessPlayer
 {
@@ -46,7 +47,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         if (color != -1)
         {
             Color c = ColorScript.GetColor(color);
-            GetComponentInChildren<Renderer>().material.color = c;
+            GetComponentInChildren<Image>().color = c;
             GetComponentInChildren<Light>().color = c;
         }
     }
@@ -119,7 +120,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         }
         else
         {
-            transform.parent = playerParent.transform;
+            transform.SetParent(playerParent.transform);
             transform.localPosition = Vector3.zero;
         }
     }
@@ -375,7 +376,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     {
         songID = s;
 
-        playerParent.GetComponent<PlayerParentScript>().Unlock();
+        //playerParent.GetComponent<PlayerParentScript>().Unlock();
 
         // Bullshit code. Temp? Maybe not?
         // What if player WAS ready, but now that we're actually starting they are no longer?
@@ -429,11 +430,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     {
         if (l)
         {
-            playerParent.GetComponent<PlayerParentScript>().LockAndSpin();
+            //playerParent.GetComponent<PlayerParentScript>().LockAndSpin();
             AudioManagerScript.instance.PrepareGameMusic();
         }
         else {
-            playerParent.GetComponent<PlayerParentScript>().Unlock();
+            //playerParent.GetComponent<PlayerParentScript>().Unlock();
         }
     }
 }

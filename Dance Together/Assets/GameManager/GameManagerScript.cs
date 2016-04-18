@@ -19,9 +19,6 @@ public class GameManagerScript : NetworkBehaviour
     
     private NetworkedPlayerScript networkedPScript;
 
-    [SerializeField]
-    private GameObject playerParent;
-
     void Awake()
     {
         if (instance == null)

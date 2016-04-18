@@ -29,6 +29,7 @@ public class RemotePlayerScript : MonoBehaviour {
 
     void FixedUpdate()
     {
+        /*
         // Grow as player overlaps
         if ( ((!highlighted)&&(growing)) || (highlighted&&(localPlayer != null)) )
         {
@@ -60,7 +61,7 @@ public class RemotePlayerScript : MonoBehaviour {
         else
         {
             transform.localPosition = Vector3.MoveTowards(transform.localPosition, goal, movementSpeed);
-        }
+        }*/
     }
 
     public void Reset()
