@@ -20,11 +20,8 @@ public class RemotePlayerScript : MonoBehaviour {
     private Vector3 goal;
     private Vector3 highlighted_goal;
 
-    private Transform body; //The Sphere
-
     void Start()
     {
-        body = transform.Find("Sphere");
     }
 
     void FixedUpdate()
@@ -62,6 +59,7 @@ public class RemotePlayerScript : MonoBehaviour {
         {
             transform.localPosition = Vector3.MoveTowards(transform.localPosition, goal, movementSpeed);
         }*/
+        transform.localPosition = Vector3.MoveTowards(transform.localPosition, goal, movementSpeed);
     }
 
     public void Reset()
@@ -78,13 +76,15 @@ public class RemotePlayerScript : MonoBehaviour {
         numberOfPlayers = numPlayers;
         
         goal = Vector3.zero;
-        float degreeMath;
-        if (numberOfPlayers > 2) degreeMath = position * (2 * Mathf.PI) / (numberOfPlayers - 1);
-        else degreeMath = Mathf.PI; //Cheat if 2 players. If theory this won't happen if only one player, but just in case also prevents divide by 0.
-        goal.x += distance * Mathf.Cos(degreeMath);
-        goal.y += distance * Mathf.Sin(degreeMath);
+        int col = position % 3;
+        if (col == 1) goal.x = -160;
+        else if (col == 2) goal.x = 160;
+
+        if ((position >= 4)&&(position <= 6)) goal.y = -64;
+        else if (position > 6) goal.y = 64;
+
         goal.z -= 1;
 
-        highlighted_goal = new Vector3(-(((numberOfPlayers - 2) * 1.25f) / 2) + (1.25f * (position - 1f)), 3);
+        //highlighted_goal = new Vector3(-(((numberOfPlayers - 2) * 1.25f) / 2) + (1.25f * (position - 1f)), 3);
     }
 }

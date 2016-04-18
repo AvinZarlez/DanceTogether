@@ -4,17 +4,13 @@ using System.Collections.Generic;
 
 public class LocalPlayerScript : MonoBehaviour
 {
-    [System.NonSerialized] // Don't need to save the isDragging state
-    public bool isDragging; // Is the player object currently being dragged somewhere?
-
     [HideInInspector] // Don't need to see the starting location, does need to be public so RemotePlayerScript can get it.
     public Vector3 startingLocation; // Where the player object starts
 
     [SerializeField] //Make this seen in the editor, but still private/local to this class.
     private float movementSpeed = 10; // How fast does it snap back to the center?
-
-    private bool isHit; //Did the TouchDown event happen?
-    private bool locked;
+    
+    public bool temp_locked;
 
     private NetworkedPlayerScript lastCollidedWith; //Direct link to the NetworkedPlayerScript of the object we last collided with.
 
@@ -52,7 +48,7 @@ public class LocalPlayerScript : MonoBehaviour
         transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
 
         choiceSongID = -1;
-        locked = false;
+        temp_locked = false;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -62,11 +58,7 @@ public class LocalPlayerScript : MonoBehaviour
 
     public bool WasMatchedPressed()
     {
-        if (locked)
-        {
-            return true;
-        }
-        return false;
+        return temp_locked;
     }
     
     public void BackButtonPressed()
@@ -81,7 +73,7 @@ public class LocalPlayerScript : MonoBehaviour
 
         choiceSongID = -1;
 
-        locked = false;
+        temp_locked = false;
         GUIManagerScript.SetMatchButton(false);
     }
 
@@ -118,10 +110,6 @@ public class LocalPlayerScript : MonoBehaviour
             {
                 infoText.enabled = true;
 
-                //Always false during intro countdown.
-                isHit = false;
-                isDragging = false;
-
                 if (captainsCountdown < 1)
                 {
                     infoText.text = "DANCE!";
@@ -137,98 +125,21 @@ public class LocalPlayerScript : MonoBehaviour
             }
             else if (countDown > 0)
             {
-                    infoText.enabled = false;
-                    countdownText.enabled = true;
-                    countdownText.text = "" + Mathf.Ceil(countDown);
-
-                    // The main game, in the middle of game play
-                    // This. is. it. - TIME TO DANCE!
-
-                    if (!locked)
-                    {
-                        if (Input.GetButtonDown("Fire1"))
-                        {
-                            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                            if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
-                            {
-                                isDragging = true;
-                            }
-                        }
-                        else if (Input.GetButtonUp("Fire1"))
-                        {
-                            if (lastCollidedWith != null)
-                            {
-                                if (GetComponent<Collider2D>().IsTouching(lastCollidedWith.GetComponent<Collider2D>()) && isDragging)
-                                {
-                                    choiceSongID = lastCollidedWith.GetComponent<NetworkedPlayerScript>().GetSongID();
-
-                                    lastCollidedWith.remotePScript.localPlayer = this.gameObject;
-
-                                    List<CaptainsMessPlayer> players = networkedPScript.GetPlayers();
-                                    foreach (CaptainsMessPlayer player in players)
-                                    {
-                                        player.GetComponent<RemotePlayerScript>().highlighted = true;
-                                    }
-
-                                    //playerParentScript.Lock();
-
-                                    locked = true;
-                                    GUIManagerScript.SetMatchButton(true);
-                                }
-                            }
-
-                            //Always false after mouse up
-                            isHit = false;
-                            isDragging = false;
-                        }
-                        else if (Input.GetButton("Fire1"))
-                        {
-                            if (isDragging)
-                            {
-                                Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                                transform.position = new Vector3(mousePosition.x, mousePosition.y, transform.position.z);
-                            }
-                        }
-                    }
+                infoText.enabled = false;
+                countdownText.enabled = true;
+                countdownText.text = "" + Mathf.Ceil(countDown);
             }
             else
             {
                 infoText.enabled = false;
-
-                isDragging = false; //Always false if no countdown.
-
-                if (Input.GetButtonDown("Fire1"))
-                {
-                    Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
-                    {
-                        isHit = true;
-                    }
-                }
-                else if (Input.GetButtonUp("Fire1"))
-                {
-                    Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    if (GetComponent<Collider2D>().OverlapPoint(mousePosition) && isHit)
-                    {
-                        networkedPScript.ToggleReady();
-                    }
-                    //Always false after mouse up
-                    isHit = false;
-                    //isDragging = false; //Set above, always not dragging.
-                }
             }
         }
+    }
 
-        if (isDragging)
-        {
-            // Player object is being dragged right now
-        }
-        else {
-            // Player object is NOT being dragged
-
-            // Move back to the center.
-            float step = movementSpeed * Time.deltaTime;
-            //transform.position = Vector3.MoveTowards(transform.position, startingLocation, step);
-        }
+    public void PlayerChosen(int songid)
+    {
+        choiceSongID = songid;
+        temp_locked = true;
+        GUIManagerScript.SetMatchButton(true);
     }
 }

@@ -114,14 +114,16 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         playerLight = GetComponentInChildren<Light>();
         playerParent = GameObject.FindWithTag("PlayerParent");
 
+        transform.SetParent(playerParent.transform);
+
+        Vector3 start = Vector3.zero;
+        start.y += 256;
+
+        transform.localPosition = start;
+
         if (isLocalPlayer)
         {
             playerRangeMultiplier = 1.5f;
-        }
-        else
-        {
-            transform.SetParent(playerParent.transform);
-            transform.localPosition = Vector3.zero;
         }
     }
 
@@ -269,6 +271,33 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             else
             {
                 ToggleReady();
+            }
+        }
+    }
+
+    public void PlayerButtonPressed()
+    {
+        if (isLocalPlayer)
+        {
+            if (!GameManagerScript.instance.IsGameStarted())
+            {
+                ToggleReady();
+            }
+        }
+        else
+        {
+            if (GameManagerScript.instance.IsGameStarted())
+            {
+                List<CaptainsMessPlayer> players = GetPlayers();
+                foreach (CaptainsMessPlayer player in players)
+                {
+                    player.GetComponent<RemotePlayerScript>().highlighted = true;
+
+                    if (player.name != "LOCAL Player")
+                    {
+                        player.GetComponent<LocalPlayerScript>().PlayerChosen(GetSongID());
+                    }
+                }
             }
         }
     }
