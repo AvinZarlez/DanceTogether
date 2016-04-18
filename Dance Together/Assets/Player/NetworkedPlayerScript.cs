@@ -10,6 +10,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
     private float playerRangeMultiplier = 1;
 
+    public GameObject playerButton;
+
     [SerializeField]
     public LocalPlayerScript localPScript; //TEMP made public for checking in sort players
     [HideInInspector]
@@ -47,7 +49,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         if (color != -1)
         {
             Color c = ColorScript.GetColor(color);
-            GetComponentInChildren<Image>().color = c;
+            playerButton.GetComponent<Image>().color = c;
             GetComponentInChildren<Light>().color = c;
         }
     }
@@ -124,25 +126,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         if (isLocalPlayer)
         {
             playerRangeMultiplier = 1.5f;
+            playerButton.SetActive(false);
         }
-    }
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.name == "LOCAL Player" && GameManagerScript.instance.IsGameStarted()) //Temp! Change to singleton?
-        {
-            remotePScript.growing = true;
-            playerRangeMultiplier = 1.5f;
-        }
-    }
-
-    void OnTriggerExit2D(Collider2D other)
-    {
-        if (!isLocalPlayer)
-        {
-            remotePScript.growing = false;
-            playerRangeMultiplier = 1f;
-        }
+        // Disable screen dimming
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
 
     public override void Update()
@@ -262,16 +250,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         }
         else
         {
-            if (localPScript.WasMatchedPressed())
-            {
-                CmdSetMatchSongID(localPScript.choiceSongID);
-
-                GUIManagerScript.SetMatchButton(false);
-            }
-            else
-            {
-                ToggleReady();
-            }
+            ToggleReady();
         }
     }
 
@@ -288,16 +267,20 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             if (GameManagerScript.instance.IsGameStarted())
             {
+
                 List<CaptainsMessPlayer> players = GetPlayers();
                 foreach (CaptainsMessPlayer player in players)
                 {
-                    player.GetComponent<RemotePlayerScript>().highlighted = true;
 
-                    if (player.name != "LOCAL Player")
+                    if (player.name == "LOCAL Player")
                     {
-                        player.GetComponent<LocalPlayerScript>().PlayerChosen(GetSongID());
+                        player.GetComponent<NetworkedPlayerScript>().CmdSetMatchSongID(GetSongID());
                     }
+                    player.GetComponent<NetworkedPlayerScript>().playerButton.SetActive(false);
                 }
+
+                playerButton.SetActive(true);
+                playerButton.GetComponent<Button>().interactable = false;
             }
         }
     }
@@ -338,6 +321,13 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public void RpcReplayGame()
     {
         GUIManagerScript.SetReplayButton(false);
+
+        List<CaptainsMessPlayer> players = GetPlayers();
+        foreach (CaptainsMessPlayer player in players)
+        {
+            player.GetComponent<NetworkedPlayerScript>().playerButton.SetActive(true);
+            player.GetComponent<NetworkedPlayerScript>().playerButton.GetComponent<Button>().interactable = false;
+        }
     }
 
     [Command]
@@ -423,8 +413,14 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         AudioManagerScript.instance.StartGameMusic();
 
-        // Disable screen dimming
-        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
+
+        List<CaptainsMessPlayer> players = GetPlayers();
+        foreach (CaptainsMessPlayer player in players)
+        {
+            player.GetComponent<NetworkedPlayerScript>().playerButton.SetActive(true);
+            player.GetComponent<NetworkedPlayerScript>().playerButton.GetComponent<Button>().interactable = true;
+        }
     }
 
     [Command]
@@ -449,9 +445,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         GUIManagerScript.SetReplayButton(true);
 
         AudioManagerScript.instance.EndGameMusic();
-
-        // Enable screen dimming
-        Screen.sleepTimeout = SleepTimeout.SystemSetting;
     }
 
     [ClientRpc]

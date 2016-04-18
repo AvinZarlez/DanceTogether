@@ -13,9 +13,6 @@ public class LocalPlayerScript : MonoBehaviour
     public bool temp_locked;
 
     private NetworkedPlayerScript lastCollidedWith; //Direct link to the NetworkedPlayerScript of the object we last collided with.
-
-    [HideInInspector]
-    public int choiceSongID; // The player this player is thinking about being a match.
     
     // To make referencing easier/less calls.
     //private PlayerParentScript playerParentScript;
@@ -44,11 +41,6 @@ public class LocalPlayerScript : MonoBehaviour
 
         transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
         startingLocation = transform.position;
-
-        transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
-
-        choiceSongID = -1;
-        temp_locked = false;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -70,11 +62,6 @@ public class LocalPlayerScript : MonoBehaviour
         }
 
         //playerParentScript.Unlock();
-
-        choiceSongID = -1;
-
-        temp_locked = false;
-        GUIManagerScript.SetMatchButton(false);
     }
 
     void Update()
@@ -134,12 +121,5 @@ public class LocalPlayerScript : MonoBehaviour
                 infoText.enabled = false;
             }
         }
-    }
-
-    public void PlayerChosen(int songid)
-    {
-        choiceSongID = songid;
-        temp_locked = true;
-        GUIManagerScript.SetMatchButton(true);
     }
 }
