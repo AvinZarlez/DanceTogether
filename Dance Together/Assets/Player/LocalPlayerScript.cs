@@ -9,8 +9,6 @@ public class LocalPlayerScript : MonoBehaviour
 
     [SerializeField] //Make this seen in the editor, but still private/local to this class.
     private float movementSpeed = 10; // How fast does it snap back to the center?
-    
-    public bool temp_locked;
 
     private NetworkedPlayerScript lastCollidedWith; //Direct link to the NetworkedPlayerScript of the object we last collided with.
     
@@ -46,11 +44,6 @@ public class LocalPlayerScript : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         lastCollidedWith = other.GetComponent<NetworkedPlayerScript>();
-    }
-
-    public bool WasMatchedPressed()
-    {
-        return temp_locked;
     }
     
     public void BackButtonPressed()

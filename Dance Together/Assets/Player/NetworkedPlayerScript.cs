@@ -6,10 +6,6 @@ using UnityEngine.UI;
 
 public class NetworkedPlayerScript : CaptainsMessPlayer
 {
-    private const float playerLightRange = 2f;
-
-    private float playerRangeMultiplier = 1;
-
     public GameObject playerButton;
 
     [SerializeField]
@@ -34,9 +30,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     [SyncVar, HideInInspector]
     public float captainsCountdown = 0;
 
-    // To make referencing easier/less calls.
-    private Light playerLight;
-
     [HideInInspector]
     public CaptainsMess mess;
     public void Awake()
@@ -50,7 +43,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             Color c = ColorScript.GetColor(color);
             playerButton.GetComponent<Image>().color = c;
-            GetComponentInChildren<Light>().color = c;
         }
     }
 
@@ -113,7 +105,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
     void Start()
     {
-        playerLight = GetComponentInChildren<Light>();
         playerParent = GameObject.FindWithTag("PlayerParent");
 
         transform.SetParent(playerParent.transform);
@@ -125,7 +116,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         if (isLocalPlayer)
         {
-            playerRangeMultiplier = 1.5f;
             playerButton.SetActive(false);
         }
 
@@ -136,26 +126,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public override void Update()
     {
         base.Update();
-
-        // Grow as player overlaps
-        if (readyToBegin)
-        {
-            if (playerLight.range < (playerLightRange * playerRangeMultiplier))
-            {
-                playerLight.range += 0.1f;
-            }
-            if (playerLight.range > (playerLightRange * playerRangeMultiplier))
-            {
-                playerLight.range -= 0.1f;
-            }
-        }
-        else
-        {
-            if (playerLight.range > 0)
-            {
-                playerLight.range -= 0.1f;
-            }
-        }
 
         if (isServer)
             captainsCountdown = mess.CountdownTimer();
