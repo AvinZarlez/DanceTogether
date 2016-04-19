@@ -48,13 +48,7 @@ public class LocalPlayerScript : MonoBehaviour
     
     public void BackButtonPressed()
     {
-        List<CaptainsMessPlayer> players = networkedPScript.GetPlayers();
-        foreach (CaptainsMessPlayer player in players)
-        {
-            player.GetComponent<RemotePlayerScript>().Reset();
-        }
-
-        //playerParentScript.Unlock();
+        // Nothing happens
     }
 
     void Update()

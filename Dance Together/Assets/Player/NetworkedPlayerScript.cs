@@ -106,17 +106,21 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     void Start()
     {
         playerParent = GameObject.FindWithTag("PlayerParent");
+        playerButton = transform.Find("PlayerButton").gameObject;
 
         transform.SetParent(playerParent.transform);
-
-        Vector3 start = Vector3.zero;
-        start.y += 256;
-
-        transform.localPosition = start;
-
+       
         if (isLocalPlayer)
         {
-            playerButton.SetActive(false);
+            playerButton.SetActive(true);
+            playerButton.GetComponent<Button>().interactable = true;
+            Vector3 start = Vector3.zero;
+            start.y += 256;
+            transform.localPosition = start;
+        }
+        else
+        {
+            transform.localPosition = Vector3.zero;
         }
 
         // Disable screen dimming
@@ -247,6 +251,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                         player.GetComponent<NetworkedPlayerScript>().CmdSetMatchSongID(GetSongID());
                     }
                     player.GetComponent<NetworkedPlayerScript>().playerButton.SetActive(false);
+                    player.GetComponent<NetworkedPlayerScript>().playerButton.GetComponent<Button>().interactable = false;
                 }
 
                 playerButton.SetActive(true);
@@ -388,8 +393,17 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         List<CaptainsMessPlayer> players = GetPlayers();
         foreach (CaptainsMessPlayer player in players)
         {
-            player.GetComponent<NetworkedPlayerScript>().playerButton.SetActive(true);
-            player.GetComponent<NetworkedPlayerScript>().playerButton.GetComponent<Button>().interactable = true;
+            NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
+            if (!nps.isLocalPlayer)
+            {
+                player.GetComponent<NetworkedPlayerScript>().playerButton.SetActive(true);
+                player.GetComponent<NetworkedPlayerScript>().playerButton.GetComponent<Button>().interactable = true;
+            }
+            else
+            {
+                player.GetComponent<NetworkedPlayerScript>().playerButton.SetActive(false);
+                player.GetComponent<NetworkedPlayerScript>().playerButton.GetComponent<Button>().interactable = false;
+            }
         }
     }
 
@@ -406,11 +420,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public void RpcEndGame()
     {
         SetReady(false);
-
-        if (localPScript.WasMatchedPressed())
-        {
-            localPScript.BackButtonPressed();
-        }
 
         GUIManagerScript.SetReplayButton(true);
 
