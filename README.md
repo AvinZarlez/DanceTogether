@@ -74,7 +74,7 @@ Immidately, the idea for the game was born.
 
 ## Open Source: ##
 
-All of the code and Unity project files are licenced under the [MIT license](LICENSE.md).
+All of the code and Unity project files are licenced under the [MIT License](LICENSE.txt).
 
 Certain music assets may contain different licences, see credits for details.
 
