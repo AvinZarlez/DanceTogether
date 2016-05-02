@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public class CaptainsMessListener : MonoBehaviour
 {
-    [HideInInspector]
-    public CaptainsMess mess;
+	[HideInInspector]
+	public CaptainsMess mess;
 
 	public void Awake()
 	{
@@ -18,6 +18,11 @@ public class CaptainsMessListener : MonoBehaviour
 	}
 
 	public virtual void OnStopConnecting()
+	{
+		// Override
+	}
+
+	public virtual void OnServerCreated()
 	{
 		// Override
 	}
