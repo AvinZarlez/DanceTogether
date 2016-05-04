@@ -115,6 +115,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             playerButton.SetActive(true);
             playerButton.GetComponent<Button>().interactable = true;
             Vector3 start = Vector3.zero;
+            start.x = -160;
             start.y += 256;
             transform.localPosition = start;
         }
@@ -256,6 +257,18 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 playerButton.GetComponent<Button>().interactable = false;
             }
         }
+    }
+
+    [Command]
+    public void CmdSetPlayerText(string t)
+    {
+        RpcSetPlayerText(t);
+    }
+
+    [ClientRpc]
+    public void RpcSetPlayerText(string t)
+    {
+        playerButton.GetComponentInChildren<Text>().text = t;
     }
 
     [Command]

@@ -40,6 +40,16 @@ public class GUIManagerScript : MonoBehaviour {
         GameObject gm = GameObject.Find("LOCAL Player");
         gm.GetComponent<LocalPlayerScript>().BackButtonPressed();
     }
+    
+    public void SetPlayerText()
+    {
+        GameObject obj = GameObject.Find("UI_NameInput");
+        InputField field = obj.GetComponent<InputField>();
+
+        GameObject player = GameObject.Find("LOCAL Player");
+        NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
+        nps.CmdSetPlayerText(field.text);
+    }
 
     public static void SetButton(bool enabled)
     {
