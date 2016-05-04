@@ -127,10 +127,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
 
-    public override void Update()
+    public void Update()
     {
-        base.Update();
-
         if (isServer)
             captainsCountdown = mess.CountdownTimer();
     }
@@ -213,7 +211,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
     public void ToggleReady()
     {
-        SetReady(!readyToBegin);
+        SetReady(!ready);
     }
 
     public void MainButtonPressed()
@@ -375,9 +373,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         // Bullshit code. Temp? Maybe not?
         // What if player WAS ready, but now that we're actually starting they are no longer?
         // Too late for them! Let's double check
-        if (!readyToBegin)
+        if (!ready)
         {
-            Assert.IsFalse(readyToBegin, "Player wasn't ready, but the server thought they were!");
+            Assert.IsFalse(ready, "Player wasn't ready, but the server thought they were!");
             // Oh noes! What do we do? Let's cheat:
             SetReady(true);
             // See buddy, you were ready the whole time, right?

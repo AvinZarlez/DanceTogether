@@ -19,6 +19,8 @@ public class GameListenerScript : CaptainsMessListener
 	public Text networkStateField;
     //public ExampleGameSession gameSession;
 
+    public GameObject gameManagerPrefab;
+
     public void Start()
 	{
 		networkState = NetworkState.Offline;
@@ -26,7 +28,13 @@ public class GameListenerScript : CaptainsMessListener
         //networkStateField = GameObject.Find("UI_NetworkStateField").GetComponent<Text>();
     }
 
-	public override void OnStartConnecting()
+    public override void OnServerCreated()
+    {
+        GameObject gameManager = Instantiate(gameManagerPrefab);
+        NetworkServer.Spawn(gameManager);
+    }
+
+    public override void OnStartConnecting()
 	{
 		networkState = NetworkState.Connecting;
 	}
