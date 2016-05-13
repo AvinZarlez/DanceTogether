@@ -124,8 +124,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             transform.localPosition = Vector3.zero;
         }
 
-        // Disable screen dimming
-        Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
 
     public void Update()
