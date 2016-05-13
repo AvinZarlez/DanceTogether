@@ -25,9 +25,6 @@ public class GameManagerScript : NetworkBehaviour
         {
             instance = this;
         }
-        Application.runInBackground = true;
-        // Disable screen dimming
-        Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
 
     void Start()

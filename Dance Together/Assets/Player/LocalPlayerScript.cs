@@ -39,6 +39,11 @@ public class LocalPlayerScript : MonoBehaviour
 
         transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
         startingLocation = transform.position;
+
+
+        Application.runInBackground = true;
+        // Disable screen dimming
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
 
     void OnTriggerEnter2D(Collider2D other)
