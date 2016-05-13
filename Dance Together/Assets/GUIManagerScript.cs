@@ -12,6 +12,8 @@ public class GUIManagerScript : MonoBehaviour {
 
     private static Text buttonText;
 
+    private static GameObject nameInputObject;
+
     // Use this for initialization
     void Start ()
     {
@@ -19,6 +21,9 @@ public class GUIManagerScript : MonoBehaviour {
         gameButtonObject = GameObject.Find("UI_GameButton");
         gameButton = gameButtonObject.GetComponent<Button>();
         buttonText = gameButtonObject.GetComponentInChildren<Text>();
+
+        nameInputObject = GameObject.Find("UI_NameInput");
+        SetInput(false);
 
         SetButton(false);
         SetBackButton(false);
@@ -43,8 +48,7 @@ public class GUIManagerScript : MonoBehaviour {
     
     public void SetPlayerText()
     {
-        GameObject obj = GameObject.Find("UI_NameInput");
-        InputField field = obj.GetComponent<InputField>();
+        InputField field = nameInputObject.GetComponent<InputField>();
 
         GameObject player = GameObject.Find("LOCAL Player");
         NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
@@ -54,6 +58,11 @@ public class GUIManagerScript : MonoBehaviour {
     public static void SetButton(bool enabled)
     {
         gameButtonObject.SetActive(enabled);
+    }
+
+    public static void SetInput(bool enabled)
+    {
+        nameInputObject.SetActive(enabled);
     }
 
     public static void SetButtonText(string s)

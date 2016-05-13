@@ -118,6 +118,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             start.x = -160;
             start.y += 256;
             transform.localPosition = start;
+            
+            GUIManagerScript.SetInput(true);
         }
         else
         {
@@ -306,6 +308,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     {
         GUIManagerScript.SetReplayButton(false);
 
+        GUIManagerScript.SetInput(true);
+
         List<CaptainsMessPlayer> players = GetPlayers();
         foreach (CaptainsMessPlayer player in players)
         {
@@ -394,6 +398,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         matchSongID = -1;
         matchTime = -1;
         GUIManagerScript.SetButton(false);
+
+        GUIManagerScript.SetInput(false);
+
 
         AudioManagerScript.instance.StartGameMusic();
 
