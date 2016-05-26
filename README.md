@@ -134,6 +134,7 @@ This game was created by [Tobiah Zarlez](http://www.TobiahZ.com).
 ### Third Party Libraries/SDKs used ###
 
 - [Captain's Mess](https://github.com/hengineer/CaptainsMess) by Henry Smith
+- [DOTween](http://dotween.demigiant.com/) by demigiant
 
 ## Development Roadmap ##
 
