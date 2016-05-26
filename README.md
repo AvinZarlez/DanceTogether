@@ -58,13 +58,13 @@ If you'd like to play again, hit the "Play Again" button. Once every player has 
 
 ### Scoring: ###
 
-If you are the first player to lock in a choice, you get an additional 150 points.
+If you are the first player to lock in a choice, you get an additional 100 points.
 
 For every second left on the clock when you locked in your choice, you get an additional 10 points.
 
-At the end of the round, if you guessed correctly you will get 500 points. Also, if your dance partner guessed correctly, you will get 250 points.
+At the end of the round, if your dance partner guessed correctly you will get 500 points and they will get 250.
 
-That means if both you and your dance partner guessed correctly you will both earn a total of 750 points. However, if one of you guesses incorrectly, one will recieve 500 points and the other only 250.
+That means if both you and your dance partner guessed correctly you will both earn a total of 750 points. However, if only one of you guesses correctly, the correct guesser will get 250 points and their partner 500. For maximum points, make sure your dance partner knows you're the correct choice! 
 
 ### What was the inspiration behind the game? ###
 
