@@ -487,6 +487,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 }
             }
         }
+
         //Bonus for player who guessed first.
         if (bonusPlayer != null) //If this is null, nobody guessed anything. Lame!
         {
