@@ -133,7 +133,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         playerButton = transform.Find("PlayerButton").gameObject;
 
         playerButton.transform.SetParent(playerParent.transform);
-       
+
         if (isLocalPlayer)
         {
             playerButton.SetActive(true);
@@ -142,7 +142,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             start.x = -160;
             start.y += 256;
             playerButton.transform.localPosition = start;
-            
+
             GUIManagerScript.SetInput(true);
         }
         else
@@ -162,7 +162,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     {
         gameObject.name = "LOCAL Player";
 
-        GameManagerScript.instance.CmdSetNPS();
+        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+
+        Assert.IsNotNull<GameManagerScript>(gameManager);
+
+        gameManager.CmdSetNPS();
 
         remotePScript.enabled = false;
         localPScript.enabled = true;
@@ -214,7 +218,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
     public void MainButtonPressed()
     {
-        if (GameManagerScript.instance.IsInPostGame())
+        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+
+        Assert.IsNotNull<GameManagerScript>(gameManager);
+
+        if (gameManager.IsInPostGame())
         {
             CmdReplayGame();
         }
@@ -226,16 +234,20 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
     public void PlayerButtonPressed()
     {
+        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+
+        Assert.IsNotNull<GameManagerScript>(gameManager);
+
         if (isLocalPlayer)
         {
-            if (!GameManagerScript.instance.IsGameStarted())
+            if (!gameManager.IsGameStarted())
             {
                 ToggleReady();
             }
         }
         else
         {
-            if (GameManagerScript.instance.IsGameStarted())
+            if (gameManager.IsGameStarted())
             {
 
                 List<CaptainsMessPlayer> players = GetPlayers();
@@ -320,7 +332,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     {
         Assert.AreNotEqual<int>(-1, song, "No player was matched");
 
-        RpcSetMatchSongID(song, GameManagerScript.instance.countDown);
+        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+
+        Assert.IsNotNull<GameManagerScript>(gameManager);
+
+        RpcSetMatchSongID(song, gameManager.countDown);
     }
 
     [ClientRpc]
@@ -331,15 +347,23 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         if (AreAllPlayersMatched())
         {
+            GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+
+            Assert.IsNotNull<GameManagerScript>(gameManager);
+
             //Every player is matched, end the game early.
-            GameManagerScript.instance.CmdEndGame();
+            gameManager.CmdEndGame();
         }
     }
 
     [Command]
     public void CmdReplayGame()
     {
-        GameManagerScript.instance.CmdReplayGame();
+        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+
+        Assert.IsNotNull<GameManagerScript>(gameManager);
+
+        gameManager.CmdReplayGame();
 
         List<CaptainsMessPlayer> players = GetPlayers();
         foreach (CaptainsMessPlayer player in players)
@@ -347,6 +371,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             player.GetComponent<NetworkedPlayerScript>().RpcReplayGame();
         }
     }
+
     [ClientRpc]
     public void RpcReplayGame()
     {
@@ -444,9 +469,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         GUIManagerScript.SetButton(false);
 
         GUIManagerScript.SetInput(false);
-        
+
         AudioManagerScript.instance.StartGameMusic();
-        
+
         List<CaptainsMessPlayer> players = GetPlayers();
         foreach (CaptainsMessPlayer player in players)
         {

@@ -22,17 +22,26 @@ public class GameListenerScript : CaptainsMessListener
     public GameObject gameManagerPrefab;
 
     public void Start()
-	{
-		networkState = NetworkState.Offline;
+    {
+        ClientScene.RegisterPrefab(gameManagerPrefab);
+
+        networkState = NetworkState.Offline;
 
         //networkStateField = GameObject.Find("UI_NetworkStateField").GetComponent<Text>();
     }
 
     public override void OnServerCreated()
     {
-        ClientScene.RegisterPrefab(gameManagerPrefab);
-        GameObject gameManager = Instantiate(gameManagerPrefab);
-        NetworkServer.Spawn(gameManager);
+        GameManagerScript oldgameManager = FindObjectOfType<GameManagerScript>();
+        if (oldgameManager == null)
+        {
+            GameObject gameManager = Instantiate(gameManagerPrefab);
+            NetworkServer.Spawn(gameManager);
+        }
+        else
+        {
+            Debug.LogError("GameManager already exists!");
+        }
     }
 
     public override void OnStartConnecting()
@@ -63,13 +72,22 @@ public class GameListenerScript : CaptainsMessListener
 	{
         //gameSession.OnCountdownStarted();
 
-        GameManagerScript.instance.CmdRotatePlayers(true);
+        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+        if (gameManager != null)
+        {
+            gameManager.CmdRotatePlayers(true);
+        }
     }
 
 	public override void OnCountdownCancelled()
 	{
         //gameSession.OnCountdownCancelled();
-        GameManagerScript.instance.CmdRotatePlayers(false);
+
+        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+        if (gameManager != null)
+        {
+            gameManager.CmdRotatePlayers(false);
+        }
     }
 
 	public override void OnStartGame(List<CaptainsMessPlayer> aStartingPlayers)
@@ -77,7 +95,11 @@ public class GameListenerScript : CaptainsMessListener
 		Debug.Log("GO!");
         //gameSession.OnStartGame(aStartingPlayers);
 
-        GameManagerScript.instance.CmdStartMainCountdown();
+        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+        if (gameManager != null)
+        {
+            gameManager.CmdStartMainCountdown();
+        }
     }
 
 	public override void OnAbortGame()
@@ -85,7 +107,11 @@ public class GameListenerScript : CaptainsMessListener
 		Debug.Log("ABORT!");
         //gameSession.OnAbortGame();
 
-        GameManagerScript.instance.CmdEndGame();
+        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+        if (gameManager != null)
+        {
+            gameManager.CmdEndGame();
+        }
     }
 
 	void Update()

@@ -41,8 +41,11 @@ public class LocalPlayerScript : MonoBehaviour
 
     void Update()
     {
+        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
 
-        if (GameManagerScript.instance.IsInPostGame())
+        Assert.IsNotNull<GameManagerScript>(gameManager);
+
+        if (gameManager.IsInPostGame())
         {
             countdownText.enabled = false;
             infoText.enabled = true; // Redundent?
@@ -64,7 +67,7 @@ public class LocalPlayerScript : MonoBehaviour
         {
             detailsText.enabled = false;
 
-            float countDown = GameManagerScript.instance.countDown;
+            float countDown = gameManager.countDown;
 
             float captainsCountdown = networkedPScript.captainsCountdown;
             if (captainsCountdown > 0)
