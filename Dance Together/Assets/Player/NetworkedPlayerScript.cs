@@ -23,6 +23,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     private int score;
 
     [SyncVar]
+    private bool scored_GuessedCorrect;
+    [SyncVar]
+    private bool scored_WasGuessed;
+
+    [SyncVar]
     private int songID;
 
     [SyncVar]
@@ -68,20 +73,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         }
 
         return allPlayersMatched;
-    }
-
-    // NOTE: Doesn't add score. Simply checks if will score.
-    public int DoesScoreThisGame()
-    {
-        int msid = GetMatchSongID();
-        if (msid != -1)
-        {
-            if (msid == GetSongID())
-            {
-                return msid;
-            }
-        }
-        return -1;
     }
 
     void SetReady(bool ready)
@@ -493,7 +484,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public void CmdEndGame()
     {
         List<CaptainsMessPlayer> players = GetPlayers();
-        HashSet<int> scroingSongs = new HashSet<int>();
         CaptainsMessPlayer bonusPlayer = null;
         float longestMatchTime = -1;
         foreach (CaptainsMessPlayer player in players)
@@ -504,19 +494,36 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             float currentMatchTime = nps.matchTime;
             if (currentMatchTime != -1)
             {
-                int returned = nps.DoesScoreThisGame();
 
-                if (returned != -1)
+                int msid = nps.GetMatchSongID();
+                if (msid != -1)
                 {
-                    scroingSongs.Add(returned);
-                    nps.CmdAddScore(250);
+                    if (msid == GetSongID())
+                    {
+                        nps.scored_GuessedCorrect = true;
+
+                        foreach (CaptainsMessPlayer sub_player in players)
+                        {
+                            if (!sub_player.Equals(player))
+                            {
+                                NetworkedPlayerScript sub_nps = player.GetComponent<NetworkedPlayerScript>();
+
+                                if (sub_nps.GetSongID() == nps.GetMatchSongID())
+                                {
+                                    nps.scored_WasGuessed = true;
+                                }
+                            }
+                        }
+
+                    }
+
+                    if (currentMatchTime > longestMatchTime)
+                    {
+                        longestMatchTime = currentMatchTime;
+                        bonusPlayer = player;
+                    }
                 }
 
-                if (currentMatchTime > longestMatchTime)
-                {
-                    longestMatchTime = currentMatchTime;
-                    bonusPlayer = player;
-                }
             }
         }
 
@@ -530,12 +537,15 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
 
-            if (scroingSongs.Contains(nps.DoesScoreThisGame()))
+            if (nps.scored_GuessedCorrect)
+            {
+                nps.CmdAddScore(250);
+            }
+            if (nps.scored_WasGuessed)
             {
                 nps.CmdAddScore(500);
             }
         }
-    }
 
     [ClientRpc]
     public void RpcEndGame()
