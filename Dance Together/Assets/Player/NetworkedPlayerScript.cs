@@ -400,12 +400,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         GUIManagerScript.SetButton(false);
 
         GUIManagerScript.SetInput(false);
-
-
+        
         AudioManagerScript.instance.StartGameMusic();
-
-
-
+        
         List<CaptainsMessPlayer> players = GetPlayers();
         foreach (CaptainsMessPlayer player in players)
         {
