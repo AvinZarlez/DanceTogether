@@ -176,40 +176,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         return matchSongID;
     }
 
-    [Command]
-    void CmdSetColor()
-    {
-        List<int> playerColors = new List<int>();
-
-        int length = ColorScript.colors.Length;
-        for (int i = 0; i < length; i++)
-        {
-            playerColors.Add(i);
-        }
-
-        List<CaptainsMessPlayer> players = GetPlayers();
-        foreach (CaptainsMessPlayer player in players)
-        {
-            playerColors.Remove(player.GetComponent<NetworkedPlayerScript>().GetColor());
-        }
-
-        RpcSetColor(playerColors[0]);   //<- new, always get first way. Old random way: Random.Range(0, playerColors.Count)]);
-    }
-
-    [ClientRpc]
-    void RpcSetColor(int c)
-    {
-        color = c;
-        SetColor();
-
-        if (isLocalPlayer)
-        {
-            Color clr = ColorScript.GetColor(c);
-            clr = clr * 0.25f;
-            Camera.main.backgroundColor = clr;
-        }
-    }
-
     public void ToggleReady()
     {
         SetReady(!ready);
@@ -256,6 +222,40 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 playerButton.SetActive(true);
                 playerButton.GetComponent<Button>().interactable = false;
             }
+        }
+    }
+
+    [Command]
+    void CmdSetColor()
+    {
+        List<int> playerColors = new List<int>();
+
+        int length = ColorScript.colors.Length;
+        for (int i = 0; i < length; i++)
+        {
+            playerColors.Add(i);
+        }
+
+        List<CaptainsMessPlayer> players = GetPlayers();
+        foreach (CaptainsMessPlayer player in players)
+        {
+            playerColors.Remove(player.GetComponent<NetworkedPlayerScript>().GetColor());
+        }
+
+        RpcSetColor(playerColors[0]);   //<- new, always get first way. Old random way: Random.Range(0, playerColors.Count)]);
+    }
+
+    [ClientRpc]
+    void RpcSetColor(int c)
+    {
+        color = c;
+        SetColor();
+
+        if (isLocalPlayer)
+        {
+            Color clr = ColorScript.GetColor(c);
+            clr = clr * 0.25f;
+            Camera.main.backgroundColor = clr;
         }
     }
 
