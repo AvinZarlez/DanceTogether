@@ -4,9 +4,6 @@ using System.Collections.Generic;
 
 public class LocalPlayerScript : MonoBehaviour
 {
-    [HideInInspector] // Don't need to see the starting location, does need to be public so RemotePlayerScript can get it.
-    public Vector3 startingLocation; // Where the player object starts
-
     // To make referencing easier/less calls.
     //private PlayerParentScript playerParentScript;
     private NetworkedPlayerScript networkedPScript;
@@ -31,10 +28,6 @@ public class LocalPlayerScript : MonoBehaviour
         GameObject obj3 = GameObject.Find("UI_DetailsText");
         detailsText = obj3.GetComponent<Text>();
         detailsText.enabled = false;
-
-        transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
-        startingLocation = transform.position;
-
 
         Application.runInBackground = true;
         // Disable screen dimming
