@@ -16,6 +16,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     private GameObject playerParent;
 
     [SyncVar]
+    private int score;
+
+    [SyncVar]
     private int songID;
 
     [SyncVar]
@@ -61,6 +64,20 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         }
 
         return allPlayersMatched;
+    }
+
+    // NOTE: Doesn't add score. Simply checks if will score.
+    public int DoesScoreThisGame()
+    {
+        int msid = GetMatchSongID();
+        if (msid != -1)
+        {
+            if (msid == GetSongID())
+            {
+                return msid;
+            }
+        }
+        return -1;
     }
 
     void SetReady(bool ready)
@@ -166,6 +183,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         return color;
     }
 
+    public int GetScore()
+    {
+        return score;
+    }
+
     public int GetSongID()
     {
         return songID;
@@ -269,6 +291,19 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public void RpcSetPlayerText(string t)
     {
         playerButton.GetComponentInChildren<Text>().text = t;
+    }
+
+    [Command]
+    public void CmdAddScore(int value)
+    {
+        Assert.AreNotEqual<int>(0, value, "Score not modified - passed 0");
+        RpcAddScore(value);
+    }
+
+    [ClientRpc]
+    public void RpcAddScore(int value)
+    {
+        score += value;
     }
 
     [Command]
@@ -424,11 +459,49 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public void CmdEndGame()
     {
         List<CaptainsMessPlayer> players = GetPlayers();
+        HashSet<int> scroingSongs = new HashSet<int>();
+        CaptainsMessPlayer bonusPlayer = null;
+        float longestMatchTime = -1;
         foreach (CaptainsMessPlayer player in players)
         {
-            player.GetComponent<NetworkedPlayerScript>().RpcEndGame();
+            NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
+            nps.RpcEndGame();
+
+            float currentMatchTime = nps.matchTime;
+            if (currentMatchTime != -1)
+            {
+                int returned = nps.DoesScoreThisGame();
+
+                if (returned != -1)
+                {
+                    scroingSongs.Add(returned);
+                    nps.CmdAddScore(250);
+                }
+
+                if (currentMatchTime > longestMatchTime)
+                {
+                    longestMatchTime = currentMatchTime;
+                    bonusPlayer = player;
+                }
+            }
+        }
+        //Bonus for player who guessed first.
+        if (bonusPlayer != null) //If this is null, nobody guessed anything. Lame!
+        {
+            bonusPlayer.GetComponent<NetworkedPlayerScript>().CmdAddScore(100);
+        }
+
+        foreach (CaptainsMessPlayer player in players)
+        {
+            NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
+
+            if (scroingSongs.Contains(nps.DoesScoreThisGame()))
+            {
+                nps.CmdAddScore(500);
+            }
         }
     }
+
     [ClientRpc]
     public void RpcEndGame()
     {
