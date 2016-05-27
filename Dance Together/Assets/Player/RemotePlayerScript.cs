@@ -3,8 +3,7 @@ using System.Collections;
 using DG.Tweening;
 
 public class RemotePlayerScript : MonoBehaviour {
-    [SerializeField]
-    int distance = 3;
+
     [SerializeField]
     float movementSpeed = 1.0f;
 

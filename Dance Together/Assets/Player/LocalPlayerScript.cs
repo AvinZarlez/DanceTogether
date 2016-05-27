@@ -7,11 +7,6 @@ public class LocalPlayerScript : MonoBehaviour
     [HideInInspector] // Don't need to see the starting location, does need to be public so RemotePlayerScript can get it.
     public Vector3 startingLocation; // Where the player object starts
 
-    [SerializeField] //Make this seen in the editor, but still private/local to this class.
-    private float movementSpeed = 10; // How fast does it snap back to the center?
-
-    private NetworkedPlayerScript lastCollidedWith; //Direct link to the NetworkedPlayerScript of the object we last collided with.
-    
     // To make referencing easier/less calls.
     //private PlayerParentScript playerParentScript;
     private NetworkedPlayerScript networkedPScript;
@@ -44,11 +39,6 @@ public class LocalPlayerScript : MonoBehaviour
         Application.runInBackground = true;
         // Disable screen dimming
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
-    }
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        lastCollidedWith = other.GetComponent<NetworkedPlayerScript>();
     }
     
     public void BackButtonPressed()
