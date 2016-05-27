@@ -3,9 +3,13 @@ using UnityEngine.Networking;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class NetworkedPlayerScript : CaptainsMessPlayer
 {
+    [SerializeField]
+    float movementSpeed = 1.0f;
+
     public GameObject playerButton;
 
     [SerializeField]
@@ -103,11 +107,14 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         foreach (CaptainsMessPlayer player in players)
         {
+            NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
             if (player.name != "LOCAL Player")
             {
-                player.GetComponent<RemotePlayerScript>().SetPosition(++i, size);
+                Vector3 goal = player.GetComponent<RemotePlayerScript>().SetPosition(++i, size);
+
+                nps.playerButton.transform.DOLocalMove(goal, movementSpeed);
             }
-            player.GetComponent<NetworkedPlayerScript>().SetColor();
+            nps.SetColor();
         }
 
         if (size >= 4)
@@ -125,7 +132,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         playerParent = GameObject.FindWithTag("PlayerParent");
         playerButton = transform.Find("PlayerButton").gameObject;
 
-        transform.SetParent(playerParent.transform);
+        playerButton.transform.SetParent(playerParent.transform);
        
         if (isLocalPlayer)
         {
@@ -134,13 +141,13 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             Vector3 start = Vector3.zero;
             start.x = -160;
             start.y += 256;
-            transform.localPosition = start;
+            playerButton.transform.localPosition = start;
             
             GUIManagerScript.SetInput(true);
         }
         else
         {
-            transform.localPosition = Vector3.zero;
+            playerButton.transform.localPosition = Vector3.zero;
         }
 
     }

@@ -1,24 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
-using DG.Tweening;
 
 public class RemotePlayerScript : MonoBehaviour {
-
-    [SerializeField]
-    float movementSpeed = 1.0f;
-
-    int position;
-    int numberOfPlayers;
-
-    void Start()
-    {
-    }
-
-    public void Reset()
-    {
-    }
-
-    public void SetPosition(int p, int numPlayers)
+    
+    public int position;
+    public int numberOfPlayers;
+    
+    public Vector3 SetPosition(int p, int numPlayers)
     {
         // Set our position, starts at 1 and goes up to (and including) numPlayers
         position = p;
@@ -34,6 +22,6 @@ public class RemotePlayerScript : MonoBehaviour {
 
         goal.z -= 1;
 
-        transform.DOLocalMove(goal, movementSpeed);
+        return goal;
     }
 }
