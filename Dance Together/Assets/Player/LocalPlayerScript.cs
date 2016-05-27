@@ -69,14 +69,13 @@ public class LocalPlayerScript : MonoBehaviour
             int match = networkedPScript.GetMatchSongID();
             if (song == match)
             {
-                infoText.text = "You Won with "+ Mathf.Floor(networkedPScript.matchTime);
-                detailsText.text = "You both were dancing to " + song.ToString();
+                infoText.text = "Correct!";
             }
             else
             {
-                infoText.text = "You Lost!";
-                detailsText.text = "You danced to " + song.ToString() + "\nThey danced to " + match.ToString();
+                infoText.text = "Wrong!";
             }
+            detailsText.text = "Current Score: " + networkedPScript.GetScore().ToString();
         }
         else
         {
