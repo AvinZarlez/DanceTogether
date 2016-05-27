@@ -19,12 +19,14 @@ public class GameManagerScript : NetworkBehaviour
     
     private NetworkedPlayerScript networkedPScript;
 
-    void Awake()
+    [Client]
+    public override void OnStartClient()
     {
-        if (instance == null)
+        if (instance)
         {
-            instance = this;
+            Debug.LogError("ERROR: Another Client!");
         }
+        instance = this;
     }
 
     void Start()
