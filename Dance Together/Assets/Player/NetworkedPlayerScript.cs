@@ -162,6 +162,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         CmdSetColor();
 
+        score = 0;
+
         base.OnStartLocalPlayer();
     }
 
