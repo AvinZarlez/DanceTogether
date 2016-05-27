@@ -30,6 +30,7 @@ public class GameListenerScript : CaptainsMessListener
 
     public override void OnServerCreated()
     {
+        ClientScene.RegisterPrefab(gameManagerPrefab);
         GameObject gameManager = Instantiate(gameManagerPrefab);
         NetworkServer.Spawn(gameManager);
     }
