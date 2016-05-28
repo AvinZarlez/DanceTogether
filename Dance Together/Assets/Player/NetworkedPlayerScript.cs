@@ -149,6 +149,27 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             captainsCountdown = mess.CountdownTimer();
     }
 
+    // Redundant? Possible. But I am not sure
+    // Unity says this is the one to use, yet OnDestroy works and possibly works better?
+    // Let's do both to be safe.
+    void OnDestroy()
+    {
+        print("Player was was destroyed");
+        Destroy(playerButton);
+
+        if (isLocalPlayer)
+        {
+            GUIManagerScript.SetInput(false);
+            GUIManagerScript.SetButton(false);
+        }
+    }
+    public override void OnNetworkDestroy()
+    {
+        OnDestroy();
+
+        base.OnNetworkDestroy();
+    }
+
     public override void OnStartLocalPlayer()
     {
         gameObject.name = "LOCAL Player";
