@@ -546,6 +546,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 nps.CmdAddScore(500);
             }
         }
+    }
 
     [ClientRpc]
     public void RpcEndGame()
