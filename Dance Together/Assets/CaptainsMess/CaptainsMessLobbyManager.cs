@@ -12,6 +12,12 @@ public class CaptainsMessLobbyManager : NetworkManager
     public CaptainsMessPlayer[] lobbySlots;
     public int maxPlayersPerConnection = 1;
 
+    public void SetMaxPlayers(int value)
+    {
+        maxPlayers = value;
+        maxConnections = maxPlayers;
+    }
+
 	// ==================== SERVER ====================
 
     public override void OnStartServer()
