@@ -94,25 +94,9 @@ public class GUIManagerScript : MonoBehaviour {
         }
     }
 
-    private static void SetBackButton(bool enabled)
+    public static void SetBackButton(bool enabled)
     {
-        backButtonObject.SetActive(enabled);
-    }
-
-    public static void SetMatchButton(bool enabled)
-    {
-        SetBackButton(enabled);
-        if (enabled)
-        {
-            SetButton(true);
-            //SetButtonInteractable(true);
-            SetButtonText("Match");
-        }
-        else
-        {
-            SetButton(false);
-            //SetButtonInteractable(false);
-            SetButtonText("Dance"); // Not needed? Redundant?
-        }
+        if (backButtonObject != null)
+            backButtonObject.SetActive(enabled);
     }
 }

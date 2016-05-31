@@ -140,6 +140,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             playerButton.transform.localPosition = start;
 
             GUIManagerScript.SetInput(true);
+            GUIManagerScript.SetBackButton(false);
         }
         else
         {
@@ -171,6 +172,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             GUIManagerScript.SetInput(false);
             GUIManagerScript.SetButton(false);
+            GUIManagerScript.SetBackButton(false);
         }
     }
     public override void OnNetworkDestroy()
@@ -286,6 +288,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
                 playerButton.SetActive(true);
                 playerButton.GetComponent<Button>().interactable = false;
+
+                GUIManagerScript.SetBackButton(true);
             }
         }
     }
@@ -493,6 +497,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         GUIManagerScript.SetButton(false);
 
         GUIManagerScript.SetInput(false);
+        GUIManagerScript.SetBackButton(false);
 
         AudioManagerScript.instance.StartGameMusic();
 
@@ -588,6 +593,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         SetReady(false);
 
         GUIManagerScript.SetReplayButton(true);
+        GUIManagerScript.SetBackButton(false);
 
         AudioManagerScript.instance.EndGameMusic();
     }
