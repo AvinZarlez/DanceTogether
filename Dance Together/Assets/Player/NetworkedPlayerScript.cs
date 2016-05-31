@@ -235,6 +235,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         return matchSongID;
     }
 
+    public void ResetMatch()
+    {
+        matchSongID = -1;
+        matchTime = -1;
+    }
+
     public void ToggleReady()
     {
         SetReady(!ready);
@@ -492,8 +498,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             SetReady(true);
             // See buddy, you were ready the whole time, right?
         }
-        matchSongID = -1;
-        matchTime = -1;
+        ResetMatch();
         GUIManagerScript.SetButton(false);
 
         GUIManagerScript.SetInput(false);
