@@ -124,6 +124,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         playerButton = transform.Find("PlayerButton").gameObject;
 
         playerButton.transform.SetParent(playerParent.transform, false);
+        playerButton.transform.localScale = Vector3.one;
 
         if (isLocalPlayer)
         {
