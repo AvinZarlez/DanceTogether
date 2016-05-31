@@ -8,7 +8,7 @@ using DG.Tweening;
 public class NetworkedPlayerScript : CaptainsMessPlayer
 {
     [SerializeField]
-    float movementSpeed = 1.0f;
+    private float movementSpeed = 1.0f;
 
     public GameObject playerButton;
     private Outline playerButtonOutline;
