@@ -123,7 +123,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         playerParent = GameObject.FindWithTag("PlayerParent");
         playerButton = transform.Find("PlayerButton").gameObject;
 
-        playerButton.transform.SetParent(playerParent.transform);
+        playerButton.transform.SetParent(playerParent.transform, false);
 
         if (isLocalPlayer)
         {
