@@ -1,28 +1,28 @@
-# \#DanceTogether #
+﻿# \#DanceTogether #
 
-## About The Game: ##
+## About The Game: ##	
 
 \#DanceTogether is game about expressing music through dance.
 
 ### What is \#DanceTogether? ###
 
-Each round, you and **one** other player are listening to the same song.
+Each round, only you and **one** other player are listening to the same song.
 
-No talking. No hand gestures. No commmincation *of any kind*, except for Dance.
+No talking. No hand gestures. No communication *of any kind*, except for Dance.
 
 Find your dance partner.
 
 ### Requirements: ###
 
 - 4 to 9 players (even numbers recommended)
-- A "dance floor" large enough for everyone to dance simutaniously 
+- A "dance floor" large enough for everyone to dance simultaneously 
 - Each player has their own device **with headphones**.
 
 ### How to set up the game: ###
 
 Have each player make sure their devices are all on *the same* WiFi network.
 
-**NOTE:** Peer to peer commications have to be enabled on the network. This may not work on some public WiFi network.
+**NOTE:** Peer to peer communication have to be enabled on the network. This may not work on some public WiFi network.
 
 Start the game and choose "Find Other Players"
 
@@ -30,11 +30,11 @@ Start the game and choose "Find Other Players"
 
 In theory, the game should automatically detect and join a game.
 
-**NOTE:** If you have issues getting a player connect, have all players "Disconnnect" and start over.
+**NOTE:** If you have issues getting a player connect, have all players "Disconnect" and start over.
 
 Once you are in the game, your game background will change to match your player color.
 
-At the top, you can enter up to 3 characters to idenifty yourself to the other players. In the middle, you can see who else is currently in the game. At the bottom, "Ready" and "Back" buttons.
+At the top, you can enter a name to identify yourself to the other players. In the middle, you can see who else is currently in the game. At the bottom, "Ready" and "Back" buttons.
 
 When you are ready, click the "Ready" button on your screen. Once every player has marked themselves as "Ready", the game will begin.
 
@@ -44,13 +44,13 @@ Once you hear music, start dancing!
 
 Watch the other players closely, and decide which player is listening to the same song as you.
 
-**NOTE:** Remember to show the other players your screen so they can see your color/idenity characters!
+**NOTE:** Remember to show the other players your screen so they can see your color/identity characters!
 
 Once you've decided, tap the player you think is right. Don't stop dancing yet! Other players need to decide if they're a match to you.
 
 When every player has chosen, or 60 seconds has passed, the music will stop and you may stop dancing.
 
-Scores are given, and after 15 seconds the next round will automatically start.
+Scores are given, and after every player hits reply the next round will start.
 
 After three rounds, the final scores are given and a winner is declared.
 
@@ -60,7 +60,7 @@ If you'd like to play again, hit the "Play Again" button. Once every player has 
 
 If you are the first player to lock in a choice, you get an additional 100 points.
 
-For every second left on the clock when you locked in your choice, you get an additional 10 points.
+For every second left on the clock when you locked in your choice, you get an additional 5 points.
 
 At the end of the round, if your dance partner guessed correctly you will get 500 points and they will get 250.
 
@@ -70,25 +70,25 @@ That means if both you and your dance partner guessed correctly you will both ea
 
 Tobiah got the idea to create this game at a friend's wedding. At the wedding, they had a "Silent Disco", where a DJ played music directly into a series of wireless headphones. Tobiah noticed that anybody who didn't like the current song put the headphones down stopped dancing. He thought to himself: "Wouldn't it have been great if we had two of these going at once, so everybody could dance together?"
 
-Immidately, the idea for the game was born.
+Immediately, the idea for the game was born.
 
 ## Open Source: ##
 
-All of the code and Unity project files are licenced under the [MIT License](LICENSE.txt).
+All of the code and Unity project files are licensed under the [MIT License](LICENSE.txt).
 
-Certain music assets may contain different licences, see credits for details.
+Certain music assets may contain different licenses, see credits for details.
 
 ### Why make the game open source? ###
 
 This project is about making a fun game for people to play together, not about generating revenue.
 
-Open sourcing the game has some distinked advantages:
+Open sourcing the game has some advantages:
 
 - Free for all: Players can install the game on as many devices as they want, with no in app purchases or ads.
 - Community Built: Game developers from all over the world can contribute features and bug fixes to the game.
 - Learning Resource: Making your own local network based Unity game? Use this as an example! Learn from a real world working project.
 
-That said, Tobiah Zarlez has released official verions of the game on the following platforms:
+That said, Tobiah Zarlez has released official versions of the game on the following platforms:
 
 - None yet. Coming soon.
 
