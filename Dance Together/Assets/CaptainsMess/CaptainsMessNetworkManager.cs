@@ -158,8 +158,8 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
         bool shouldJoin = false;
         bool isMe = (aServer.peerId == peerId);
 
-        #if UNITY_EDITOR
-            isMe = false;
+        #if UNITY_EDITOR || UNITY_STANDALONE_WIN
+        isMe = false;
         #endif
 
         if (!isMe)
