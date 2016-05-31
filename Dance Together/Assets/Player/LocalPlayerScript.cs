@@ -43,9 +43,15 @@ public class LocalPlayerScript : MonoBehaviour
         List<CaptainsMessPlayer> players = networkedPScript.GetPlayers();
         foreach (CaptainsMessPlayer player in players)
         {
-            player.GetComponent<NetworkedPlayerScript>().playerButton.SetActive(true);
-            player.GetComponent<NetworkedPlayerScript>().playerButton.GetComponent<Button>().interactable = true;
+            NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
+            if (!nps.isLocalPlayer)
+            {
+                nps.playerButton.SetActive(true);
+                nps.playerButton.GetComponent<Button>().interactable = true;
+            }
         }
+
+        GUIManagerScript.SetBackButton(false);
     }
 
     void Update()
