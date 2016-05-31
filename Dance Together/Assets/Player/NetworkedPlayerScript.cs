@@ -11,6 +11,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     float movementSpeed = 1.0f;
 
     public GameObject playerButton;
+    private Outline playerButtonOutline;
 
     [SerializeField]
     public LocalPlayerScript localPScript; //TEMP made public for checking in sort players
@@ -126,6 +127,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         playerButton.transform.SetParent(playerParent.transform, false);
         playerButton.transform.localScale = Vector3.one;
 
+        playerButtonOutline = playerButton.GetComponent<Outline>();
+        playerButtonOutline.enabled = false;
+
         if (isLocalPlayer)
         {
             playerButton.SetActive(true);
@@ -141,13 +145,18 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             playerButton.transform.localPosition = Vector3.zero;
         }
-
     }
 
     public void Update()
     {
         if (isServer)
             captainsCountdown = mess.CountdownTimer();
+
+
+        if (ready)
+            playerButtonOutline.enabled = true;
+        else
+            playerButtonOutline.enabled = false;
     }
 
     // Redundant? Possible. But I am not sure
