@@ -57,12 +57,14 @@ public class GUIManagerScript : MonoBehaviour {
 
     public static void SetButton(bool enabled)
     {
-        gameButtonObject.SetActive(enabled);
+        if (gameButtonObject != null)
+            gameButtonObject.SetActive(enabled);
     }
 
     public static void SetInput(bool enabled)
     {
-        nameInputObject.SetActive(enabled);
+        if (nameInputObject != null)
+            nameInputObject.SetActive(enabled);
     }
 
     public static void SetButtonText(string s)
