@@ -15,7 +15,7 @@ public class GameManagerScript : NetworkBehaviour
     private byte currentGameState;
     // 200+ means the game is running
 
-    private const float gameLength = 90; // How long the game lasts, in seconds.
+    private const float gameLength = 60; // How long the game lasts, in seconds.
     
     private NetworkedPlayerScript networkedPScript;
 
