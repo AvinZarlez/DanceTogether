@@ -329,7 +329,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     [Command]
     public void CmdAddScore(int value)
     {
-        Assert.AreNotEqual<int>(0, value, "Score not modified - passed 0");
+        // Don't need this assert, because maybe it's ok if 0 is passed?
+        // Example: When the guess is locked in right when the clock hits 0?
+        //Assert.AreNotEqual<int>(0, value, "Score not modified - passed 0");
         RpcAddScore(value);
     }
 
@@ -515,6 +517,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             float currentMatchTime = nps.matchTime;
             if (currentMatchTime != -1)
             {
+                nps.CmdAddScore(10 * Mathf.FloorToInt(currentMatchTime));
 
                 int msid = nps.GetMatchSongID();
                 if (msid != -1)
