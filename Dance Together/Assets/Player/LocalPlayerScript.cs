@@ -37,7 +37,15 @@ public class LocalPlayerScript : MonoBehaviour
     
     public void BackButtonPressed()
     {
-        // Nothing happens
+        // Oops, let's reset the match ID
+        networkedPScript.ResetMatch();
+        
+        List<CaptainsMessPlayer> players = networkedPScript.GetPlayers();
+        foreach (CaptainsMessPlayer player in players)
+        {
+            player.GetComponent<NetworkedPlayerScript>().playerButton.SetActive(true);
+            player.GetComponent<NetworkedPlayerScript>().playerButton.GetComponent<Button>().interactable = true;
+        }
     }
 
     void Update()
