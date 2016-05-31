@@ -537,13 +537,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             float currentMatchTime = nps.matchTime;
             if (currentMatchTime != -1)
             {
-                nps.CmdAddScore(10 * Mathf.FloorToInt(currentMatchTime));
-
                 int msid = nps.GetMatchSongID();
                 if (msid != -1)
                 {
                     if (msid == GetSongID())
                     {
+                        nps.CmdAddScore(5 * Mathf.FloorToInt(currentMatchTime));
                         nps.scored_GuessedCorrect = true;
 
                         foreach (CaptainsMessPlayer sub_player in players)
