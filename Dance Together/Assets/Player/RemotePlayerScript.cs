@@ -1,8 +1,14 @@
 ﻿using UnityEngine;
+using DG.Tweening;
 using System.Collections;
 
 public class RemotePlayerScript : MonoBehaviour {
-    
+
+    #if UNITY_EDITOR
+    //Debugging Varibles
+    public bool debug_SortPlayers;
+    #endif
+
     public int position;
     public int numberOfPlayers;
     
@@ -23,5 +29,16 @@ public class RemotePlayerScript : MonoBehaviour {
         goal.z -= 1;
 
         return goal;
+    }
+    
+    public void Update()
+    {
+        #if UNITY_EDITOR
+        if (debug_SortPlayers)
+        {
+            debug_SortPlayers = false;
+            GetComponent<NetworkedPlayerScript>().playerButton.transform.DOLocalMove(SetPosition(position, numberOfPlayers), 0.5f);
+        }
+        #endif
     }
 }

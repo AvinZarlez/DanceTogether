@@ -157,6 +157,11 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
 
         bool shouldJoin = false;
         bool isMe = (aServer.peerId == peerId);
+
+        #if UNITY_EDITOR
+            isMe = false;
+        #endif
+
         if (!isMe)
         {
             if (aServer.isOpen && aServer.numPlayers < maxPlayers)
