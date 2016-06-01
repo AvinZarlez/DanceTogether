@@ -162,6 +162,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             playerButton.transform.localPosition = Vector3.zero;
 
             GUIManagerScript.SetInput(true);
+            GUIManagerScript.DisableInput(false);
             GUIManagerScript.SetBackButton(false);
         }
     }
@@ -357,6 +358,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         if (isLocalPlayer)
         {
             Color clr = ColorScript.GetColor(c);
+            GUIManagerScript.SetInputColor(clr);
             clr = clr * 0.25f;
             Camera.main.backgroundColor = clr;
         }
@@ -446,7 +448,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     {
         GUIManagerScript.SetReplayButton(false);
 
-        GUIManagerScript.SetInput(true);
+        GUIManagerScript.DisableInput(false);
 
         List<CaptainsMessPlayer> players = GetPlayers();
         foreach (CaptainsMessPlayer player in players)
@@ -457,6 +459,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 nps.playerButton.SetActive(true);
             }
             nps.playerButton.GetComponent<Button>().interactable = false;
+            
+            Vector3 goal = player.GetComponent<RemotePlayerScript>().GetPosition();
+            nps.playerButton.transform.DOLocalMove(goal, nps.fastMovementSpeed);
         }
     }
 
@@ -540,9 +545,10 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         }
         ResetMatch();
         GUIManagerScript.SetButton(false);
-
-        GUIManagerScript.SetInput(false);
+        
+        GUIManagerScript.DisableInput(true);
         GUIManagerScript.SetBackButton(false);
+
 
         AudioManagerScript.instance.StartGameMusic();
 
@@ -603,10 +609,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 }
 
             }
-
-            Vector3 goal = player.GetComponent<RemotePlayerScript>().GetPosition();
-
-            nps.playerButton.transform.DOLocalMove(goal, nps.fastMovementSpeed);
         }
 
         //Bonus for player who guessed first.

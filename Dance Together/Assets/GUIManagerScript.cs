@@ -23,17 +23,17 @@ public class GUIManagerScript : MonoBehaviour {
     // Use this for initialization
     void Start ()
     {
-        backButtonObject = GameObject.Find("UI_BackButton");
         gameButtonObject = GameObject.Find("UI_GameButton");
         gameButton = gameButtonObject.GetComponent<Button>();
         buttonText = gameButtonObject.GetComponentInChildren<Text>();
         SetMainButtonHighlight(false);
+        SetButton(false);
+
+        backButtonObject = GameObject.Find("UI_BackButton");
+        SetBackButton(false);
 
         nameInputObject = GameObject.Find("UI_NameInput");
         SetInput(false);
-
-        SetButton(false);
-        SetBackButton(false);
 
         scoreText = GameObject.Find("UI_Score").GetComponent<Text>();
         scoreText.enabled = false;
@@ -87,6 +87,17 @@ public class GUIManagerScript : MonoBehaviour {
     {
         if (nameInputObject != null)
             nameInputObject.SetActive(enabled);
+    }
+
+    public static void DisableInput(bool enabled)
+    {
+        if (nameInputObject != null)
+            nameInputObject.GetComponent<InputField>().interactable = !enabled;
+    }
+
+    public static void SetInputColor(Color c)
+    {
+        nameInputObject.GetComponent<Image>().color = c;
     }
 
     public static void SetButtonText(string s)

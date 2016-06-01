@@ -11,6 +11,7 @@ public class AudioManagerScript : MonoBehaviour {
     public AudioClip[] gameMusic;
 
     public AudioSource gameplaySource;
+    public AudioSource menuSource;
     public float bpm = 120;
 
     private float m_TransitionIn;
@@ -49,6 +50,8 @@ public class AudioManagerScript : MonoBehaviour {
 
     public void StartMenuMusic()
     {
+        menuSource.Stop();
+        menuSource.Play();
         inMenu.TransitionTo(m_TransitionIn);
     }
 
