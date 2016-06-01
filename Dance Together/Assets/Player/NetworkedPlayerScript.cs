@@ -603,6 +603,10 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 }
 
             }
+
+            Vector3 goal = player.GetComponent<RemotePlayerScript>().GetPosition();
+
+            nps.playerButton.transform.DOLocalMove(goal, nps.fastMovementSpeed);
         }
 
         //Bonus for player who guessed first.
