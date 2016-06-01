@@ -95,6 +95,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             SendNotReadyToBeginMessage();
             GUIManagerScript.SetButtonText("Dance");
         }
+
+        GUIManagerScript.SetMainButtonHighlight(ready);
     }
 
     void SortPlayers()

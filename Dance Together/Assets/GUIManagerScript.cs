@@ -27,6 +27,7 @@ public class GUIManagerScript : MonoBehaviour {
         gameButtonObject = GameObject.Find("UI_GameButton");
         gameButton = gameButtonObject.GetComponent<Button>();
         buttonText = gameButtonObject.GetComponentInChildren<Text>();
+        SetMainButtonHighlight(false);
 
         nameInputObject = GameObject.Find("UI_NameInput");
         SetInput(false);
@@ -125,5 +126,10 @@ public class GUIManagerScript : MonoBehaviour {
     {
         scoreText.enabled = true;
         scoreText.text = "Score:\n" + score.ToString();
+    }
+
+    public static void SetMainButtonHighlight(bool highlight)
+    {
+        gameButtonObject.GetComponent<Outline>().enabled = highlight;
     }
 }
