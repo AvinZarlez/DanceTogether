@@ -11,13 +11,19 @@ public class RemotePlayerScript : MonoBehaviour {
 
     public int position;
     public int numberOfPlayers;
-    
+
     public Vector3 SetPosition(int p, int numPlayers)
     {
         // Set our position, starts at 1 and goes up to (and including) numPlayers
         position = p;
         numberOfPlayers = numPlayers;
 
+        return GetPosition();
+    }
+
+
+    public Vector3 GetPosition()
+    {
         Vector3 goal = Vector3.zero;
         int col = position % 2;
         if (col == 1) goal.x = -100;

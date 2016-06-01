@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Assertions;
+using DG.Tweening;
 using System.Collections.Generic;
 
 public class LocalPlayerScript : MonoBehaviour
@@ -48,6 +49,10 @@ public class LocalPlayerScript : MonoBehaviour
             {
                 nps.playerButton.SetActive(true);
                 nps.playerButton.GetComponent<Button>().interactable = true;
+
+                Vector3 goal = player.GetComponent<RemotePlayerScript>().GetPosition();
+
+                nps.playerButton.transform.DOLocalMove(goal, nps.fastMovementSpeed);
             }
         }
 

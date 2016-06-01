@@ -9,6 +9,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 {
     [SerializeField]
     private float movementSpeed = 1.0f;
+    public float fastMovementSpeed = 0.5f;
 
     public GameObject playerButton;
     private Outline playerButtonOutline;
@@ -102,9 +103,20 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         foreach (CaptainsMessPlayer player in players)
         {
             NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
-            if (player.name != "LOCAL Player")
+            if (!nps.isLocalPlayer)
             {
-                Vector3 goal = player.GetComponent<RemotePlayerScript>().SetPosition(++i, size);
+                nps.playerButton.SetActive(true);
+
+                RemotePlayerScript rps = player.GetComponent<RemotePlayerScript>();
+
+                Vector3 goal = rps.SetPosition(++i, size);
+
+                Vector3 start = goal;
+                if (goal.x > 0)
+                    start.x = 200 + (Screen.width / 2);
+                else
+                    start.x = -200 - (Screen.width / 2);
+                nps.playerButton.transform.localPosition = start;
 
                 nps.playerButton.transform.DOLocalMove(goal, movementSpeed);
             }
@@ -132,21 +144,15 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         playerButtonOutline = playerButton.GetComponent<Outline>();
         playerButtonOutline.enabled = false;
 
+        playerButton.SetActive(false);
+
         if (isLocalPlayer)
         {
-            playerButton.SetActive(false);
             playerButton.GetComponent<Button>().interactable = false;
-            Vector3 start = Vector3.zero;
-            start.x = -160;
-            start.y += 256;
-            playerButton.transform.localPosition = start;
+            playerButton.transform.localPosition = Vector3.zero;
 
             GUIManagerScript.SetInput(true);
             GUIManagerScript.SetBackButton(false);
-        }
-        else
-        {
-            playerButton.transform.localPosition = Vector3.zero;
         }
     }
 
@@ -297,6 +303,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
                 playerButton.SetActive(true);
                 playerButton.GetComponent<Button>().interactable = false;
+                playerButton.transform.DOLocalMove(Vector3.zero, fastMovementSpeed);
 
                 GUIManagerScript.SetBackButton(true);
             }
