@@ -353,7 +353,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             Color clr = ColorScript.GetColor(c);
             GUIManagerScript.SetInputColor(clr);
-            clr = clr * 0.25f;
+            clr = clr * 0.5f;
             Camera.main.backgroundColor = clr;
         }
     }

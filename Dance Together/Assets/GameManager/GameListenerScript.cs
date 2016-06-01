@@ -64,6 +64,8 @@ public class GameListenerScript : CaptainsMessListener
         disconnectButton.SetActive(false);
         menuParent.SetActive(true);
 
+        Camera.main.backgroundColor = new Color32(32, 32, 32, 255);
+
     }
 
 	public override void OnJoinedLobby()
@@ -84,6 +86,8 @@ public class GameListenerScript : CaptainsMessListener
 
         disconnectButton.SetActive(false);
         menuParent.SetActive(true);
+
+        Camera.main.backgroundColor = new Color32(32, 32, 32,255);
     }
 
 	public override void OnCountdownStarted()
