@@ -116,6 +116,6 @@ public class GameListenerScript : CaptainsMessListener
 
 	void Update()
 	{
-		networkStateField.text = networkState.ToString();	
+		networkStateField.text = "Status: " + networkState.ToString();	
 	}
 }

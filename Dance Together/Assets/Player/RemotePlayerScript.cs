@@ -21,7 +21,7 @@ public class RemotePlayerScript : MonoBehaviour {
         Vector3 goal = Vector3.zero;
         int col = position % 2;
         if (col == 1) goal.x = -100;
-        else if (col == 2) goal.x = 100;
+        else goal.x = 100;
 
         switch (position)
         {

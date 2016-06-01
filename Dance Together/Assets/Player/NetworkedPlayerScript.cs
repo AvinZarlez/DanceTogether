@@ -22,6 +22,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
     [SyncVar]
     private int score;
+    [SyncVar]
+    private int scoredThisRound;
 
     [SyncVar]
     private bool scored_GuessedCorrect;
@@ -132,8 +134,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         if (isLocalPlayer)
         {
-            playerButton.SetActive(true);
-            playerButton.GetComponent<Button>().interactable = true;
+            playerButton.SetActive(false);
+            playerButton.GetComponent<Button>().interactable = false;
             Vector3 start = Vector3.zero;
             start.x = -160;
             start.y += 256;
@@ -198,6 +200,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         CmdSetColor();
 
         score = 0;
+        scoredThisRound = 0;
 
         base.OnStartLocalPlayer();
     }
@@ -220,9 +223,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         return color;
     }
 
-    public int GetScore()
+    public int GetScoredThisRound()
     {
-        return score;
+        return scoredThisRound;
     }
 
     public int GetSongID()
@@ -359,6 +362,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public void RpcAddScore(int value)
     {
         score += value;
+        scoredThisRound += value;
+
+        if (isLocalPlayer)
+        {
+            GUIManagerScript.SetScoreText(score);
+        }
     }
 
     [Command]
@@ -416,8 +425,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         List<CaptainsMessPlayer> players = GetPlayers();
         foreach (CaptainsMessPlayer player in players)
         {
-            player.GetComponent<NetworkedPlayerScript>().playerButton.SetActive(true);
-            player.GetComponent<NetworkedPlayerScript>().playerButton.GetComponent<Button>().interactable = false;
+            NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
+            if (!nps.isLocalPlayer)
+            {
+                nps.playerButton.SetActive(true);
+            }
+            nps.playerButton.GetComponent<Button>().interactable = false;
         }
     }
 
@@ -485,6 +498,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public void RpcStartGame(int s)
     {
         songID = s;
+        scoredThisRound = 0;
 
         //playerParent.GetComponent<PlayerParentScript>().Unlock();
 
@@ -514,11 +528,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             {
                 player.GetComponent<NetworkedPlayerScript>().playerButton.SetActive(true);
                 player.GetComponent<NetworkedPlayerScript>().playerButton.GetComponent<Button>().interactable = true;
-            }
-            else
-            {
-                player.GetComponent<NetworkedPlayerScript>().playerButton.SetActive(false);
-                player.GetComponent<NetworkedPlayerScript>().playerButton.GetComponent<Button>().interactable = false;
             }
         }
     }

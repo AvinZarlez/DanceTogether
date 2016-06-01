@@ -12,6 +12,8 @@ public class GUIManagerScript : MonoBehaviour {
 
     private static Text buttonText;
 
+    private static Text scoreText;
+
     private static GameObject nameInputObject;
 
     // Use this for initialization
@@ -27,6 +29,8 @@ public class GUIManagerScript : MonoBehaviour {
 
         SetButton(false);
         SetBackButton(false);
+
+        scoreText = GameObject.Find("UI_Score").GetComponent<Text>();
     }
 	
 	// Update is called once per frame
@@ -98,5 +102,10 @@ public class GUIManagerScript : MonoBehaviour {
     {
         if (backButtonObject != null)
             backButtonObject.SetActive(enabled);
+    }
+
+    public static void SetScoreText(int score)
+    {
+        scoreText.text = "Score:\n" + score.ToString();
     }
 }
