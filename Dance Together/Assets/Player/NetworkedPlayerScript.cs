@@ -171,11 +171,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     {
         if (isServer)
             captainsCountdown = mess.CountdownTimer();
-    }
 
-    public override void OnClientReady(bool readyState)
-    {
-        if (readyState)
+
+        if (ready)
             playerButtonOutline.enabled = true;
         else
             playerButtonOutline.enabled = false;
@@ -551,7 +549,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         GUIManagerScript.DisableInput(true);
         GUIManagerScript.SetBackButton(false);
 
-        playerButtonOutline.enabled = false;
 
         AudioManagerScript.instance.StartGameMusic();
 
