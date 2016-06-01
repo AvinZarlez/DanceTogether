@@ -19,6 +19,9 @@ public class GameListenerScript : CaptainsMessListener
 	public Text networkStateField;
     //public ExampleGameSession gameSession;
 
+    public GameObject disconnectButton;
+    public GameObject menuParent;
+
     public GameObject gameManagerPrefab;
 
     public void Start()
@@ -28,6 +31,8 @@ public class GameListenerScript : CaptainsMessListener
         networkState = NetworkState.Offline;
 
         //networkStateField = GameObject.Find("UI_NetworkStateField").GetComponent<Text>();
+
+        disconnectButton.SetActive(false);
     }
 
     public override void OnServerCreated()
@@ -47,26 +52,39 @@ public class GameListenerScript : CaptainsMessListener
     public override void OnStartConnecting()
 	{
 		networkState = NetworkState.Connecting;
-	}
+
+        disconnectButton.SetActive(true);
+        menuParent.SetActive(false);
+    }
 
 	public override void OnStopConnecting()
 	{
 		networkState = NetworkState.Offline;
-	}
+
+        disconnectButton.SetActive(false);
+        menuParent.SetActive(true);
+
+    }
 
 	public override void OnJoinedLobby()
 	{
 		networkState = NetworkState.Connected;
 
-		//gameSession.OnJoinedLobby();
-	}
+        //gameSession.OnJoinedLobby();
+
+        disconnectButton.SetActive(true);
+        menuParent.SetActive(false);
+    }
 
 	public override void OnLeftLobby()
 	{
 		networkState = NetworkState.Offline;
 
-		//gameSession.OnLeftLobby();
-	}
+        //gameSession.OnLeftLobby();
+
+        disconnectButton.SetActive(false);
+        menuParent.SetActive(true);
+    }
 
 	public override void OnCountdownStarted()
 	{

@@ -57,14 +57,7 @@ public class GameManagerScript : NetworkBehaviour
         return (currentGameState >= 210);
     }
 
-    [Command]
-    public void CmdSetNPS()
-    {
-        RpcSetNPS();
-    }
-
-    [ClientRpc]
-    void RpcSetNPS()
+    private void SetNPS()
     {
         GameObject player = GameObject.Find("LOCAL Player");
         networkedPScript = player.GetComponent<NetworkedPlayerScript>();
@@ -75,6 +68,10 @@ public class GameManagerScript : NetworkBehaviour
     {
         RpcStartMainCountdown();
 
+        if (networkedPScript == null)
+        {
+            SetNPS();
+        }
         networkedPScript.CmdStartGame();
     }
 
@@ -91,6 +88,10 @@ public class GameManagerScript : NetworkBehaviour
         if (!IsInPostGame())
         {
             RpcEndGame();
+            if (networkedPScript == null)
+            {
+                SetNPS();
+            }
             networkedPScript.CmdEndGame(); //Let's stop this party
         }
     }
@@ -120,6 +121,10 @@ public class GameManagerScript : NetworkBehaviour
     [Command]
     public void CmdRotatePlayers(bool l)
     {
+        if (networkedPScript == null)
+        {
+            SetNPS();
+        }
         List<CaptainsMessPlayer> players = networkedPScript.GetPlayers();
         foreach (CaptainsMessPlayer player in players)
         {

@@ -205,12 +205,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     {
         gameObject.name = "LOCAL Player";
 
-        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
-
-        Assert.IsNotNull<GameManagerScript>(gameManager);
-
-        gameManager.CmdSetNPS();
-
         remotePScript.enabled = false;
         localPScript.enabled = true;
 
