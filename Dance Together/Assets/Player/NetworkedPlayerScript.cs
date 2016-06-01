@@ -97,11 +97,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         }
     }
 
-    void SetNameText()
-    {
-        playerButton.GetComponentInChildren<Text>().text = nameText;
-    }
-
     void SortPlayers()
     {
         List<CaptainsMessPlayer> players = mess.Players();
@@ -127,6 +122,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                     else
                         start.x = -200 - (Screen.width / 2);
                     nps.playerButton.transform.localPosition = start;
+
+                    nps.SetNameText();
                 }
 
                 nps.playerButton.transform.DOLocalMove(goal, movementSpeed);
@@ -230,10 +227,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         Invoke("SortPlayers", 0.5f);
     }
 
-    public override void OnStartClient()
+    public void SetNameText()
     {
-        base.OnStartClient();
-        SetNameText();
+        if (nameText == "")
+            nameText = ColorScript.GetColorName(color);
+
+        playerButton.GetComponentInChildren<Text>().text = nameText;
     }
 
     public List<CaptainsMessPlayer> GetPlayers()

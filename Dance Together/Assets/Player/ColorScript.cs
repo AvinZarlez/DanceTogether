@@ -22,6 +22,33 @@ public class ColorScript : MonoBehaviour {
             //new Color(0.25f,0f,1f) //Ultramarine (Bright Purple)
         };
 
+    static public string GetColorName(int c)
+    {
+        switch (c)
+        {
+            case 0:
+                return "White";
+            case 1:
+                return "Red";
+            case 2:
+                return "Green";
+            case 3:
+                return "Blue";
+            case 4:
+                return "Yellow";
+            case 5:
+                return "Pink";
+            case 6:
+                return "Cyan";
+            case 7:
+                return "Orange";
+            case 8:
+                return "Forrest";
+            default:
+                return "";
+        }
+    }
+
     static public Color GetColor(int index)
     {
         return colors[index];
