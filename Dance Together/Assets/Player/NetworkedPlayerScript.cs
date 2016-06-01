@@ -457,6 +457,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             Vector3 goal = player.GetComponent<RemotePlayerScript>().GetPosition();
             nps.playerButton.transform.DOLocalMove(goal, nps.fastMovementSpeed);
         }
+
+        SetReady(true); //Auto advance
     }
 
     [Command]
