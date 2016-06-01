@@ -24,13 +24,13 @@ Have each player make sure their devices are all on *the same* WiFi network.
 
 **NOTE:** Peer to peer communication have to be enabled on the network. This may not work on some public WiFi network.
 
-Start the game and choose "Find Other Players"
+Start the game and choose "Auto Connect"
 
 **NOTE:** The game is currently bugged/broken for players joining and/or leaving games mid-game. This will be fixed in future versions
 
 In theory, the game should automatically detect and join a game.
 
-**NOTE:** If you have issues getting a player connect, have all players "Disconnect" and start over.
+**NOTE:** If you have issues getting a player connect, have all players "Disconnect" and start over. If you are still having issues, have one player pick "Host" and the rest pick "Join"
 
 Once you are in the game, your game background will change to match your player color.
 
