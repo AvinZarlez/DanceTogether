@@ -18,18 +18,12 @@ public class LocalPlayerScript : MonoBehaviour
         //playerParentScript = GameObject.FindWithTag("PlayerParent").GetComponent<PlayerParentScript>();
 
         networkedPScript = GetComponent<NetworkedPlayerScript>();
+        
+        countdownText = GUIManagerScript.countdownText;
 
-        GameObject obj1 = GameObject.Find("UI_Countdown");
-        countdownText = obj1.GetComponent<Text>();
-        countdownText.enabled = false;
+        infoText = GUIManagerScript.infoText;
 
-        GameObject obj2 = GameObject.Find("UI_InfoText");
-        infoText = obj2.GetComponent<Text>();
-        infoText.enabled = false;
-
-        GameObject obj3 = GameObject.Find("UI_DetailsText");
-        detailsText = obj3.GetComponent<Text>();
-        detailsText.enabled = false;
+        detailsText = GUIManagerScript.detailsText;
 
         Application.runInBackground = true;
         // Disable screen dimming

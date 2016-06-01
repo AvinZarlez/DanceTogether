@@ -43,6 +43,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     [SyncVar]
     private int color = -1;
 
+    [SyncVar]
+    private string nameText = "";
+
     [SyncVar, HideInInspector]
     public float captainsCountdown = 0;
 
@@ -94,6 +97,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         }
     }
 
+    void SetNameText()
+    {
+        playerButton.GetComponentInChildren<Text>().text = nameText;
+    }
+
     void SortPlayers()
     {
         List<CaptainsMessPlayer> players = mess.Players();
@@ -105,18 +113,21 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
             if (!nps.isLocalPlayer)
             {
-                nps.playerButton.SetActive(true);
 
                 RemotePlayerScript rps = player.GetComponent<RemotePlayerScript>();
 
                 Vector3 goal = rps.SetPosition(++i, size);
 
-                Vector3 start = goal;
-                if (goal.x > 0)
-                    start.x = 200 + (Screen.width / 2);
-                else
-                    start.x = -200 - (Screen.width / 2);
-                nps.playerButton.transform.localPosition = start;
+                if (nps.playerButton.activeSelf == false)
+                {
+                    nps.playerButton.SetActive(true);
+                    Vector3 start = goal;
+                    if (goal.x > 0)
+                        start.x = 200 + (Screen.width / 2);
+                    else
+                        start.x = -200 - (Screen.width / 2);
+                    nps.playerButton.transform.localPosition = start;
+                }
 
                 nps.playerButton.transform.DOLocalMove(goal, movementSpeed);
             }
@@ -217,6 +228,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         // Brief delay to let SyncVars propagate
         Invoke("SortPlayers", 0.5f);
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        SetNameText();
     }
 
     public List<CaptainsMessPlayer> GetPlayers()
@@ -353,7 +370,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     [ClientRpc]
     public void RpcSetPlayerText(string t)
     {
-        playerButton.GetComponentInChildren<Text>().text = t;
+        nameText = t;
+        SetNameText();
     }
 
     [Command]

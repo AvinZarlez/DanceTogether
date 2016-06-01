@@ -16,6 +16,10 @@ public class GUIManagerScript : MonoBehaviour {
 
     private static GameObject nameInputObject;
 
+    public static Text countdownText; // UI text object named "UI_Countdown"
+    public static Text infoText; // UI text object named "UI_InfoText"
+    public static Text detailsText; // UI text object named "UI_DetailsText"
+
     // Use this for initialization
     void Start ()
     {
@@ -31,6 +35,19 @@ public class GUIManagerScript : MonoBehaviour {
         SetBackButton(false);
 
         scoreText = GameObject.Find("UI_Score").GetComponent<Text>();
+        scoreText.enabled = false;
+        
+        GameObject obj1 = GameObject.Find("UI_Countdown");
+        countdownText = obj1.GetComponent<Text>();
+        countdownText.enabled = false;
+
+        GameObject obj2 = GameObject.Find("UI_InfoText");
+        infoText = obj2.GetComponent<Text>();
+        infoText.enabled = false;
+
+        GameObject obj3 = GameObject.Find("UI_DetailsText");
+        detailsText = obj3.GetComponent<Text>();
+        detailsText.enabled = false;
     }
 	
 	// Update is called once per frame
@@ -106,6 +123,7 @@ public class GUIManagerScript : MonoBehaviour {
 
     public static void SetScoreText(int score)
     {
+        scoreText.enabled = true;
         scoreText.text = "Score:\n" + score.ToString();
     }
 }
