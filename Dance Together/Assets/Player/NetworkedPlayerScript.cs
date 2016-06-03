@@ -275,6 +275,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     {
         matchSongID = -1;
         matchTime = -1;
+        scored_GuessedCorrect = false;
     }
 
     public void ToggleReady()
@@ -322,12 +323,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                     NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
                     if (player.name == "LOCAL Player")
                     {
-                        nps.CmdSetMatchSongID(songID);
-                        int song = nps.GetSongID();
-                        if (songID == song)
-                        {
-                            CmdSetWasGuessed();
-                        }
+                        nps.CmdSetMatchSongID(songID, this);
                     }
                     nps.playerButton.SetActive(false);
                     nps.playerButton.GetComponent<Button>().interactable = false;
@@ -414,34 +410,22 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     }
 
     [Command]
-    public void CmdSetWasGuessed()
-    {
-        RpcSetWasGuessed();
-    }
-
-    [ClientRpc]
-    public void RpcSetWasGuessed()
-    {
-        scored_WasGuessed = true;
-    }
-
-    [Command]
     public void CmdSetMatchSongID(int song)
     {
         Assert.AreNotEqual<int>(-1, song, "No player was matched");
 
+        RpcSetMatchSongID(song);
+    }
+
+    [ClientRpc]
+    public void RpcSetMatchSongID(int song)
+    {
         GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
 
         Assert.IsNotNull<GameManagerScript>(gameManager);
 
-        RpcSetMatchSongID(song, gameManager.countDown);
-    }
-
-    [ClientRpc]
-    public void RpcSetMatchSongID(int song, float count)
-    {
         matchSongID = song;
-        matchTime = count;
+        matchTime = gameManager.countDown;
 
         if (songID == matchSongID)
         {
@@ -450,10 +434,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         if (AreAllPlayersMatched())
         {
-            GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
-
-            Assert.IsNotNull<GameManagerScript>(gameManager);
-
             //Every player is matched, end the game early.
             gameManager.CmdEndGame();
         }
