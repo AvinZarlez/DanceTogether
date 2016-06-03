@@ -28,8 +28,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
     [SyncVar]
     public bool scored_GuessedCorrect;
-    [SyncVar]
-    public bool scored_WasGuessed;
 
     [SyncVar]
     private int songID;
@@ -597,9 +595,10 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
             if (nps.scored_GuessedCorrect)
             {
-                //nps.CmdAddScore(5 * Mathf.FloorToInt(currentMatchTime));
-
                 float currentMatchTime = nps.matchTime;
+
+                nps.RpcAddScore(5 * Mathf.FloorToInt(currentMatchTime));
+
                 if (currentMatchTime > longestMatchTime)
                 {
                     longestMatchTime = currentMatchTime;
