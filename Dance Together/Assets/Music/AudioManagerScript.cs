@@ -118,6 +118,13 @@ public class AudioManagerScript : MonoBehaviour {
         PlaySFX(SFXClips.NewRound);
     }
 
+    public void PlayRules()
+    {
+        sfxSource.clip = soundEffects[Convert.ToInt32(SFXClips.Rules)];
+        sfxSource.Stop();
+        sfxSource.Play();
+    }
+
     public void StopSFX()
     {
         sfxSource.Stop();

@@ -6,6 +6,8 @@ public class GUIManagerScript : MonoBehaviour {
     
     private static GameObject gameButtonObject;
 
+    private static GameObject rulesButtonObject;
+
     private static GameObject backButtonObject;
 
     private static Button gameButton;
@@ -28,6 +30,8 @@ public class GUIManagerScript : MonoBehaviour {
         buttonText = gameButtonObject.GetComponentInChildren<Text>();
         SetMainButtonHighlight(false);
         SetButton(false);
+        
+        rulesButtonObject = GameObject.Find("UI_RulesButton");
 
         backButtonObject = GameObject.Find("UI_BackButton");
         SetBackButton(false);
@@ -62,6 +66,12 @@ public class GUIManagerScript : MonoBehaviour {
         gm.GetComponent<NetworkedPlayerScript>().MainButtonPressed();
     }
 
+    public void RulesButtonPressed()
+    {
+        GameObject gm = GameObject.Find("LOCAL Player");
+        gm.GetComponent<NetworkedPlayerScript>().CmdRulesButtonPressed();
+    }
+
     public void BackButtonPressed()
     {
         GameObject gm = GameObject.Find("LOCAL Player");
@@ -86,7 +96,9 @@ public class GUIManagerScript : MonoBehaviour {
     public static void SetButton(bool enabled)
     {
         if (gameButtonObject != null)
+        {
             gameButtonObject.SetActive(enabled);
+        }
     }
 
     public static void SetInput(bool enabled)
@@ -148,5 +160,13 @@ public class GUIManagerScript : MonoBehaviour {
     public static void SetMainButtonHighlight(bool highlight)
     {
         gameButtonObject.GetComponent<Outline>().enabled = highlight;
+    }
+
+    public static void SetRulesButton(bool enabled)
+    {
+        if (rulesButtonObject != null)
+        {
+            rulesButtonObject.SetActive(enabled);
+        }
     }
 }

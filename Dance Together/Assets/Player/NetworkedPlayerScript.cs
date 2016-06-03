@@ -295,6 +295,16 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         }
     }
 
+    public void CmdRulesButtonPressed()
+    {
+        RpcRulesButtonPressed();
+    }
+
+    public void RpcRulesButtonPressed()
+    {
+        AudioManagerScript.instance.PlayRules();
+    }
+
     public void PlayerButtonPressed()
     {
         GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
