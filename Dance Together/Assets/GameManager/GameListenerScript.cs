@@ -76,8 +76,6 @@ public class GameListenerScript : CaptainsMessListener
 
         disconnectButton.SetActive(true);
         menuParent.SetActive(false);
-
-        AudioManagerScript.instance.PlaySFX(AudioManagerScript.SFXClips.DanceTogether);
     }
 
 	public override void OnLeftLobby()
@@ -99,10 +97,8 @@ public class GameListenerScript : CaptainsMessListener
         GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
         if (gameManager != null)
         {
-            gameManager.CmdRotatePlayers(true);
+            gameManager.CmdCountdown(true);
         }
-
-        AudioManagerScript.instance.PlaySFX(AudioManagerScript.SFXClips.Countdown);
     }
 
 	public override void OnCountdownCancelled()
@@ -112,10 +108,8 @@ public class GameListenerScript : CaptainsMessListener
         GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
         if (gameManager != null)
         {
-            gameManager.CmdRotatePlayers(false);
+            gameManager.CmdCountdown(false);
         }
-
-        AudioManagerScript.instance.StopSFX();
     }
 
 	public override void OnStartGame(List<CaptainsMessPlayer> aStartingPlayers)
@@ -128,8 +122,6 @@ public class GameListenerScript : CaptainsMessListener
         {
             gameManager.CmdStartMainCountdown();
         }
-
-        AudioManagerScript.instance.PlayCountdown();
     }
 
 	public override void OnAbortGame()

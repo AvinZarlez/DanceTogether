@@ -94,16 +94,28 @@ public class AudioManagerScript : MonoBehaviour {
         PlaySFX(Convert.ToInt32(danceTogether));
     }
 
-    public void PlaySFX(int i)
+    private void PlaySFX(int i)
     {
         sfxSource.PlayOneShot(soundEffects[i]);
+    }
+
+    public void PlayRoundEnd(bool correct)
+    {
+        int sfx;
+        if (correct) sfx = Convert.ToInt32(SFXClips.Correct);
+        else sfx = Convert.ToInt32(SFXClips.Wrong);
+        sfxSource.clip = soundEffects[sfx];
+        sfxSource.Stop();
+        sfxSource.PlayDelayed(1.5f);
+        PlaySFX(SFXClips.RoundComplete);
     }
 
     public void PlayCountdown()
     {
         sfxSource.clip = soundEffects[Convert.ToInt32(SFXClips.Countdown)];
         sfxSource.Stop();
-        sfxSource.Play();
+        sfxSource.PlayDelayed(1f);
+        PlaySFX(SFXClips.NewRound);
     }
 
     public void StopSFX()

@@ -119,16 +119,24 @@ public class GameManagerScript : NetworkBehaviour
 
 
     [Command]
-    public void CmdRotatePlayers(bool l)
+    public void CmdCountdown(bool l)
     {
-        if (networkedPScript == null)
+        RpcCountdown(l);
+    }
+
+    [ClientRpc]
+    public void RpcCountdown(bool l)
+    {
+        if (l)
         {
-            SetNPS();
+            //playerParent.GetComponent<PlayerParentScript>().LockAndSpin();
+            AudioManagerScript.instance.PrepareGameMusic();
+            AudioManagerScript.instance.PlayCountdown();
         }
-        List<CaptainsMessPlayer> players = networkedPScript.GetPlayers();
-        foreach (CaptainsMessPlayer player in players)
-        {
-            player.GetComponent<NetworkedPlayerScript>().RpcRotatePlayers(l);
+        else {
+            //playerParent.GetComponent<PlayerParentScript>().Unlock();
+            Debug.Log("Countdown stopped!");
+            AudioManagerScript.instance.StopSFX();
         }
     }
 }

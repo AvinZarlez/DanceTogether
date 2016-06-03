@@ -213,6 +213,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         score = 0;
         scoredThisRound = 0;
 
+        AudioManagerScript.instance.PlaySFX(AudioManagerScript.SFXClips.DanceTogether);
+
         base.OnStartLocalPlayer();
     }
 
@@ -569,7 +571,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         foreach (CaptainsMessPlayer player in players)
         {
             NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
-            nps.RpcEndGame();
 
             float currentMatchTime = nps.matchTime;
             if (currentMatchTime != -1)
@@ -625,6 +626,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             {
                 nps.CmdAddScore(500);
             }
+
+            nps.RpcEndGame();
         }
     }
 
@@ -637,18 +640,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         GUIManagerScript.SetBackButton(false);
 
         AudioManagerScript.instance.EndGameMusic();
-    }
 
-    [ClientRpc]
-    public void RpcRotatePlayers(bool l)
-    {
-        if (l)
-        {
-            //playerParent.GetComponent<PlayerParentScript>().LockAndSpin();
-            AudioManagerScript.instance.PrepareGameMusic();
-        }
-        else {
-            //playerParent.GetComponent<PlayerParentScript>().Unlock();
-        }
+        AudioManagerScript.instance.PlayRoundEnd(scored_GuessedCorrect);
     }
 }
