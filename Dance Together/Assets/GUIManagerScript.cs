@@ -32,6 +32,7 @@ public class GUIManagerScript : MonoBehaviour {
         SetButton(false);
         
         rulesButtonObject = GameObject.Find("UI_RulesButton");
+        SetRulesButton(false);
 
         backButtonObject = GameObject.Find("UI_BackButton");
         SetBackButton(false);

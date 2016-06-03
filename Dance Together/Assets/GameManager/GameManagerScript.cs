@@ -132,11 +132,14 @@ public class GameManagerScript : NetworkBehaviour
             //playerParent.GetComponent<PlayerParentScript>().LockAndSpin();
             AudioManagerScript.instance.PrepareGameMusic();
             AudioManagerScript.instance.PlayCountdown();
+            GUIManagerScript.SetRulesButton(false);
         }
         else {
             //playerParent.GetComponent<PlayerParentScript>().Unlock();
             Debug.Log("Countdown stopped!");
             AudioManagerScript.instance.StopSFX();
+            AudioManagerScript.instance.StartMenuMusic();
+            GUIManagerScript.SetRulesButton(true);
         }
     }
 }

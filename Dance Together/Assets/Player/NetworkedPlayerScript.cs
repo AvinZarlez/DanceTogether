@@ -190,6 +190,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             GUIManagerScript.SetInput(false);
             GUIManagerScript.SetButton(false);
+            GUIManagerScript.SetRulesButton(false);
             GUIManagerScript.SetBackButton(false);
         }
     }
@@ -213,6 +214,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         scoredThisRound = 0;
 
         AudioManagerScript.instance.PlaySFX(AudioManagerScript.SFXClips.DanceTogether);
+
+        GUIManagerScript.SetRulesButton(true);
 
         base.OnStartLocalPlayer();
     }
@@ -295,16 +298,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         }
     }
 
-    public void CmdRulesButtonPressed()
-    {
-        RpcRulesButtonPressed();
-    }
-
-    public void RpcRulesButtonPressed()
-    {
-        AudioManagerScript.instance.PlayRules();
-    }
-
     public void PlayerButtonPressed()
     {
         GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
@@ -342,6 +335,18 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 GUIManagerScript.SetBackButton(true);
             }
         }
+    }
+
+    [Command]
+    public void CmdRulesButtonPressed()
+    {
+        RpcRulesButtonPressed();
+    }
+
+    [ClientRpc]
+    public void RpcRulesButtonPressed()
+    {
+        AudioManagerScript.instance.PlayRules();
     }
 
     [Command]
@@ -567,7 +572,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             GUIManagerScript.FillPlayerText(nameText);
 
             GUIManagerScript.SetButton(false);
-        
+
             GUIManagerScript.DisableInput(true);
             GUIManagerScript.SetBackButton(false);
             
