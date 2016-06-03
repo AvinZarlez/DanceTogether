@@ -43,8 +43,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     [SyncVar]
     private int color = -1;
 
-    [SyncVar]
-    private string nameText = "";
+    [SyncVar(hook = "OnNameTextChanged")]
+    public string nameText = "";
 
     [SyncVar, HideInInspector]
     public float captainsCountdown = 0;
@@ -124,13 +124,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                     else
                         start.x = -200 - (Screen.width / 2);
                     nps.playerButton.transform.localPosition = start;
-
-                    nps.SetNameText();
                 }
 
                 nps.playerButton.transform.DOLocalMove(goal, movementSpeed);
             }
             nps.SetColor();
+            nps.SetNameText();
         }
 
         if (size >= 4)
@@ -225,11 +224,21 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         // Brief delay to let SyncVars propagate
         Invoke("SortPlayers", 0.5f);
     }
-
+    
     public void SetNameText()
     {
-        if (nameText == "")
+        OnNameTextChanged(nameText);
+    }
+    public void OnNameTextChanged(string s)
+    {
+        if (s == "")
+        {
             nameText = ColorScript.GetColorName(color);
+        }
+        else
+        {
+            nameText = s;
+        }
 
         playerButton.GetComponentInChildren<Text>().text = nameText;
     }
@@ -370,7 +379,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public void RpcSetPlayerText(string t)
     {
         nameText = t;
-        SetNameText();
     }
 
     [Command]
@@ -514,8 +522,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 //Recycle local J variable, don't care about last value
                 j = Random.Range(0, playerSongChoice.Count);
 
+                NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
                 //Tell the player which song they got
-                player.GetComponent<NetworkedPlayerScript>().RpcStartGame(playerSongChoice[j]);
+                nps.RpcStartGame(playerSongChoice[j]);
 
                 //Remove that entry from list. 
                 playerSongChoice.RemoveAt(j);
@@ -542,13 +551,18 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             // See buddy, you were ready the whole time, right?
         }
         ResetMatch();
-        GUIManagerScript.SetButton(false);
+
+        if (isLocalPlayer)
+        {
+            GUIManagerScript.FillPlayerText(nameText);
+
+            GUIManagerScript.SetButton(false);
         
-        GUIManagerScript.DisableInput(true);
-        GUIManagerScript.SetBackButton(false);
-
-
-        AudioManagerScript.instance.StartGameMusic();
+            GUIManagerScript.DisableInput(true);
+            GUIManagerScript.SetBackButton(false);
+            
+            AudioManagerScript.instance.StartGameMusic();
+        }
 
         List<CaptainsMessPlayer> players = GetPlayers();
         foreach (CaptainsMessPlayer player in players)

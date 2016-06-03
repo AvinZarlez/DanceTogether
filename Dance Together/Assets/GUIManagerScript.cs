@@ -77,6 +77,12 @@ public class GUIManagerScript : MonoBehaviour {
         nps.CmdSetPlayerText(field.text);
     }
 
+    public static void FillPlayerText(string s)
+    {
+        InputField field = nameInputObject.GetComponent<InputField>();
+        field.text = s;
+    }
+
     public static void SetButton(bool enabled)
     {
         if (gameButtonObject != null)
