@@ -323,7 +323,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                     NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
                     if (player.name == "LOCAL Player")
                     {
-                        nps.CmdSetMatchSongID(songID, this);
+                        nps.CmdSetMatchSongID(songID);
                     }
                     nps.playerButton.SetActive(false);
                     nps.playerButton.GetComponent<Button>().interactable = false;
@@ -590,31 +590,24 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         List<CaptainsMessPlayer> players = GetPlayers();
         NetworkedPlayerScript bonusPlayer = null;
         float longestMatchTime = -1;
+        List<int> scoringSongs = new List<int>();
         foreach (CaptainsMessPlayer player in players)
         {
             NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
 
-            float currentMatchTime = nps.matchTime;
-            if (currentMatchTime != -1)
+            if (nps.scored_GuessedCorrect)
             {
-                int msid = nps.GetMatchSongID();
-                if (msid != -1)
-                {
-                    if (msid == nps.GetSongID())
-                    {
-                        //nps.CmdAddScore(5 * Mathf.FloorToInt(currentMatchTime));
+                //nps.CmdAddScore(5 * Mathf.FloorToInt(currentMatchTime));
 
-                        if (currentMatchTime > longestMatchTime)
-                        {
-                            longestMatchTime = currentMatchTime;
-                            bonusPlayer = nps;
-                        }
-                    }
+                float currentMatchTime = nps.matchTime;
+                if (currentMatchTime > longestMatchTime)
+                {
+                    longestMatchTime = currentMatchTime;
+                    bonusPlayer = nps;
                 }
 
+                scoringSongs.Add(nps.GetSongID());
             }
-            Debug.Log("currentMatchTime: " + currentMatchTime + " - nps.GetMatchSongID(): " + nps.GetMatchSongID() + " - nps.GetSongID(): " + nps.GetSongID() + " - nps.scored_GuessedCorrect: " + nps.scored_GuessedCorrect + " - nps.scored_WasGuessed: " + nps.scored_WasGuessed);
-            
         }
 
         //Bonus for player who guessed first.
@@ -631,7 +624,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             {
                 nps.RpcAddScore(250);
             }
-            if (nps.scored_WasGuessed)
+            if (scoringSongs.Contains(nps.songID))
             {
                 nps.RpcAddScore(500);
             }
