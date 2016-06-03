@@ -27,9 +27,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     private int scoredThisRound;
 
     [SyncVar]
-    private bool scored_GuessedCorrect;
+    public bool scored_GuessedCorrect;
     [SyncVar]
-    private bool scored_WasGuessed;
+    public bool scored_WasGuessed;
 
     [SyncVar]
     private int songID;
@@ -319,13 +319,18 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 List<CaptainsMessPlayer> players = GetPlayers();
                 foreach (CaptainsMessPlayer player in players)
                 {
-
+                    NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
                     if (player.name == "LOCAL Player")
                     {
-                        player.GetComponent<NetworkedPlayerScript>().CmdSetMatchSongID(GetSongID());
+                        nps.CmdSetMatchSongID(songID);
+                        int song = nps.GetSongID();
+                        if (songID == song)
+                        {
+                            CmdSetWasGuessed();
+                        }
                     }
-                    player.GetComponent<NetworkedPlayerScript>().playerButton.SetActive(false);
-                    player.GetComponent<NetworkedPlayerScript>().playerButton.GetComponent<Button>().interactable = false;
+                    nps.playerButton.SetActive(false);
+                    nps.playerButton.GetComponent<Button>().interactable = false;
                 }
 
                 playerButton.SetActive(true);
@@ -396,15 +401,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         nameText = t;
     }
 
-    [Command]
-    public void CmdAddScore(int value)
-    {
-        // Don't need this assert, because maybe it's ok if 0 is passed?
-        // Example: When the guess is locked in right when the clock hits 0?
-        //Assert.AreNotEqual<int>(0, value, "Score not modified - passed 0");
-        RpcAddScore(value);
-    }
-
     [ClientRpc]
     public void RpcAddScore(int value)
     {
@@ -415,6 +411,18 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             GUIManagerScript.SetScoreText(score);
         }
+    }
+
+    [Command]
+    public void CmdSetWasGuessed()
+    {
+        RpcSetWasGuessed();
+    }
+
+    [ClientRpc]
+    public void RpcSetWasGuessed()
+    {
+        scored_WasGuessed = true;
     }
 
     [Command]
@@ -434,6 +442,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     {
         matchSongID = song;
         matchTime = count;
+
+        if (songID == matchSongID)
+        {
+            scored_GuessedCorrect = true;
+        }
 
         if (AreAllPlayersMatched())
         {
@@ -595,7 +608,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public void CmdEndGame()
     {
         List<CaptainsMessPlayer> players = GetPlayers();
-        CaptainsMessPlayer bonusPlayer = null;
+        NetworkedPlayerScript bonusPlayer = null;
         float longestMatchTime = -1;
         foreach (CaptainsMessPlayer player in players)
         {
@@ -607,40 +620,27 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 int msid = nps.GetMatchSongID();
                 if (msid != -1)
                 {
-                    if (msid == GetSongID())
+                    if (msid == nps.GetSongID())
                     {
-                        nps.CmdAddScore(5 * Mathf.FloorToInt(currentMatchTime));
-                        nps.scored_GuessedCorrect = true;
+                        //nps.CmdAddScore(5 * Mathf.FloorToInt(currentMatchTime));
 
-                        foreach (CaptainsMessPlayer sub_player in players)
+                        if (currentMatchTime > longestMatchTime)
                         {
-                            if (!sub_player.Equals(player))
-                            {
-                                NetworkedPlayerScript sub_nps = player.GetComponent<NetworkedPlayerScript>();
-
-                                if (sub_nps.GetSongID() == nps.GetMatchSongID())
-                                {
-                                    nps.scored_WasGuessed = true;
-                                }
-                            }
+                            longestMatchTime = currentMatchTime;
+                            bonusPlayer = nps;
                         }
-
-                    }
-
-                    if (currentMatchTime > longestMatchTime)
-                    {
-                        longestMatchTime = currentMatchTime;
-                        bonusPlayer = player;
                     }
                 }
 
             }
+            Debug.Log("currentMatchTime: " + currentMatchTime + " - nps.GetMatchSongID(): " + nps.GetMatchSongID() + " - nps.GetSongID(): " + nps.GetSongID() + " - nps.scored_GuessedCorrect: " + nps.scored_GuessedCorrect + " - nps.scored_WasGuessed: " + nps.scored_WasGuessed);
+            
         }
 
         //Bonus for player who guessed first.
         if (bonusPlayer != null) //If this is null, nobody guessed anything. Lame!
         {
-            bonusPlayer.GetComponent<NetworkedPlayerScript>().CmdAddScore(100);
+            bonusPlayer.RpcAddScore(100);
         }
 
         foreach (CaptainsMessPlayer player in players)
@@ -649,11 +649,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
             if (nps.scored_GuessedCorrect)
             {
-                nps.CmdAddScore(250);
+                nps.RpcAddScore(250);
             }
             if (nps.scored_WasGuessed)
             {
-                nps.CmdAddScore(500);
+                nps.RpcAddScore(500);
             }
 
             nps.RpcEndGame();
@@ -665,11 +665,14 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     {
         SetReady(false);
 
-        GUIManagerScript.SetReplayButton(true);
-        GUIManagerScript.SetBackButton(false);
+        if (isLocalPlayer)
+        {
+            GUIManagerScript.SetReplayButton(true);
+            GUIManagerScript.SetBackButton(false);
 
-        AudioManagerScript.instance.EndGameMusic();
+            AudioManagerScript.instance.EndGameMusic();
 
-        AudioManagerScript.instance.PlayRoundEnd(scored_GuessedCorrect);
+            AudioManagerScript.instance.PlayRoundEnd(scored_GuessedCorrect);
+        }
     }
 }
