@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Audio;
 using System.Collections;
+using System;
 
 public class AudioManagerScript : MonoBehaviour {
     
@@ -86,5 +87,27 @@ public class AudioManagerScript : MonoBehaviour {
         gameplaySource.Stop();
         gameplaySource.Play();
         inGameplay.TransitionTo(m_TransitionIn);
+    }
+
+    public void PlaySFX(SFXClips danceTogether)
+    {
+        PlaySFX(Convert.ToInt32(danceTogether));
+    }
+
+    public void PlaySFX(int i)
+    {
+        sfxSource.PlayOneShot(soundEffects[i]);
+    }
+
+    public void PlayCountdown()
+    {
+        sfxSource.clip = soundEffects[Convert.ToInt32(SFXClips.Countdown)];
+        sfxSource.Stop();
+        sfxSource.Play();
+    }
+
+    public void StopSFX()
+    {
+        sfxSource.Stop();
     }
 }
