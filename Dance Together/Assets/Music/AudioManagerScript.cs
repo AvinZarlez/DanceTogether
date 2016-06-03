@@ -4,14 +4,28 @@ using System.Collections;
 
 public class AudioManagerScript : MonoBehaviour {
     
+    public enum SFXClips
+    {
+        Correct,
+        Wrong,
+        RoundComplete,
+        NewRound,
+        Rules,
+        DanceTogether,
+        Countdown
+    };
+
     public AudioMixerSnapshot inMenu;
     public AudioMixerSnapshot inGameStarted;
     public AudioMixerSnapshot inGameplay;
 
     public AudioClip[] gameMusic;
 
+    public AudioClip[] soundEffects;
+
     public AudioSource gameplaySource;
     public AudioSource menuSource;
+    public AudioSource sfxSource;
     public float bpm = 120;
 
     private float m_TransitionIn;
