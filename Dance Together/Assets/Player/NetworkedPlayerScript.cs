@@ -91,6 +91,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         else
         {
             SendNotReadyToBeginMessage();
+            
             GUIManagerScript.SetButtonText("Dance");
         }
 
@@ -487,8 +488,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     [ClientRpc]
     public void RpcReplayGame()
     {
-        GUIManagerScript.SetReplayButton(false);
-
         GUIManagerScript.DisableInput(false);
 
         List<CaptainsMessPlayer> players = GetPlayers();
@@ -672,7 +671,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         if (isLocalPlayer)
         {
-            GUIManagerScript.SetReplayButton(true);
+            GUIManagerScript.SetButton(true);
+
             GUIManagerScript.SetBackButton(false);
 
             AudioManagerScript.instance.EndGameMusic();

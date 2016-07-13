@@ -19,6 +19,8 @@ public class GameManagerScript : NetworkBehaviour
     
     private NetworkedPlayerScript networkedPScript;
 
+    private int roundCount;
+
     [Client]
     public override void OnStartClient()
     {
@@ -32,6 +34,7 @@ public class GameManagerScript : NetworkBehaviour
     void Start()
     {
         countDown = -1;
+        roundCount = 0;
     }
 
     void Update()
@@ -57,6 +60,11 @@ public class GameManagerScript : NetworkBehaviour
         return (currentGameState >= 210);
     }
 
+    public int GetRoundCount()
+    {
+        return roundCount;
+    }
+
     private void SetNPS()
     {
         GameObject player = GameObject.Find("LOCAL Player");
@@ -78,6 +86,7 @@ public class GameManagerScript : NetworkBehaviour
     [ClientRpc]
     void RpcStartMainCountdown()
     {
+        roundCount++;
         currentGameState = 200;
         countDown = gameLength;
     }

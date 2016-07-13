@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Assertions;
 using System.Collections;
 
 public class GUIManagerScript : MonoBehaviour {
@@ -121,6 +122,14 @@ public class GUIManagerScript : MonoBehaviour {
 
     public static void SetButtonText(string s)
     {
+        if (s == "Dance")
+        {
+            // Hacky bullshit that might end up being too many calls? But hopefully not?
+            GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+            Assert.IsNotNull<GameManagerScript>(gameManager);
+            if (gameManager.GetRoundCount() > 0) { s = "Replay"; }
+        }
+
         buttonText.text = s;
     }
 
@@ -130,21 +139,6 @@ public class GUIManagerScript : MonoBehaviour {
         gameButton.interactable = enabled;
     }
     */
-
-    public static void SetReplayButton(bool enabled)
-    {
-        if (enabled)
-        {
-            SetButton(true);
-            //SetButtonInteractable(true);
-            SetButtonText("Replay");
-        }
-        else
-        {
-            //SetButtonInteractable(false);
-            SetButtonText("Dance");
-        }
-    }
 
     public static void SetBackButton(bool enabled)
     {
