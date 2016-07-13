@@ -169,12 +169,33 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         if (isServer)
             captainsCountdown = mess.CountdownTimer();
 
-
-        if (ready)
-            playerButtonOutline.enabled = true;
+        // Hacky bullshit that might end up being too many calls? But hopefully not?
+        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+        Assert.IsNotNull<GameManagerScript>(gameManager);
+        if (gameManager.IsGameStarted())
+        {
+            if (GetMatchSongID() != -1)
+            {
+                playerButtonOutline.enabled = true;
+            }
+            else
+            {
+                playerButtonOutline.enabled = false;
+            }
+        }
         else
-            playerButtonOutline.enabled = false;
+        {
+            if (ready)
+            {
+                playerButtonOutline.enabled = true;
+            }
+            else
+            {
+                playerButtonOutline.enabled = false;
+            }
+        }
     }
+}
 
     // Redundant? Possible. But I am not sure
     // Unity says this is the one to use, yet OnDestroy works and possibly works better?
