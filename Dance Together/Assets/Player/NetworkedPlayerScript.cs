@@ -195,7 +195,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             }
         }
     }
-}
 
     // Redundant? Possible. But I am not sure
     // Unity says this is the one to use, yet OnDestroy works and possibly works better?
