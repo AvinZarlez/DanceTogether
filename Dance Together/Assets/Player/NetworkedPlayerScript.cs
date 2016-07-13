@@ -630,6 +630,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
             nps.RpcEndGame();
         }
+
+        mess.FinishGame();
     }
 
     [ClientRpc]
