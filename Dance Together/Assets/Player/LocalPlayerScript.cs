@@ -33,7 +33,7 @@ public class LocalPlayerScript : MonoBehaviour
     public void BackButtonPressed()
     {
         // Oops, let's reset the match ID
-        networkedPScript.ResetMatch();
+        networkedPScript.CmdResetMatchSongID();
         
         List<CaptainsMessPlayer> players = networkedPScript.GetPlayers();
         foreach (CaptainsMessPlayer player in players)

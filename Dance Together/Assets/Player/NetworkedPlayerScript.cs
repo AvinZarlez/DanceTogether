@@ -181,7 +181,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     // Let's do both to be safe.
     void OnDestroy()
     {
-        print("Player was was destroyed");
+        //print("Player was was destroyed");
         Destroy(playerButton);
 
         if (isLocalPlayer)
@@ -225,7 +225,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         // Brief delay to let SyncVars propagate
         Invoke("SortPlayers", 0.5f);
     }
-    
+
     public void SetNameText()
     {
         OnNameTextChanged(nameText);
@@ -435,6 +435,17 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             //Every player is matched, end the game early.
             gameManager.CmdEndGame();
         }
+    }
+
+    [Command]
+    public void CmdResetMatchSongID()
+    {
+        RpcResetMatchSongID();
+    }
+    [ClientRpc]
+    public void RpcResetMatchSongID()
+    {
+        ResetMatch();
     }
 
     [Command]
