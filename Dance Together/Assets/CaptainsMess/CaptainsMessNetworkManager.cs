@@ -30,7 +30,7 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
 
     public virtual void Start ()
     {
-        deviceId = SystemInfo.deviceUniqueIdentifier;
+        deviceId = GetUniqueDeviceId();
         peerId = deviceId.Substring(0, 8);
 
         discoveryServer.Setup(this);
@@ -44,6 +44,39 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
 
         Debug.Log(String.Format("#CaptainsMess# Initialized peer {0}, \'{1}\', {2}-{3} players",
             peerId, broadcastIdentifier, minPlayers, maxPlayers));
+    }
+
+    string GetUniqueDeviceId()
+    {
+        // NOTE: Don't use SystemInfo.deviceUniqueIdentifier here because it causes Android
+        // to ask for permission to "make and manage phone calls?" which sounds suspicious.
+        // Using this alternate method means that the ID isn't truly unique. Each time the app is
+        // uninstalled/reinstalled a new ID will be generated.
+        // This won't matter for normal connections but might matter if you want to use the ID
+        // to track unique players met (eg. Spaceteam has achievements for number of players met).
+
+        string savedId = PlayerPrefs.GetString("CaptainsMessDeviceId");
+        if (string.IsNullOrEmpty(savedId))
+        {
+            savedId = GenerateNewUniqueID();
+            PlayerPrefs.SetString("CaptainsMessDeviceId", savedId);
+        }
+        return savedId;
+    }
+
+    string GenerateNewUniqueID()
+    {
+        return Guid.NewGuid().ToString().Substring(0,8);
+    }
+
+    public void InitNetworkTransport()
+    {
+        NetworkTransport.Init();
+    }
+
+    public void ShutdownNetworkTransport()
+    {
+        NetworkTransport.Shutdown();
     }
 
     public void StartHosting()
@@ -86,8 +119,10 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
         if (!isNetworkActive)
         {
             // Must also start network server so the broadcast is sent properly
-            if (!StartServer()) {
+            if (!StartServer())
+            {
                 Debug.LogError("#CaptainsMess# Failed to start broadcasting!");
+                return;
             }
         }
 
@@ -123,20 +158,24 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
 
         if (gameHasStarted)
         {
-            SendAbortGameMessage();
+            if (IsHost()) {
+                SendAbortGameMessage();
+            }
             gameHasStarted = false;
             Invoke("Cancel", 0.1f);
             return;
         }
 
-        CancelInvoke(maybeStartHostingFunction);
+        // NOTE: Calling CancelInvoke(maybeStartHostingFunction) here crashes the game in certain cases
+        // so I'm using the more general version instead.
+        CancelInvoke();
 
-        if (discoveryClient.hostId != -1) {
+        if (discoveryClient.running && discoveryClient.hostId != -1) {
             discoveryClient.StopBroadcast();
         }
         discoveryClient.Reset();
 
-        if (discoveryServer.hostId != -1) {
+        if (discoveryServer.running && discoveryServer.hostId != -1) {
             discoveryServer.StopBroadcast();
         }
         discoveryServer.Reset();
@@ -144,7 +183,9 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
         StopClient();
         StopServer();
 
-        NetworkServer.Reset();
+        if (NetworkServer.active) {
+            NetworkServer.Reset();
+        }
     }
 
     public void FinishGame()
@@ -163,6 +204,11 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
             Debug.Log("#CaptainsMess# Discovered " + aServer.rawData);
         }
 
+        if (discoveryServer.isOpen) {
+            Debug.Log("#CaptainsMess# Already hosting a server, ignoring " + aServer.rawData);
+            return;
+        }
+
         SendDiscoveredServerMessage(aServer);
 
         bool shouldJoin = false;
@@ -171,10 +217,13 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
         {
             if (aServer.isOpen && aServer.numPlayers < maxPlayers)
             {
-                if (aServer.numPlayers > 0) {
-                    shouldJoin = true; // Pick the first server that already has players
-                } else if (BestHostingCandidate() == aServer.peerId) {
-                    shouldJoin = true;
+                if (aServer.privateTeamKey == discoveryServer.privateTeamKey)
+                {
+                    if (aServer.numPlayers > 0) {
+                        shouldJoin = true; // Pick the first server that already has players
+                    } else if (BestHostingCandidate() == aServer.peerId) {
+                        shouldJoin = true;
+                    }
                 }
             }
         }
@@ -244,8 +293,17 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
         // Grab server peer IDs
         foreach (DiscoveredServer server in discoveryClient.discoveredServers.Values)
         {
-            if (server.numPlayers < 2 && !server.isOpen) {
-                candidates.Add(server);
+            if (server.numPlayers < 2 && !server.isOpen && (server.privateTeamKey == discoveryServer.privateTeamKey))
+            {
+                if (!candidates.Exists(x => x.peerId == server.peerId)) {
+                    candidates.Add(server);
+                }
+                else
+                {
+                    if (verboseLogging) {
+                        Debug.LogWarning("#CaptainsMess# Discovered duplicate server!");
+                    }
+                }
             }
         }
 
@@ -308,6 +366,27 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
         return (NumReadyPlayers() == NumPlayers() && NumPlayers() >= minPlayers);
     }
 
+    public bool AreAllPlayersCompatible()
+    {
+        int highestVersion = HighestConnectedVersion();
+        foreach (var player in LobbyPlayers())
+        {
+            if (player.version != highestVersion) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public int HighestConnectedVersion()
+    {
+        int highestVersion = 0;
+        foreach (CaptainsMessPlayer p in LobbyPlayers()) {
+            highestVersion = Math.Max(highestVersion, p.version);
+        }
+        return highestVersion;
+    }
+
     public List<CaptainsMessPlayer> LobbyPlayers()
     {
         var lobbyPlayers = new List<CaptainsMessPlayer>();
@@ -359,7 +438,7 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
     {
         if (!gameHasStarted && allReadyCountdown > 0)
         {
-            if (AreAllPlayersReady())
+            if (AreAllPlayersReady() && AreAllPlayersCompatible())
             {
                 allReadyCountdown -= Time.deltaTime;
                 if (allReadyCountdown <= 0)
@@ -406,7 +485,7 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
 
     public void CheckReadyToBegin()
     {
-        if (AreAllPlayersReady()) {
+        if (AreAllPlayersReady() && AreAllPlayersCompatible()) {
             OnLobbyServerPlayersReady();
         }
     }
@@ -414,6 +493,11 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
     public override bool HasGameStarted()
     {
         return gameHasStarted;
+    }
+
+    public void SetPrivateTeamKey(string key)
+    {
+        discoveryServer.privateTeamKey = key;
     }
 
     // ------------------------ lobby server virtuals ------------------------
@@ -451,9 +535,7 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
 
         if (gameHasStarted)
         {
-            SendAbortGameMessage();
-            gameHasStarted = false;
-
+            // Always cancel the game if it has started. We don't support re-joining a game in progress.
             Cancel();
         }
         else
@@ -498,7 +580,7 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
             Debug.Log("#CaptainsMess# OnLobbyServerPlayersReady (num players " + NumPlayers() + ")");
         }
 
-        if (AreAllPlayersReady())
+        if (AreAllPlayersReady() && AreAllPlayersCompatible())
         {
             if (allReadyCountdownDuration > 0)
             {
@@ -509,7 +591,7 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
             else
             {
                 // Stop the broadcast so no more players join
-                if (discoveryClient.running) {
+                if (discoveryServer.running) {
                     discoveryServer.StopBroadcast();
                 }
 
@@ -547,6 +629,14 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
     {
         if (verboseLogging) {
             Debug.Log("#CaptainsMess# OnLobbyClientExit (num players = " + numPlayers + ")");
+        }
+
+        if (gameHasStarted)
+        {
+            if (IsHost()) {
+                SendAbortGameMessage();
+            }
+            gameHasStarted = false;
         }
 
         // Check to see if we've actually joined a lobby

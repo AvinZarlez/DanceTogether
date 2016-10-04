@@ -18,11 +18,6 @@ public class CaptainsMess : MonoBehaviour
 
     private CaptainsMessNetworkManager networkManager;
 
-    void OnLevelWasLoaded(int levelIndex)
-    {
-        Debug.Log("!!! LEVEL LOAD !!!");
-    }
-
     public void Awake()
     {
         ValidateConfig();
@@ -101,18 +96,21 @@ public class CaptainsMess : MonoBehaviour
 
     public void AutoConnect()
     {
+        networkManager.InitNetworkTransport();
         networkManager.minPlayers = minPlayers;
         networkManager.AutoConnect();
     }
 
     public void StartHosting()
     {
+        networkManager.InitNetworkTransport();
         networkManager.minPlayers = minPlayers;
         networkManager.StartHosting();
     }
 
     public void StartJoining()
     {
+        networkManager.InitNetworkTransport();
         networkManager.minPlayers = minPlayers;
         networkManager.StartJoining();
     }
@@ -120,6 +118,7 @@ public class CaptainsMess : MonoBehaviour
     public void Cancel()
     {
         networkManager.Cancel();
+        networkManager.ShutdownNetworkTransport();
     }
 
     public bool AreAllPlayersReady()
@@ -134,6 +133,7 @@ public class CaptainsMess : MonoBehaviour
 
     public void StartLocalGameForDebugging()
     {
+        networkManager.InitNetworkTransport();
         networkManager.minPlayers = 1;
         networkManager.StartLocalGameForDebugging();
     }
@@ -157,5 +157,15 @@ public class CaptainsMess : MonoBehaviour
     {
         forceServer = fs;
         networkManager.forceServer = fs;
+    }
+
+    public void SetPrivateTeamKey(string key)
+    {
+        networkManager.SetPrivateTeamKey(key);
+    }
+
+    public int HighestConnectedVersion()
+    {
+        return networkManager.HighestConnectedVersion();
     }
 }

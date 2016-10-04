@@ -16,6 +16,7 @@ public class DiscoveredServer : BroadcastData
 		isOpen = aData.isOpen;
 		numPlayers = aData.numPlayers;
 		serverScore = aData.serverScore;
+		privateTeamKey = aData.privateTeamKey;
 	}
 }
 
@@ -44,7 +45,7 @@ public class CaptainsMessClient : NetworkDiscovery
 	public void Setup(CaptainsMessNetworkManager aNetworkManager)
 	{
 		networkManager = aNetworkManager;
-		broadcastKey = aNetworkManager.broadcastIdentifier.GetHashCode(); // Make sure broadcastKey matches server
+		broadcastKey = Mathf.Abs(aNetworkManager.broadcastIdentifier.GetHashCode()); // Make sure broadcastKey matches server
 	}
 
 	public void Reset()
@@ -60,8 +61,16 @@ public class CaptainsMessClient : NetworkDiscovery
 		if (!Initialize()) {
 			Debug.LogError("#CaptainsMess# Network port is unavailable!");
 		}
-		if (!StartAsClient()) {
+		if (!StartAsClient())
+		{
 			Debug.LogError("#CaptainsMess# Unable to listen!");
+
+			// Clean up some data that Unity seems not to
+			if (hostId != -1)
+			{
+            	NetworkTransport.RemoveHost(hostId);
+            	hostId = -1;
+            }
 		}
 		autoJoin = true;
     }
