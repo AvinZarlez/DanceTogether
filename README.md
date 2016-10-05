@@ -152,10 +152,9 @@ What's next for \#DanceTogether?
 
 ### To Do List
 
-- [ ] Art and UI/UX Polish
-- [ ] More Songs
-- [ ] Settle on a tag line ("Find your dance partner"?)
+- See [Projects](https://github.com/TobiahZ/DanceTogether/projects) page
 
 ### Version History
 
+- **0.0.2** - First prototype
 - **0.0.1** - Initial Upload
