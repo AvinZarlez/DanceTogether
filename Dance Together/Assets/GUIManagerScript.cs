@@ -23,6 +23,8 @@ public class GUIManagerScript : MonoBehaviour {
     public static Text infoText; // UI text object named "UI_InfoText"
     public static Text detailsText; // UI text object named "UI_DetailsText"
 
+    public static Renderer bgRenderer;
+
     // Use this for initialization
     void Start ()
     {
@@ -38,7 +40,7 @@ public class GUIManagerScript : MonoBehaviour {
         backButtonObject = GameObject.Find("UI_BackButton");
         SetBackButton(false);
 
-        nameInputObject = GameObject.Find("UI_NameInput");
+        nameInputObject = GameObject.Find("NameInputParent");
         SetInput(false);
 
         scoreText = GameObject.Find("UI_Score").GetComponent<Text>();
@@ -55,6 +57,9 @@ public class GUIManagerScript : MonoBehaviour {
         GameObject obj3 = GameObject.Find("UI_DetailsText");
         detailsText = obj3.GetComponent<Text>();
         detailsText.enabled = false;
+
+        bgRenderer = GameObject.Find("Game_Background").GetComponent<Renderer>();
+        
     }
 	
 	// Update is called once per frame
@@ -82,7 +87,7 @@ public class GUIManagerScript : MonoBehaviour {
     
     public void SetPlayerText()
     {
-        InputField field = nameInputObject.GetComponent<InputField>();
+        InputField field = nameInputObject.GetComponentInChildren<InputField>();
 
         GameObject player = GameObject.Find("LOCAL Player");
         NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
@@ -91,7 +96,7 @@ public class GUIManagerScript : MonoBehaviour {
 
     public static void FillPlayerText(string s)
     {
-        InputField field = nameInputObject.GetComponent<InputField>();
+        InputField field = nameInputObject.GetComponentInChildren<InputField>();
         field.text = s;
     }
 
@@ -112,12 +117,12 @@ public class GUIManagerScript : MonoBehaviour {
     public static void DisableInput(bool enabled)
     {
         if (nameInputObject != null)
-            nameInputObject.GetComponent<InputField>().interactable = !enabled;
+            nameInputObject.GetComponentInChildren<InputField>().interactable = !enabled;
     }
 
     public static void SetInputColor(Color c)
     {
-        nameInputObject.GetComponent<Image>().color = c;
+        nameInputObject.GetComponentInChildren<Image>().color = c;
     }
 
     public static void SetButtonText(string s)
@@ -163,5 +168,10 @@ public class GUIManagerScript : MonoBehaviour {
         {
             rulesButtonObject.SetActive(enabled);
         }
+    }
+
+    public static void SetBGColor(Color c)
+    {
+        bgRenderer.material.SetColor("_Color", c);
     }
 }

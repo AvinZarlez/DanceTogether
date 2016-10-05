@@ -408,7 +408,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             Color clr = ColorScript.GetColor(c);
             GUIManagerScript.SetInputColor(clr);
             clr = clr * 0.5f;
-            Camera.main.gameObject.GetComponent<CameraScript>().background.GetComponent<Renderer>().material.SetColor("_Color", clr);
+            GUIManagerScript.SetBGColor(clr);
         }
     }
 

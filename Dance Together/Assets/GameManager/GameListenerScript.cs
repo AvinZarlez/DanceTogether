@@ -64,8 +64,7 @@ public class GameListenerScript : CaptainsMessListener
         disconnectButton.SetActive(false);
         menuParent.SetActive(true);
 
-        Camera.main.gameObject.GetComponent<CameraScript>().background.GetComponent<Renderer>().material.SetColor("_Color", new Color32(32, 32, 32, 255));
-
+        GUIManagerScript.SetBGColor(new Color32(32, 32, 32, 255));
     }
 
 	public override void OnJoinedLobby()
@@ -87,7 +86,7 @@ public class GameListenerScript : CaptainsMessListener
         disconnectButton.SetActive(false);
         menuParent.SetActive(true);
 
-        Camera.main.gameObject.GetComponent<CameraScript>().background.GetComponent<Renderer>().material.SetColor("_Color", new Color32(32, 32, 32, 255));
+        GUIManagerScript.SetBGColor(new Color32(32, 32, 32, 255));
     }
 
 	public override void OnCountdownStarted()
