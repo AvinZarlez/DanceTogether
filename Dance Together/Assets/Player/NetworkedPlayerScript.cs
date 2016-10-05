@@ -394,7 +394,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             playerColors.Remove(player.GetComponent<NetworkedPlayerScript>().GetColor());
         }
 
-        RpcSetColor(playerColors[0]);   //<- new, always get first way. Old random way: Random.Range(0, playerColors.Count)]);
+        //RpcSetColor(playerColors[0]);   // Always get first. 
+        RpcSetColor(playerColors[Random.Range(0, playerColors.Count)]);   //old random way 
     }
 
     [ClientRpc]
@@ -406,7 +407,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         if (isLocalPlayer)
         {
             Color clr = ColorScript.GetColor(c);
-            GUIManagerScript.SetInputColor(clr);
+            string clr_name = ColorScript.GetColorName(c);
+            GUIManagerScript.SetInputColor(clr, clr_name);
             clr = clr * 0.5f;
             GUIManagerScript.SetBGColor(clr);
         }

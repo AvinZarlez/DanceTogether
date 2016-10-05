@@ -19,11 +19,14 @@ public class GUIManagerScript : MonoBehaviour {
 
     private static GameObject nameInputObject;
 
+    private static Text whichColorText;
+    private static Image whichColorPanel;
+
     public static Text countdownText; // UI text object named "UI_Countdown"
     public static Text infoText; // UI text object named "UI_InfoText"
     public static Text detailsText; // UI text object named "UI_DetailsText"
 
-    public static Renderer bgRenderer;
+    private static Renderer bgRenderer;
 
     // Use this for initialization
     void Start ()
@@ -40,7 +43,10 @@ public class GUIManagerScript : MonoBehaviour {
         backButtonObject = GameObject.Find("UI_BackButton");
         SetBackButton(false);
 
+        whichColorPanel = GameObject.Find("UI_WhichColorPanel").GetComponent<Image>();
+
         nameInputObject = GameObject.Find("NameInputParent");
+        whichColorText = nameInputObject.transform.Find("UI_WhichColor").GetComponent<Text>();
         SetInput(false);
 
         scoreText = GameObject.Find("UI_Score").GetComponent<Text>();
@@ -120,9 +126,11 @@ public class GUIManagerScript : MonoBehaviour {
             nameInputObject.GetComponentInChildren<InputField>().interactable = !enabled;
     }
 
-    public static void SetInputColor(Color c)
+    public static void SetInputColor(Color c, string name)
     {
-        nameInputObject.GetComponentInChildren<Image>().color = c;
+        nameInputObject.transform.Find("UI_NameInput").GetComponent<Image>().color = c;
+        whichColorText.text = name;
+        whichColorPanel.color = c;
     }
 
     public static void SetButtonText(string s)
