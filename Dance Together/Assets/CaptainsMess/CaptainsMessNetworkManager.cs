@@ -213,6 +213,7 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
 
         bool shouldJoin = false;
         bool isMe = (aServer.peerId == peerId);
+        isMe = false; //TOBIAH REMOVE ME
         if (!isMe)
         {
             if (aServer.isOpen && aServer.numPlayers < maxPlayers)

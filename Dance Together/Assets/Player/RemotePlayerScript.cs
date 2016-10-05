@@ -25,35 +25,9 @@ public class RemotePlayerScript : MonoBehaviour {
     public Vector3 GetPosition()
     {
         Vector3 goal = Vector3.zero;
-        int col = position % 2;
-        if (col == 1) goal.x = -100;
-        else goal.x = 100;
 
-        switch (position)
-        {
-            case 1:
-            case 2:
-                goal.y = 60;
-                break;
-            case 3:
-            case 4:
-                goal.y = -60;
-                break;
-            case 5:
-            case 6:
-                goal.y = 180;
-                break;
-            case 7:
-            case 8:
-                goal.y = -180;
-                break;
-            default:
-                goal.y = -300;
-                break;
 
-        }
-
-        goal.z -= 1;
+        goal.x = 180 * (position-1);
 
         return goal;
     }
