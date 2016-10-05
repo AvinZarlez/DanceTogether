@@ -203,7 +203,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     void OnDestroy()
     {
         //print("Player was was destroyed");
-        Destroy(playerButton);
+        if (playerButton != null)
+            Destroy(playerButton);
 
         if (isLocalPlayer)
         {
@@ -211,6 +212,13 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             GUIManagerScript.SetButton(false);
             GUIManagerScript.SetRulesButton(false);
             GUIManagerScript.SetBackButton(false);
+        }
+
+        // If this is a client player on the server then OnClientExitLobby will not be called.
+        // Call it here instead.
+        if (networkManager.IsHost() && networkManager.localPlayer != this)
+        {
+            OnClientExitLobby();
         }
     }
     public override void OnNetworkDestroy()
@@ -400,7 +408,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             Color clr = ColorScript.GetColor(c);
             GUIManagerScript.SetInputColor(clr);
             clr = clr * 0.5f;
-            Camera.main.backgroundColor = clr;
+            Camera.main.gameObject.GetComponent<CameraScript>().background.GetComponent<Renderer>().material.SetColor("_Color", clr);
         }
     }
 

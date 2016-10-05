@@ -8,10 +8,14 @@ public class CameraScript : MonoBehaviour
 
     public Camera cam;
 
+    public GameObject background;
+
     void Start()
     {
 
         screenWidth = screenWidth / Screen.height * Screen.width;
         cam.orthographicSize = screenWidth * Screen.height / Screen.width;
+
+        background.transform.localScale = new Vector3(screenWidth*2, 16, 1);
     }
 }
