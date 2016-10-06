@@ -142,6 +142,7 @@ public class GameManagerScript : NetworkBehaviour
     [ClientRpc]
     public void RpcReplayGame()
     {
+        endgameCountDown = -1;
         currentGameState = 0;
 
         AudioManagerScript.instance.StartMenuMusic();
