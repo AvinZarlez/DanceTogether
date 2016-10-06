@@ -39,6 +39,9 @@ public class LocalPlayerScript : MonoBehaviour
         networkedPScript.CmdResetMatchSongID();
         
         List<CaptainsMessPlayer> players = networkedPScript.GetPlayers();
+
+        int size = players.Count;
+
         foreach (CaptainsMessPlayer player in players)
         {
             NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
@@ -52,7 +55,12 @@ public class LocalPlayerScript : MonoBehaviour
                 nps.playerButton.transform.DOLocalMove(goal, nps.fastMovementSpeed);
                 nps.playerButton.transform.DOScale(Vector3.one, nps.fastMovementSpeed);
             }
+            else
+            {
+                nps.playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(160 * (size + 1), 340);
+            }
         }
+
 
         GUIManagerScript.SetBackButton(false);
     }
