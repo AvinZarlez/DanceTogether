@@ -13,7 +13,8 @@ public class AudioManagerScript : MonoBehaviour {
         NewRound,
         Rules,
         DanceTogether,
-        Countdown
+        Countdown,
+        Find
     };
 
     public AudioMixerSnapshot inMenu;
@@ -121,6 +122,13 @@ public class AudioManagerScript : MonoBehaviour {
     public void PlayRules()
     {
         sfxSource.clip = soundEffects[Convert.ToInt32(SFXClips.Rules)];
+        sfxSource.Stop();
+        sfxSource.Play();
+    }
+
+    public void PlayFind()
+    {
+        sfxSource.clip = soundEffects[Convert.ToInt32(SFXClips.Find)];
         sfxSource.Stop();
         sfxSource.Play();
     }

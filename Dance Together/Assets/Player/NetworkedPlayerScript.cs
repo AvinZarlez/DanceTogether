@@ -628,6 +628,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             AudioManagerScript.instance.StartGameMusic();
 
             GUIManagerScript.SetColorShow(nameText, ColorScript.GetColor(color), ColorScript.GetColorName(color));
+
+            localPScript.reminded = false;
         }
 
         List<CaptainsMessPlayer> players = GetPlayers();

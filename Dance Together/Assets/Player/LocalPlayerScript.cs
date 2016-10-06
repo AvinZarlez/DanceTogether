@@ -14,6 +14,8 @@ public class LocalPlayerScript : MonoBehaviour
     private Text detailsText; // UI text object named "UI_DetailsText"
     private Text sliderText; // UI text object named "UI_SliderText"
 
+    public bool reminded = false;
+
     void Start()
     {
         //playerParentScript = GameObject.FindWithTag("PlayerParent").GetComponent<PlayerParentScript>();
@@ -125,6 +127,17 @@ public class LocalPlayerScript : MonoBehaviour
                 infoText.enabled = false;
                 countdownText.enabled = true;
                 countdownText.text = "" + Mathf.Ceil(countDown);
+
+                if (reminded == false)
+                {
+                    if (countDown < 30)
+                    {
+                        if (networkedPScript.GetMatchSongID() == -1)
+                        {
+                            AudioManagerScript.instance.PlayFind();
+                        }
+                    }
+                }
             }
             else
             {
