@@ -121,7 +121,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 }
 
                 nps.playerButton.transform.DOLocalMove(goal, movementSpeed);
-                nps.playerButton.transform.DOScale(Vector3.one, fastMovementSpeed);
+                nps.playerButton.transform.DOScale(Vector3.one, movementSpeed);
             }
             nps.SetColor();
             nps.SetNameText();
@@ -534,8 +534,15 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             nps.playerButton.GetComponent<Button>().interactable = false;
             
             Vector3 goal = player.GetComponent<RemotePlayerScript>().GetPosition();
+
+            //Move there
+            /*
             nps.playerButton.transform.DOLocalMove(goal, nps.fastMovementSpeed);
             nps.playerButton.transform.DOScale(Vector3.one, nps.fastMovementSpeed);
+            */
+            //Insta go there
+            nps.playerButton.transform.localPosition = goal;
+            nps.playerButton.transform.localScale = Vector3.one;
         }
 
         playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(160 * (size + 1), 340);
