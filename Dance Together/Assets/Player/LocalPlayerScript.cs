@@ -91,7 +91,7 @@ public class LocalPlayerScript : MonoBehaviour
             {
                 infoText.text = "Wrong!";
             }
-            detailsText.text = "Scored this round:\n+" + networkedPScript.GetScoredThisRound().ToString() + "\nAuto advancing in " + gameManager.endgameCountDown;
+            detailsText.text = "Scored this round:\n+" + networkedPScript.GetScoredThisRound().ToString() + "\nAuto advancing in " + Mathf.CeilToInt(gameManager.endgameCountDown);
         }
         else
         {
