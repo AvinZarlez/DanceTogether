@@ -136,7 +136,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             GUIManagerScript.SetButton(false);
         }
 
-        playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(160 * (size + 1), 340);
+        RectTransform rt = playerParent.GetComponent<RectTransform>();
+        rt.sizeDelta = new Vector2(160 * (size + 1), 340);
+        rt.anchorMin = new Vector2(0f, 0.5f);
+        rt.anchorMax = new Vector2(0f, 0.5f);
+        rt.pivot = new Vector2(0f, 0.5f);
     }
 
     void Start()
@@ -356,10 +360,16 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
                 playerButton.SetActive(true);
                 playerButton.GetComponent<Button>().interactable = false;
-                playerButton.transform.DOLocalMove(new Vector3(135,0,0), fastMovementSpeed);
+
+                RectTransform rt = playerParent.GetComponent<RectTransform>();
+                rt.sizeDelta = new Vector2(480, 340);
+                rt.anchorMin = new Vector2(0.5f, 0.5f);
+                rt.anchorMax = new Vector2(0.5f, 0.5f);
+                rt.pivot = new Vector2(0.5f, 0.5f);
+
+                playerButton.transform.DOLocalMove(new Vector3(0,0,0), fastMovementSpeed);
                 playerButton.transform.DOScale(new Vector3(1.5f, 1.5f, 1f), fastMovementSpeed);
 
-                playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(480, 340);
 
                 GUIManagerScript.SetBackButton(true);
             }
@@ -523,7 +533,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             nps.playerButton.transform.DOScale(Vector3.one, nps.fastMovementSpeed);
         }
 
-        playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(160 * (size + 1), 340);
+        RectTransform rt = playerParent.GetComponent<RectTransform>();
+        rt.sizeDelta = new Vector2(160 * (size + 1), 340);
+        rt.anchorMin = new Vector2(0f, 0.5f);
+        rt.anchorMax = new Vector2(0f, 0.5f);
+        rt.pivot = new Vector2(0f, 0.5f);
 
         SetReady(true); //Auto advance
     }
