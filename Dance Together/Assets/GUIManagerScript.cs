@@ -29,6 +29,7 @@ public class GUIManagerScript : MonoBehaviour {
     public static Text sliderText; // UI text object named "UI_SliderText"
 
     public static GameObject playerParent;
+    private static GameObject playerSliderParent;
 
     private static Renderer bgRenderer;
 
@@ -78,6 +79,7 @@ public class GUIManagerScript : MonoBehaviour {
 
         playerParent = GameObject.FindWithTag("PlayerParent");
 
+        playerSliderParent = GameObject.Find("PlayerSliderParent");
     }
 
     // Update is called once per frame
@@ -216,5 +218,11 @@ public class GUIManagerScript : MonoBehaviour {
     {
         if (colorShowObject != null)
             colorShowObject.SetActive(false);
+    }
+    
+    public static void SetPlayerSliderParent(bool b)
+    {
+        if (playerSliderParent != null)
+            playerSliderParent.SetActive(b);
     }
 }
