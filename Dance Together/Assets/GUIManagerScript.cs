@@ -30,6 +30,7 @@ public class GUIManagerScript : MonoBehaviour {
 
     public static GameObject playerParent;
     private static GameObject playerSliderParent;
+    private static GameObject endGameParent;
 
     private static Renderer bgRenderer;
 
@@ -79,7 +80,8 @@ public class GUIManagerScript : MonoBehaviour {
 
         playerParent = GameObject.FindWithTag("PlayerParent");
 
-        playerSliderParent = GameObject.Find("PlayerSliderParent");
+        playerSliderParent = GameObject.Find("PlayerSliderParent"); 
+        endGameParent = GameObject.Find("EndGameParent");
     }
 
     // Update is called once per frame
@@ -220,9 +222,21 @@ public class GUIManagerScript : MonoBehaviour {
             colorShowObject.SetActive(false);
     }
     
-    public static void SetPlayerSliderParent(bool b)
+    public static void SetEndGameScreen(bool b)
     {
-        if (playerSliderParent != null)
-            playerSliderParent.SetActive(b);
+        if (b) //Yes to end game screen
+        {
+            if (playerSliderParent != null)
+                playerSliderParent.SetActive(false);
+            if (endGameParent != null)
+                endGameParent.SetActive(true);
+        }
+        else
+        {
+            if (playerSliderParent != null)
+                playerSliderParent.SetActive(true);
+            if (endGameParent != null)
+                endGameParent.SetActive(false);
+        }
     }
 }

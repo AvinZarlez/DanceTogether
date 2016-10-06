@@ -39,7 +39,7 @@ public class GameManagerScript : NetworkBehaviour
         countDown = -1;
         endgameCountDown = -1;
         roundCount = 0;
-        GUIManagerScript.SetPlayerSliderParent(true);
+        GUIManagerScript.SetEndGameScreen(false);
 
         Random.InitState((int)System.Environment.TickCount);
     }
@@ -110,7 +110,7 @@ public class GameManagerScript : NetworkBehaviour
         roundCount++;
         currentGameState = 200;
         countDown = gameLength;
-        GUIManagerScript.SetPlayerSliderParent(true);
+        GUIManagerScript.SetEndGameScreen(false);
     }
 
     [Command]
@@ -133,7 +133,7 @@ public class GameManagerScript : NetworkBehaviour
         countDown = 0;
         endgameCountDown = 5;
         currentGameState = 210;
-        GUIManagerScript.SetPlayerSliderParent(false);
+        GUIManagerScript.SetEndGameScreen(true);
     }
 
     [Command]
@@ -147,7 +147,7 @@ public class GameManagerScript : NetworkBehaviour
     {
         endgameCountDown = -1;
         currentGameState = 0;
-        GUIManagerScript.SetPlayerSliderParent(true);
+        GUIManagerScript.SetEndGameScreen(false);
 
         AudioManagerScript.instance.StartMenuMusic();
     }
@@ -162,7 +162,7 @@ public class GameManagerScript : NetworkBehaviour
     [ClientRpc]
     public void RpcCountdown(bool l)
     {
-        GUIManagerScript.SetPlayerSliderParent(true);
+        GUIManagerScript.SetEndGameScreen(false);
         if (l)
         {
             //playerParent.GetComponent<PlayerParentScript>().LockAndSpin();
