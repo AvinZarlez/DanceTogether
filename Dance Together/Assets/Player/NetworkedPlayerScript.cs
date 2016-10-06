@@ -141,7 +141,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
     void Start()
     {
-        playerParent = GameObject.FindWithTag("PlayerParent");
+        playerParent = GUIManagerScript.playerParent;
         playerButton = transform.Find("PlayerButton").gameObject;
 
         playerButton.transform.SetParent(playerParent.transform, false);

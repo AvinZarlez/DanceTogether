@@ -28,6 +28,8 @@ public class GUIManagerScript : MonoBehaviour {
     public static Text detailsText; // UI text object named "UI_DetailsText"
     public static Text sliderText; // UI text object named "UI_SliderText"
 
+    public static GameObject playerParent;
+
     private static Renderer bgRenderer;
 
     // Use this for initialization
@@ -73,11 +75,13 @@ public class GUIManagerScript : MonoBehaviour {
         sliderText = obj4.GetComponent<Text>();
 
         bgRenderer = GameObject.Find("Game_Background").GetComponent<Renderer>();
-        
+
+        playerParent = GameObject.FindWithTag("PlayerParent");
+
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update () {
 
     }
 
