@@ -520,7 +520,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             
             Vector3 goal = player.GetComponent<RemotePlayerScript>().GetPosition();
             nps.playerButton.transform.DOLocalMove(goal, nps.fastMovementSpeed);
-            nps.playerButton.transform.DOScale(Vector3.one, fastMovementSpeed);
+            nps.playerButton.transform.DOScale(Vector3.one, nps.fastMovementSpeed);
         }
 
         playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(160 * (size + 1), 340);

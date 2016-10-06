@@ -50,6 +50,7 @@ public class LocalPlayerScript : MonoBehaviour
                 Vector3 goal = player.GetComponent<RemotePlayerScript>().GetPosition();
 
                 nps.playerButton.transform.DOLocalMove(goal, nps.fastMovementSpeed);
+                nps.playerButton.transform.DOScale(Vector3.one, nps.fastMovementSpeed);
             }
         }
 

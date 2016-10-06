@@ -39,6 +39,8 @@ public class RemotePlayerScript : MonoBehaviour {
         {
             debug_SortPlayers = false;
             GetComponent<NetworkedPlayerScript>().playerButton.transform.DOLocalMove(SetPosition(position, numberOfPlayers), 0.5f);
+            GetComponent<NetworkedPlayerScript>().playerButton.transform.DOScale(Vector3.one, GetComponent<NetworkedPlayerScript>().fastMovementSpeed);
+
         }
         #endif
     }
