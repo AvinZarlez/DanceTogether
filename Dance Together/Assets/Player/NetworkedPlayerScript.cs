@@ -619,6 +619,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             GUIManagerScript.SetBackButton(false);
             
             AudioManagerScript.instance.StartGameMusic();
+
+            GUIManagerScript.SetColorShow(nameText, ColorScript.GetColor(color), ColorScript.GetColorName(color));
         }
 
         List<CaptainsMessPlayer> players = GetPlayers();
@@ -699,6 +701,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             AudioManagerScript.instance.EndGameMusic();
 
             AudioManagerScript.instance.PlayRoundEnd(scored_GuessedCorrect);
+
+            GUIManagerScript.HideColorShow();
         }
     }
 }

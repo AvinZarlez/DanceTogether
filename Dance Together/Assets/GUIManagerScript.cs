@@ -18,6 +18,7 @@ public class GUIManagerScript : MonoBehaviour {
     private static Text scoreText;
 
     private static GameObject nameInputObject;
+    private static GameObject colorShowObject;
 
     private static Text whichColorText;
     private static Image whichColorPanel;
@@ -49,6 +50,9 @@ public class GUIManagerScript : MonoBehaviour {
         nameInputObject = GameObject.Find("NameInputParent");
         whichColorText = GameObject.Find("UI_WhichColor").GetComponent<Text>();
         SetInput(false);
+
+        colorShowObject = GameObject.Find("ColorShowParent");
+        HideColorShow();
 
         scoreText = GameObject.Find("UI_Score").GetComponent<Text>();
         scoreText.enabled = false;
@@ -188,5 +192,25 @@ public class GUIManagerScript : MonoBehaviour {
     public static void SetBGColor(Color c)
     {
         bgRenderer.material.SetColor("_Color", c);
+    }
+
+    public static void SetColorShow(string player_name, Color c, string color_name)
+    {
+        if (colorShowObject != null)
+        {
+            colorShowObject.SetActive(true);
+            colorShowObject.transform.Find("UI_ColorShowColorPanel").GetComponent<Image>().color = c;
+            string txt;
+            if (player_name == color_name) txt = color_name;
+            else txt = player_name + "\n(" + color_name +")";
+            colorShowObject.transform.Find("UI_ColorShowPlayerName").GetComponent<Text>().text = txt;
+
+        }
+    }
+
+    public static void HideColorShow()
+    {
+        if (colorShowObject != null)
+            colorShowObject.SetActive(false);
     }
 }
