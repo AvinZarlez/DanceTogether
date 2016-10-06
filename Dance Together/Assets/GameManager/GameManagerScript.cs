@@ -8,6 +8,9 @@ public class GameManagerScript : NetworkBehaviour
     [SyncVar, HideInInspector]
     public float countDown;
 
+    [SyncVar, HideInInspector]
+    public float endgameCountDown;
+
     [HideInInspector]
     static public GameManagerScript instance = null;
 
@@ -34,7 +37,10 @@ public class GameManagerScript : NetworkBehaviour
     void Start()
     {
         countDown = -1;
+        endgameCountDown = -1;
         roundCount = 0;
+
+        Random.InitState((int)System.Environment.TickCount);
     }
 
     void Update()
@@ -43,10 +49,24 @@ public class GameManagerScript : NetworkBehaviour
         {
             countDown -= Time.deltaTime;
             
-                if (countDown <= 0)
+            if (countDown <= 0)
+            {
+                CmdEndGame();
+            }
+        }
+        else if (endgameCountDown > 0)
+        {
+            endgameCountDown -= Time.deltaTime;
+
+            if (endgameCountDown <= 0)
+            {
+                endgameCountDown = -1;
+                if (networkedPScript == null)
                 {
-                    CmdEndGame();
+                    SetNPS();
                 }
+                networkedPScript.CmdReplayGame();
+            }
         }
     }
 
@@ -109,6 +129,7 @@ public class GameManagerScript : NetworkBehaviour
     public void RpcEndGame()
     {
         countDown = 0;
+        endgameCountDown = 5;
         currentGameState = 210;
     }
 
