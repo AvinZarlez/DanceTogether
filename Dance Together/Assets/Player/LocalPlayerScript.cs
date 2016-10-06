@@ -120,7 +120,8 @@ public class LocalPlayerScript : MonoBehaviour
             }
             else if (countDown > 0)
             {
-                if (networkedPScript.GetMatchSongID() == -1)
+                bool chosen = (networkedPScript.GetMatchSongID() == -1);
+                if (chosen)
                     sliderText.text = "Chose your dance partner:";
                 else
                     sliderText.text = "Press back to undo current choice";
@@ -130,12 +131,11 @@ public class LocalPlayerScript : MonoBehaviour
 
                 if (reminded == false)
                 {
-                    if (countDown < 30)
+                    if (countDown < 30 && chosen)
                     {
-                        if (networkedPScript.GetMatchSongID() == -1)
-                        {
-                            AudioManagerScript.instance.PlayFind();
-                        }
+                        Debug.Log("Reminder to pick!");
+                        AudioManagerScript.instance.PlayFind();
+                        reminded = true;
                     }
                 }
             }
