@@ -359,7 +359,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 playerButton.transform.DOLocalMove(new Vector3(135,0,0), fastMovementSpeed);
                 playerButton.transform.DOScale(new Vector3(1.5f, 1.5f, 1f), fastMovementSpeed);
 
-                playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2((Screen.width-210)/2, 340);
+                playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(480, 340);
 
                 GUIManagerScript.SetBackButton(true);
             }
