@@ -159,6 +159,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             
             GUIManagerScript.DisableInput(false);
             GUIManagerScript.SetBackButton(false);
+
+            nameText = "";
+            SetReady(false);
         }
     }
 
@@ -356,7 +359,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
                 playerButton.SetActive(true);
                 playerButton.GetComponent<Button>().interactable = false;
-                playerButton.transform.DOLocalMove(new Vector3(20,0,0), fastMovementSpeed);
+                playerButton.transform.DOLocalMove(new Vector3(40,0,0), fastMovementSpeed);
                 playerButton.transform.DOScale(new Vector3(1.5f, 1.5f, 1f), fastMovementSpeed);
 
                 playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(180, 340);

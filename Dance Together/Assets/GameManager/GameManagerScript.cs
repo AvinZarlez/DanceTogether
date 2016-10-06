@@ -151,6 +151,15 @@ public class GameManagerScript : NetworkBehaviour
             AudioManagerScript.instance.StartMenuMusic();
             GUIManagerScript.SetRulesButton(true);
             GUIManagerScript.SetInput(true);
+            
+            if (networkedPScript == null)
+            {
+                SetNPS();
+            }
+            if (networkedPScript.nameText == ColorScript.GetColorName(networkedPScript.GetColor()))
+            {
+                networkedPScript.nameText = "";
+            }
         }
     }
 
