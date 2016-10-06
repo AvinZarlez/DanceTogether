@@ -117,12 +117,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 if (nps.playerButton.activeSelf == false)
                 {
                     nps.playerButton.SetActive(true);
-                    Vector3 start = goal;
-                    if (goal.x > 0)
-                        start.x = 200 + (Screen.width / 2);
-                    else
-                        start.x = -200 - (Screen.width / 2);
-                    nps.playerButton.transform.localPosition = start;
+                    nps.playerButton.transform.localPosition = new Vector3(0,340,0);
                 }
 
                 nps.playerButton.transform.DOLocalMove(goal, movementSpeed);
@@ -139,6 +134,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             GUIManagerScript.SetButton(false);
         }
+
+        playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(160 * (size + 1), 340);
     }
 
     void Start()
@@ -158,8 +155,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             playerButton.GetComponent<Button>().interactable = false;
             playerButton.transform.localPosition = Vector3.zero;
-
-            GUIManagerScript.SetInput(true);
+            
             GUIManagerScript.DisableInput(false);
             GUIManagerScript.SetBackButton(false);
         }
@@ -243,6 +239,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         AudioManagerScript.instance.PlaySFX(AudioManagerScript.SFXClips.DanceTogether);
 
         GUIManagerScript.SetRulesButton(true);
+        GUIManagerScript.SetInput(true);
 
         base.OnStartLocalPlayer();
     }
@@ -358,7 +355,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
                 playerButton.SetActive(true);
                 playerButton.GetComponent<Button>().interactable = false;
-                playerButton.transform.DOLocalMove(Vector3.zero, fastMovementSpeed);
+                playerButton.transform.DOLocalMove(new Vector3(160,0,0), fastMovementSpeed);
+                
+                playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(160 * 3, 340);
 
                 GUIManagerScript.SetBackButton(true);
             }
@@ -501,6 +500,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         GUIManagerScript.DisableInput(false);
 
         List<CaptainsMessPlayer> players = GetPlayers();
+        int size = players.Count;
+
         foreach (CaptainsMessPlayer player in players)
         {
             NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
@@ -513,6 +514,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             Vector3 goal = player.GetComponent<RemotePlayerScript>().GetPosition();
             nps.playerButton.transform.DOLocalMove(goal, nps.fastMovementSpeed);
         }
+
+        playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(160 * (size + 1), 340);
 
         SetReady(true); //Auto advance
     }

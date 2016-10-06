@@ -142,6 +142,7 @@ public class GameManagerScript : NetworkBehaviour
             AudioManagerScript.instance.PrepareGameMusic();
             AudioManagerScript.instance.PlayCountdown();
             GUIManagerScript.SetRulesButton(false);
+            GUIManagerScript.SetInput(false);
         }
         else {
             //playerParent.GetComponent<PlayerParentScript>().Unlock();
@@ -149,6 +150,7 @@ public class GameManagerScript : NetworkBehaviour
             AudioManagerScript.instance.StopSFX();
             AudioManagerScript.instance.StartMenuMusic();
             GUIManagerScript.SetRulesButton(true);
+            GUIManagerScript.SetInput(true);
         }
     }
 }

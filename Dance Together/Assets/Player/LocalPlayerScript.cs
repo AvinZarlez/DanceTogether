@@ -12,6 +12,7 @@ public class LocalPlayerScript : MonoBehaviour
     private Text countdownText; // UI text object named "UI_Countdown"
     private Text infoText; // UI text object named "UI_InfoText"
     private Text detailsText; // UI text object named "UI_DetailsText"
+    private Text sliderText; // UI text object named "UI_SliderText"
 
     void Start()
     {
@@ -20,6 +21,8 @@ public class LocalPlayerScript : MonoBehaviour
         networkedPScript = GetComponent<NetworkedPlayerScript>();
         
         countdownText = GUIManagerScript.countdownText;
+
+        sliderText = GUIManagerScript.sliderText;
 
         infoText = GUIManagerScript.infoText;
 
@@ -61,6 +64,8 @@ public class LocalPlayerScript : MonoBehaviour
 
         if (gameManager.IsInPostGame())
         {
+            sliderText.text = "";
+
             countdownText.enabled = false;
             infoText.enabled = true; // Redundent?
             detailsText.enabled = true;
@@ -86,6 +91,7 @@ public class LocalPlayerScript : MonoBehaviour
             float captainsCountdown = networkedPScript.captainsCountdown;
             if (captainsCountdown > 0)
             {
+                sliderText.text = "";
                 infoText.enabled = true;
 
                 if (captainsCountdown < 1)
@@ -103,12 +109,14 @@ public class LocalPlayerScript : MonoBehaviour
             }
             else if (countDown > 0)
             {
+                sliderText.text = "Chose your dance partner:";
                 infoText.enabled = false;
                 countdownText.enabled = true;
                 countdownText.text = "" + Mathf.Ceil(countDown);
             }
             else
             {
+                sliderText.text = "Other players:";
                 infoText.enabled = false;
             }
         }

@@ -25,6 +25,7 @@ public class GUIManagerScript : MonoBehaviour {
     public static Text countdownText; // UI text object named "UI_Countdown"
     public static Text infoText; // UI text object named "UI_InfoText"
     public static Text detailsText; // UI text object named "UI_DetailsText"
+    public static Text sliderText; // UI text object named "UI_SliderText"
 
     private static Renderer bgRenderer;
 
@@ -63,6 +64,9 @@ public class GUIManagerScript : MonoBehaviour {
         GameObject obj3 = GameObject.Find("UI_DetailsText");
         detailsText = obj3.GetComponent<Text>();
         detailsText.enabled = false;
+
+        GameObject obj4 = GameObject.Find("UI_SliderText");
+        sliderText = obj4.GetComponent<Text>();
 
         bgRenderer = GameObject.Find("Game_Background").GetComponent<Renderer>();
         
@@ -128,9 +132,12 @@ public class GUIManagerScript : MonoBehaviour {
 
     public static void SetInputColor(Color c, string name)
     {
-        nameInputObject.transform.Find("UI_NameInput").GetComponent<Image>().color = c;
-        whichColorText.text = name;
-        whichColorPanel.color = c;
+        if (nameInputObject != null)
+            nameInputObject.transform.Find("UI_NameInput").GetComponent<Image>().color = c;
+        if (whichColorText != null)
+            whichColorText.text = name;
+        if (whichColorPanel != null)
+            whichColorPanel.color = c;
     }
 
     public static void SetButtonText(string s)
