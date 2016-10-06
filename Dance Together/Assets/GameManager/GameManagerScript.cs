@@ -153,4 +153,14 @@ public class GameManagerScript : NetworkBehaviour
             GUIManagerScript.SetInput(true);
         }
     }
+
+    [Command]
+    public void CmdResetColor()
+    {
+        if (networkedPScript == null)
+        {
+            SetNPS();
+        }
+        networkedPScript.CmdSetColor();
+    }
 }

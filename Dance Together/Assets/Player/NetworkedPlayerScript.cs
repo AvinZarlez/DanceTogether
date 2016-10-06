@@ -377,7 +377,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     }
 
     [Command]
-    void CmdSetColor()
+    public void CmdSetColor()
     {
         List<int> playerColors = new List<int>();
 
