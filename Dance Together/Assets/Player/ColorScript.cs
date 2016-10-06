@@ -15,7 +15,7 @@ public class ColorScript : MonoBehaviour {
         new Color(0.0f,0.13f,1.0f), // Blue
         new Color(0.75f,0.0f,1.0f), // Orchid
         new Color(0.0f,0.5f,0.07f), // Forest
-        new Color(0.0f,0.07f,0.5f), // Midnight
+        new Color(0.0f,0.0f,0.5f), // Midnight
         new Color(0.25f,0.0f,0.5f), // Purple
         new Color(0.5f,0.0f,0.0f), // Wine
         new Color(0.5f,0.5f,0.0f), // Olive
