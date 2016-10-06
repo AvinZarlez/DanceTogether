@@ -11,7 +11,7 @@ public class GUIManagerScript : MonoBehaviour {
 
     private static GameObject backButtonObject;
 
-    private static Button gameButton;
+    //private static Button gameButton;
 
     private static Text buttonText;
 
@@ -33,7 +33,7 @@ public class GUIManagerScript : MonoBehaviour {
     void Start ()
     {
         gameButtonObject = GameObject.Find("UI_GameButton");
-        gameButton = gameButtonObject.GetComponent<Button>();
+        //gameButton = gameButtonObject.GetComponent<Button>();
         buttonText = gameButtonObject.GetComponentInChildren<Text>();
         SetMainButtonHighlight(false);
         SetButton(false);
