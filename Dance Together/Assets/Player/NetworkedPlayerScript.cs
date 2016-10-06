@@ -121,6 +121,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 }
 
                 nps.playerButton.transform.DOLocalMove(goal, movementSpeed);
+                nps.playerButton.transform.DOScale(Vector3.one, fastMovementSpeed);
             }
             nps.SetColor();
             nps.SetNameText();
@@ -355,9 +356,10 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
                 playerButton.SetActive(true);
                 playerButton.GetComponent<Button>().interactable = false;
-                playerButton.transform.DOLocalMove(new Vector3(160,0,0), fastMovementSpeed);
-                
-                playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(160 * 3, 340);
+                playerButton.transform.DOLocalMove(new Vector3(135,0,0), fastMovementSpeed);
+                playerButton.transform.DOScale(new Vector3(1.5f, 1.5f, 1f), fastMovementSpeed);
+
+                playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(480, 340);
 
                 GUIManagerScript.SetBackButton(true);
             }
@@ -518,6 +520,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             
             Vector3 goal = player.GetComponent<RemotePlayerScript>().GetPosition();
             nps.playerButton.transform.DOLocalMove(goal, nps.fastMovementSpeed);
+            nps.playerButton.transform.DOScale(Vector3.one, fastMovementSpeed);
         }
 
         playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(160 * (size + 1), 340);
