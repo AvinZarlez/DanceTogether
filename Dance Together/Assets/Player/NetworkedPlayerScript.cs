@@ -400,17 +400,22 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     [ClientRpc]
     void RpcSetColor(int c)
     {
+        int oldColor = color;
+
         color = c;
         SetColor();
+
+        string clr_name = ColorScript.GetColorName(c);
 
         if (isLocalPlayer)
         {
             Color clr = ColorScript.GetColor(c);
-            string clr_name = ColorScript.GetColorName(c);
             GUIManagerScript.SetInputColor(clr, clr_name);
             clr = clr * 0.5f;
             GUIManagerScript.SetBGColor(clr);
         }
+
+        if (nameText == ColorScript.GetColorName(oldColor) || nameText == "") OnNameTextChanged(clr_name);
     }
 
     [Command]
