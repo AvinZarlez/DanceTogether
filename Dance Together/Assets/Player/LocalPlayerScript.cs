@@ -57,11 +57,7 @@ public class LocalPlayerScript : MonoBehaviour
             }
             else
             {
-                RectTransform rt = nps.playerParent.GetComponent<RectTransform>();
-                rt.sizeDelta = new Vector2(160 * (size + 1), 340);
-                rt.anchorMin = new Vector2(0f, 0.5f);
-                rt.anchorMax = new Vector2(0f, 0.5f);
-                rt.pivot = new Vector2(0f, 0.5f);
+                nps.playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(160 * (size + 1), 340);
             }
         }
 
