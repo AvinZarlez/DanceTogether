@@ -201,7 +201,7 @@ public class GUIManagerScript : MonoBehaviour {
             colorShowObject.SetActive(true);
             colorShowObject.transform.Find("UI_ColorShowColorPanel").GetComponent<Image>().color = c;
             string txt;
-            if (player_name == color_name) txt = color_name;
+            if (player_name == color_name || player_name == "") txt = color_name;
             else txt = player_name + "\n(" + color_name +")";
             colorShowObject.transform.Find("UI_ColorShowPlayerName").GetComponent<Text>().text = txt;
 

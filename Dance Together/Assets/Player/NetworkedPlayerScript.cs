@@ -161,7 +161,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             GUIManagerScript.SetBackButton(false);
 
             nameText = "";
-            SetReady(false);
+            GUIManagerScript.FillPlayerText(nameText);
         }
     }
 
@@ -212,6 +212,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             GUIManagerScript.SetButton(false);
             GUIManagerScript.SetRulesButton(false);
             GUIManagerScript.SetBackButton(false);
+            GUIManagerScript.HideColorShow();
+            GUIManagerScript.countdownText.enabled = false;
         }
 
         // If this is a client player on the server then OnClientExitLobby will not be called.
@@ -244,6 +246,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         GUIManagerScript.SetRulesButton(true);
         GUIManagerScript.SetInput(true);
+
+        SetReady(false);
 
         base.OnStartLocalPlayer();
     }
