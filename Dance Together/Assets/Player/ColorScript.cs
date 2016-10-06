@@ -51,7 +51,7 @@ public class ColorScript : MonoBehaviour {
             case 10:
                 return "Forest";
             case 11:
-                return "Midnight";
+                return "Night";
             case 12:
                 return "Purple";
             case 13:
@@ -61,7 +61,7 @@ public class ColorScript : MonoBehaviour {
             case 15:
                 return "Brown";
             case 16:
-                return "Charcoal";
+                return "Coal";
             default: //17
                 return "Black";
         }
