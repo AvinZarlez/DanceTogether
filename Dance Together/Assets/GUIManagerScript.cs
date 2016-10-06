@@ -47,7 +47,7 @@ public class GUIManagerScript : MonoBehaviour {
         whichColorPanel = GameObject.Find("UI_WhichColorPanel").GetComponent<Image>();
 
         nameInputObject = GameObject.Find("NameInputParent");
-        whichColorText = nameInputObject.transform.Find("UI_WhichColor").GetComponent<Text>();
+        whichColorText = GameObject.Find("UI_WhichColor").GetComponent<Text>();
         SetInput(false);
 
         scoreText = GameObject.Find("UI_Score").GetComponent<Text>();
