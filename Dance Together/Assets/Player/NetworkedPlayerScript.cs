@@ -117,7 +117,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 if (nps.playerButton.activeSelf == false)
                 {
                     nps.playerButton.SetActive(true);
-                    nps.playerButton.transform.localPosition = new Vector3(i*160,340,0);
+                    nps.playerButton.transform.localPosition = new Vector3(i*160,-340,0);
                 }
 
                 nps.playerButton.transform.DOLocalMove(goal, movementSpeed);

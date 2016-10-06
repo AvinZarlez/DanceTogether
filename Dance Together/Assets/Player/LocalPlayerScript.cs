@@ -109,7 +109,10 @@ public class LocalPlayerScript : MonoBehaviour
             }
             else if (countDown > 0)
             {
-                sliderText.text = "Chose your dance partner:";
+                if (networkedPScript.GetMatchSongID() == -1)
+                    sliderText.text = "Chose your dance partner:";
+                else
+                    sliderText.text = "Choice locked in! Press \"back\" to undo";
                 infoText.enabled = false;
                 countdownText.enabled = true;
                 countdownText.text = "" + Mathf.Ceil(countDown);
