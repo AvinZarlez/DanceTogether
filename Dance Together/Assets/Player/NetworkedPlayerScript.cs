@@ -214,6 +214,10 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             GUIManagerScript.SetBackButton(false);
             GUIManagerScript.HideColorShow();
             GUIManagerScript.countdownText.enabled = false;
+
+            AudioManagerScript.instance.StopSFX();
+            AudioManagerScript.instance.EndGameMusic();
+            AudioManagerScript.instance.StartMenuMusic();
         }
 
         // If this is a client player on the server then OnClientExitLobby will not be called.
