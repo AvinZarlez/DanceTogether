@@ -512,19 +512,28 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 scored_TimeBonus = value;
         }
     }
+    
+    public void ResetScore()
+    {
+        Debug.Log("NP ResetScore");
+        CmdResetScore();
+    }
 
     [Command]
     public void CmdResetScore()
     {
+        Debug.Log("NP CmdResetScore");
         RpcResetScore();
     }
 
     [ClientRpc]
     public void RpcResetScore()
     {
+        Debug.Log("NP RpsResetScore");
         score = 0;
         if (isLocalPlayer)
         {
+            Debug.Log("NP RpsResetScore Local Player");
             GUIManagerScript.SetScoreText(score);
         }
     }

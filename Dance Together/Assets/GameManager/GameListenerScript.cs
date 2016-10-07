@@ -153,13 +153,13 @@ public class GameListenerScript : CaptainsMessListener
 	{
 		networkStateField.text = "Status: " + networkState.ToString();
     }
-
+    
     public void ResetScore()
     {
         GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
         if (gameManager != null)
         {
-            gameManager.CmdResetScore();
+            gameManager.ResetScore();
         }
     }
 }
