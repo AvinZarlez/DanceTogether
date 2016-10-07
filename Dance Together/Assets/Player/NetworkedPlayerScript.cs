@@ -5,7 +5,7 @@ using UnityEngine.Assertions;
 using UnityEngine.UI;
 using DG.Tweening;
 using UnityEngine.Analytics;
-
+using System.Linq;
 
 public class NetworkedPlayerScript : CaptainsMessPlayer
 {
@@ -71,6 +71,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
     [SyncVar(hook = "OnNameTextChanged")]
     public string nameText = "";
+    private bool to_sort = false;
 
     [SyncVar, HideInInspector]
     public float captainsCountdown = 0;
@@ -132,7 +133,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         int i = 0;
         int size = players.Count;
 
-        foreach (CaptainsMessPlayer player in players)
+        List<CaptainsMessPlayer> SortedList = players.OrderBy(o => o.GetComponent<NetworkedPlayerScript>().nameText).ToList();
+
+        foreach (CaptainsMessPlayer player in SortedList)
         {
             NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
             if (!nps.isLocalPlayer)
@@ -223,6 +226,15 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             else
             {
                 playerButtonOutline.enabled = false;
+            }
+        }
+
+        if (isLocalPlayer)
+        {
+            if (to_sort)
+            {
+                to_sort = false;
+                SortPlayers();
             }
         }
     }
@@ -327,6 +339,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         }
 
         playerButton.GetComponentInChildren<Text>().text = nameText;
+        to_sort = true;
     }
 
     public List<CaptainsMessPlayer> GetPlayers()
@@ -785,7 +798,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 }
 
                 scoringSongs.Add(sid);
-                
+
                 Analytics.CustomEvent("guessedCorrect", new Dictionary<string, object>
                   {
                     { "matchTime", currentMatchTime },
