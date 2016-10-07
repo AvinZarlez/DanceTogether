@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.Analytics;
 
 
 public class NetworkedPlayerScript : CaptainsMessPlayer
@@ -526,7 +527,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 scored_TimeBonus = value;
         }
     }
-    
+
     public void ResetScore()
     {
         Debug.Log("NP ResetScore");
@@ -784,6 +785,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 }
 
                 scoringSongs.Add(sid);
+                
+                Analytics.CustomEvent("guessedCorrect", new Dictionary<string, object>
+                  {
+                    { "matchTime", currentMatchTime },
+                    { "songID", sid }
+                });
             }
             else
             {
