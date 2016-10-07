@@ -514,6 +514,18 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     }
 
     [Command]
+    public void CmdResetScore()
+    {
+        RpcResetScore();
+    }
+
+    [ClientRpc]
+    public void RpcResetScore()
+    {
+        score = 0;
+    }
+
+    [Command]
     public void CmdSetMatchSongID(int song, int color, string name)
     {
         Assert.AreNotEqual<int>(-1, song, "No player was matched");

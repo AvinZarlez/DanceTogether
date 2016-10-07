@@ -16,6 +16,7 @@ public class GUIManagerScript : MonoBehaviour {
     private static Text buttonText;
 
     private static Text scoreText;
+    private static GameObject resetScoreBtn;
 
     private static GameObject nameInputObject;
     private static GameObject colorShowObject;
@@ -70,7 +71,10 @@ public class GUIManagerScript : MonoBehaviour {
 
         scoreText = GameObject.Find("UI_Score").GetComponent<Text>();
         scoreText.enabled = false;
-        
+
+        resetScoreBtn = GameObject.Find("UI_ResetScore");
+        resetScoreBtn.SetActive(false);
+
         GameObject obj1 = GameObject.Find("UI_Countdown");
         countdownText = obj1.GetComponent<Text>();
         countdownText.enabled = false;
@@ -201,6 +205,15 @@ public class GUIManagerScript : MonoBehaviour {
     {
         scoreText.enabled = true;
         scoreText.text = "Score:\n" + score.ToString();
+
+        resetScoreBtn.SetActive(true);
+    }
+
+    public static void HideScoreText()
+    {
+        scoreText.enabled = false;
+
+        resetScoreBtn.SetActive(false);
     }
 
     public static void SetMainButtonHighlight(bool highlight)

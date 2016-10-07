@@ -201,4 +201,13 @@ public class GameManagerScript : NetworkBehaviour
         }
         networkedPScript.CmdSetColor();
     }
+
+    [Command]
+    public void CmdResetScore()
+    {
+        if (networkedPScript != null)
+        {
+            networkedPScript.CmdResetScore();
+        }
+    }
 }

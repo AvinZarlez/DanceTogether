@@ -70,6 +70,7 @@ public class GameListenerScript : CaptainsMessListener
 
         disconnectButton.SetActive(false);
         menuParent.SetActive(true);
+        GUIManagerScript.HideScoreText();
 
         GUIManagerScript.SetBGColor(new Color32(32, 32, 32, 255));
     }
@@ -97,6 +98,7 @@ public class GameListenerScript : CaptainsMessListener
 
         disconnectButton.SetActive(false);
         menuParent.SetActive(true);
+        GUIManagerScript.HideScoreText();
 
         GUIManagerScript.SetBGColor(new Color32(32, 32, 32, 255));
     }
