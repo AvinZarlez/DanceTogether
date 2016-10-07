@@ -22,6 +22,7 @@ public class LocalPlayerScript : MonoBehaviour
 
     private GameObject playerPickedBtn; // UI Button named "UI_WhichPlayerPicked"
     private GameObject lookingForBtn; // UI Button named "UI_LookingForPlayer"
+    private GameObject lookingForParent;
 
     public bool reminded = false;
 
@@ -40,12 +41,14 @@ public class LocalPlayerScript : MonoBehaviour
         // Assigned GUI elements based on
         finalScoreText = GUIManagerScript.finalScoreText;
         answerText = GUIManagerScript.answerText;
-        listeningToText = GUIManagerScript.listeningToText; //TODO
+        listeningToText = GUIManagerScript.listeningToText;
         detailsText = GUIManagerScript.detailsText;
         continuingInText = GUIManagerScript.continuingInText;
 
         playerPickedBtn = GUIManagerScript.playerPickedBtn; //TODO
         lookingForBtn = GUIManagerScript.lookingForBtn; //TODO
+
+        lookingForParent = GUIManagerScript.lookingForParent;
 
         Application.runInBackground = true;
         // Disable screen dimming
@@ -108,6 +111,8 @@ public class LocalPlayerScript : MonoBehaviour
             int match = networkedPScript.GetMatchSongID();
             if (song == match)
             {
+                lookingForParent.SetActive(false);
+
                 answerText.text = "Correct!";
                 details += "(Found Dance Partner: +250)\n(Time Bonus: +" + networkedPScript.GetTimeBonus() + ")\n";
 
@@ -115,6 +120,8 @@ public class LocalPlayerScript : MonoBehaviour
             }
             else
             {
+                lookingForParent.SetActive(true);
+
                 answerText.text = "Wrong!";
 
                 listeningToText.text = "You heard: " + AudioManagerScript.GetSongName(song) + "\nThey heard: "+ AudioManagerScript.GetSongName(match);

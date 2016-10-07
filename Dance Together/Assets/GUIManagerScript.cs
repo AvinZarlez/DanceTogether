@@ -34,6 +34,7 @@ public class GUIManagerScript : MonoBehaviour {
     public static Text continuingInText; // UI text object named "UI_ContinuingIn"
     public static GameObject playerPickedBtn; // UI Button named "UI_WhichPlayerPicked"
     public static GameObject lookingForBtn; // UI Button named "UI_LookingForPlayer"
+    public static GameObject lookingForParent;
 
     public static GameObject playerParent;
     private static GameObject playerSliderParent;
@@ -90,6 +91,8 @@ public class GUIManagerScript : MonoBehaviour {
         continuingInText = GameObject.Find("UI_ContinuingIn").GetComponent<Text>();
         playerPickedBtn = GameObject.Find("UI_WhichPlayerPicked");
         lookingForBtn = GameObject.Find("UI_LookingForPlayer");
+
+        lookingForParent = GameObject.Find("UI_LookingForParent");
 
         playerSliderParent = GameObject.Find("PlayerSliderParent");
         endGameParent = GameObject.Find("EndGameParent");

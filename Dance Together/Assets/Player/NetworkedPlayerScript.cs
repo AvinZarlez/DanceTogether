@@ -31,13 +31,16 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     private int score;
 
     [SyncVar]
-    private int scoredThisRound;
+    private int scored_ThisRound;
+
     [SyncVar]
-    private int time_bonus;
+    private int scored_TimeBonus;
+
     [SyncVar]
-    private bool first_bonus;
+    private bool scored_FirstBonus;
+
     [SyncVar]
-    private bool was_guessed;
+    private bool scored_WasGuessed;
 
     [SyncVar]
     public bool scored_GuessedCorrect;
@@ -47,6 +50,15 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
     [SyncVar]
     private int matchSongID; // The other player this player has picked as a match
+
+    [SyncVar]
+    private string picked_nameText;
+    [SyncVar]
+    private int picked_color;
+    [SyncVar]
+    private string match_nameText;
+    [SyncVar]
+    private int match_color;
 
     [SyncVar]
     public float matchTime;
@@ -104,7 +116,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         else
         {
             SendNotReadyToBeginMessage();
-            
+
             GUIManagerScript.SetButtonText("Dance");
         }
 
@@ -130,7 +142,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 if (nps.playerButton.activeSelf == false)
                 {
                     nps.playerButton.SetActive(true);
-                    nps.playerButton.transform.localPosition = new Vector3(i*160,-340,0);
+                    nps.playerButton.transform.localPosition = new Vector3(i * 160, -340, 0);
                 }
 
                 nps.playerButton.transform.DOLocalMove(goal, movementSpeed);
@@ -169,7 +181,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             playerButton.GetComponent<Button>().interactable = false;
             playerButton.transform.localPosition = Vector3.zero;
-            
+
             GUIManagerScript.DisableInput(false);
             GUIManagerScript.SetBackButton(false);
 
@@ -261,12 +273,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         CmdSetColor();
 
         score = 0;
-        scoredThisRound = 0;
-        time_bonus = 0;
-        first_bonus = false;
-        was_guessed = false;
+        scored_ThisRound = 0;
+        scored_TimeBonus = 0;
+        scored_FirstBonus = false;
+        scored_WasGuessed = false;
 
-    AudioManagerScript.instance.PlaySFX(AudioManagerScript.SFXClips.DanceTogether);
+        AudioManagerScript.instance.PlaySFX(AudioManagerScript.SFXClips.DanceTogether);
 
         GUIManagerScript.SetRulesButton(true);
         GUIManagerScript.SetInput(true);
@@ -314,22 +326,22 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
     public int GetScoredThisRound()
     {
-        return scoredThisRound;
+        return scored_ThisRound;
     }
 
     public int GetTimeBonus()
     {
-        return time_bonus;
+        return scored_TimeBonus;
     }
 
     public bool GetWasGuessed()
     {
-        return was_guessed;
+        return scored_WasGuessed;
     }
 
     public bool GetFirstBonus()
     {
-        return first_bonus;
+        return scored_FirstBonus;
     }
 
     public int GetSongID()
@@ -346,6 +358,10 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     {
         matchSongID = -1;
         matchTime = -1;
+
+        picked_nameText = "";
+        picked_color = -1;
+
         scored_GuessedCorrect = false;
     }
 
@@ -394,7 +410,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                     NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
                     if (player.name == "LOCAL Player")
                     {
-                        nps.CmdSetMatchSongID(songID);
+                        nps.CmdSetMatchSongID(songID, color, nameText);
                     }
                     nps.playerButton.SetActive(false);
                     nps.playerButton.GetComponent<Button>().interactable = false;
@@ -402,7 +418,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
                 playerButton.SetActive(true);
                 playerButton.GetComponent<Button>().interactable = false;
-                playerButton.transform.DOLocalMove(new Vector3(40,0,0), fastMovementSpeed);
+                playerButton.transform.DOLocalMove(new Vector3(40, 0, 0), fastMovementSpeed);
                 playerButton.transform.DOScale(new Vector3(1.5f, 1.5f, 1f), fastMovementSpeed);
 
                 playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(180, 340);
@@ -482,31 +498,31 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public void RpcAddScore(int value, int s)
     {
         score += value;
-        scoredThisRound += value;
+        scored_ThisRound += value;
 
         if (isLocalPlayer)
         {
             GUIManagerScript.SetScoreText(score);
 
             if (s == (int)(Score.First))
-                first_bonus = true;
+                scored_FirstBonus = true;
             if (s == (int)(Score.WasGuessed))
-                was_guessed = true;
+                scored_WasGuessed = true;
             if (s == (int)(Score.Time))
-                time_bonus = value;
+                scored_TimeBonus = value;
         }
     }
 
     [Command]
-    public void CmdSetMatchSongID(int song)
+    public void CmdSetMatchSongID(int song, int color, string name)
     {
         Assert.AreNotEqual<int>(-1, song, "No player was matched");
 
-        RpcSetMatchSongID(song);
+        RpcSetMatchSongID(song, color, name);
     }
 
     [ClientRpc]
-    public void RpcSetMatchSongID(int song)
+    public void RpcSetMatchSongID(int song, int c, string name)
     {
         GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
 
@@ -514,6 +530,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         matchSongID = song;
         matchTime = gameManager.countDown;
+
+        picked_nameText = name;
+        picked_color = c;
 
         if (songID == matchSongID)
         {
@@ -570,7 +589,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 nps.playerButton.SetActive(true);
             }
             nps.playerButton.GetComponent<Button>().interactable = false;
-            
+
             Vector3 goal = player.GetComponent<RemotePlayerScript>().GetPosition();
 
             //Move there
@@ -653,10 +672,10 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public void RpcStartGame(int s)
     {
         songID = s;
-        scoredThisRound = 0;
-        time_bonus = 0;
-        first_bonus = false;
-        was_guessed = false;
+        scored_ThisRound = 0;
+        scored_TimeBonus = 0;
+        scored_FirstBonus = false;
+        scored_WasGuessed = false;
 
         //playerParent.GetComponent<PlayerParentScript>().Unlock();
 
@@ -680,7 +699,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
             GUIManagerScript.DisableInput(true);
             GUIManagerScript.SetBackButton(false);
-            
+
             AudioManagerScript.instance.StartGameMusic();
 
             GUIManagerScript.SetColorShow(nameText, ColorScript.GetColor(color), ColorScript.GetColorName(color));
@@ -711,10 +730,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
 
+            int sid = nps.GetSongID();
+
             if (nps.scored_GuessedCorrect)
             {
                 float currentMatchTime = nps.matchTime;
-                
+
                 nps.RpcAddScore(5 * Mathf.FloorToInt(currentMatchTime), (int)Score.Time);
 
                 if (currentMatchTime > longestMatchTime)
@@ -723,14 +744,31 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                     bonusPlayer = nps;
                 }
 
-                scoringSongs.Add(nps.GetSongID());
+                scoringSongs.Add(sid);
+            }
+            else
+            {
+                for (int i = 0; i < players.Count; i++)
+                {
+                    NetworkedPlayerScript other_nps = players[i].GetComponent<NetworkedPlayerScript>();
+
+                    if (sid == other_nps.GetSongID())
+                    {
+                        if (nps.color != other_nps.color)
+                        {
+                            match_color = other_nps.color;
+                            match_nameText = other_nps.nameText;
+                            break;
+                        }
+                    }
+                }
             }
         }
 
         //Bonus for player who guessed first.
         if (bonusPlayer != null) //If this is null, nobody guessed anything. Lame!
         {
-            bonusPlayer.RpcAddScore(100, (int)Score.WasGuessed);
+            bonusPlayer.RpcAddScore(100, (int)Score.First);
         }
 
         foreach (CaptainsMessPlayer player in players)
