@@ -109,6 +109,13 @@ public class LocalPlayerScript : MonoBehaviour
 
             int song = networkedPScript.GetSongID();
             int match = networkedPScript.GetMatchSongID();
+
+            if (match != -1)
+            {
+                playerPickedBtn.GetComponent<Image>().color = ColorScript.GetColor(networkedPScript.picked_color);
+                playerPickedBtn.GetComponentInChildren<Text>().text = networkedPScript.picked_nameText;
+            }
+
             if (song == match)
             {
                 lookingForParent.SetActive(false);
@@ -121,6 +128,9 @@ public class LocalPlayerScript : MonoBehaviour
             else
             {
                 lookingForParent.SetActive(true);
+
+                lookingForBtn.GetComponent<Image>().color = ColorScript.GetColor(networkedPScript.match_color);
+                lookingForBtn.GetComponentInChildren<Text>().text = networkedPScript.match_nameText;
 
                 answerText.text = "Wrong!";
 

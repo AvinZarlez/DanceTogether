@@ -52,13 +52,13 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     private int matchSongID; // The other player this player has picked as a match
 
     [SyncVar]
-    private string picked_nameText;
+    public string picked_nameText;
     [SyncVar]
-    private int picked_color;
+    public int picked_color;
     [SyncVar]
-    private string match_nameText;
+    public string match_nameText;
     [SyncVar]
-    private int match_color;
+    public int match_color;
 
     [SyncVar]
     public float matchTime;

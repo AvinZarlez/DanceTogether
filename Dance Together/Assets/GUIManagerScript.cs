@@ -92,7 +92,7 @@ public class GUIManagerScript : MonoBehaviour {
         playerPickedBtn = GameObject.Find("UI_WhichPlayerPicked");
         lookingForBtn = GameObject.Find("UI_LookingForPlayer");
 
-        lookingForParent = GameObject.Find("UI_LookingForParent");
+        lookingForParent = GameObject.Find("LookingForParent");
 
         playerSliderParent = GameObject.Find("PlayerSliderParent");
         endGameParent = GameObject.Find("EndGameParent");
