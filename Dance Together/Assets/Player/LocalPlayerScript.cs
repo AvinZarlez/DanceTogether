@@ -10,9 +10,18 @@ public class LocalPlayerScript : MonoBehaviour
     //private PlayerParentScript playerParentScript;
     private NetworkedPlayerScript networkedPScript;
     private Text countdownText; // UI text object named "UI_Countdown"
-    private Text infoText; // UI text object named "UI_InfoText"
-    private Text detailsText; // UI text object named "UI_DetailsText"
     private Text sliderText; // UI text object named "UI_SliderText"
+
+    private Text infoText; // UI text object named "UI_InfoText"
+
+    private Text finalScoreText; // UI text object named "UI_FinalScore"
+    private Text answerText; // UI text object named "UI_Answer"
+    private Text listeningToText; // UI text object named "UI_ListeningTo"
+    private Text detailsText; // UI text object named "UI_DetailsText"
+    private Text continuingInText; // UI text object named "UI_ContinuingIn"
+
+    private Button playerPickedBtn; // UI Button named "UI_WhichPlayerPicked"
+    private Button lookingForBtn; // UI Button named "UI_LookingForPlayer"
 
     public bool reminded = false;
 
@@ -28,7 +37,8 @@ public class LocalPlayerScript : MonoBehaviour
 
         infoText = GUIManagerScript.infoText;
 
-        detailsText = GUIManagerScript.detailsText;
+        // Assigned GUI elements based on
+        // GUIManagerScript.endGameParent
 
         Application.runInBackground = true;
         // Disable screen dimming
@@ -78,24 +88,23 @@ public class LocalPlayerScript : MonoBehaviour
             sliderText.text = "";
 
             countdownText.enabled = false;
-            infoText.enabled = true; // Redundent?
             detailsText.enabled = true;
 
             int song = networkedPScript.GetSongID();
             int match = networkedPScript.GetMatchSongID();
             if (song == match)
             {
-                infoText.text = "Correct!";
+                answerText.text = "Correct!";
             }
             else
             {
-                infoText.text = "Wrong!";
+                answerText.text = "Wrong!";
             }
-            detailsText.text = "Scored this round:\n+" + networkedPScript.GetScoredThisRound().ToString() + "\nAuto advancing in " + Mathf.CeilToInt(gameManager.endgameCountDown);
+            oldDetailsText.text = "Scored this round:\n+" + networkedPScript.GetScoredThisRound().ToString() + "\nAuto advancing in " + Mathf.CeilToInt(gameManager.endgameCountDown);
         }
         else
         {
-            detailsText.enabled = false;
+            oldDetailsText.enabled = false;
 
             float countDown = gameManager.countDown;
 

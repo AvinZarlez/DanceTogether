@@ -25,12 +25,12 @@ public class GUIManagerScript : MonoBehaviour {
 
     public static Text countdownText; // UI text object named "UI_Countdown"
     public static Text infoText; // UI text object named "UI_InfoText"
-    public static Text detailsText; // UI text object named "UI_DetailsText"
     public static Text sliderText; // UI text object named "UI_SliderText"
+
+    public static GameObject endGameParent;
 
     public static GameObject playerParent;
     private static GameObject playerSliderParent;
-    private static GameObject endGameParent;
 
     private static Renderer bgRenderer;
 
@@ -68,10 +68,6 @@ public class GUIManagerScript : MonoBehaviour {
         GameObject obj2 = GameObject.Find("UI_InfoText");
         infoText = obj2.GetComponent<Text>();
         infoText.enabled = false;
-
-        GameObject obj3 = GameObject.Find("UI_DetailsText");
-        detailsText = obj3.GetComponent<Text>();
-        detailsText.enabled = false;
 
         GameObject obj4 = GameObject.Find("UI_SliderText");
         sliderText = obj4.GetComponent<Text>();
