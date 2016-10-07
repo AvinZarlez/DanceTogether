@@ -21,7 +21,7 @@ public class GameListenerScript : CaptainsMessListener
 
     public GameObject disconnectButton;
     public GameObject menuParent;
-    public GameObject playerSlider;
+    public GameObject mainViewParent;
 
     public GameObject gameManagerPrefab;
 
@@ -33,7 +33,7 @@ public class GameListenerScript : CaptainsMessListener
 
         //networkStateField = GameObject.Find("UI_NetworkStateField").GetComponent<Text>();
 
-        playerSlider.SetActive(false);
+        mainViewParent.SetActive(false);
         disconnectButton.SetActive(false);
     }
 
@@ -53,7 +53,8 @@ public class GameListenerScript : CaptainsMessListener
 
     public override void OnStartConnecting()
     {
-        playerSlider.SetActive(true);
+        mainViewParent.SetActive(true);
+        GUIManagerScript.HideMainView();
 
         networkState = NetworkState.Connecting;
 
@@ -63,7 +64,7 @@ public class GameListenerScript : CaptainsMessListener
 
 	public override void OnStopConnecting()
     {
-        playerSlider.SetActive(false);
+        mainViewParent.SetActive(false);
 
         networkState = NetworkState.Offline;
 
@@ -75,7 +76,8 @@ public class GameListenerScript : CaptainsMessListener
 
 	public override void OnJoinedLobby()
     {
-        playerSlider.SetActive(true);
+        mainViewParent.SetActive(true);
+        GUIManagerScript.HideMainView();
 
         networkState = NetworkState.Connected;
 
@@ -87,7 +89,7 @@ public class GameListenerScript : CaptainsMessListener
 
 	public override void OnLeftLobby()
     {
-        playerSlider.SetActive(false);
+        mainViewParent.SetActive(false);
 
         networkState = NetworkState.Offline;
 

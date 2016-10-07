@@ -82,18 +82,19 @@ public class GUIManagerScript : MonoBehaviour {
         bgRenderer = GameObject.Find("Game_Background").GetComponent<Renderer>();
 
         playerParent = GameObject.FindWithTag("PlayerParent");
-
-        playerSliderParent = GameObject.Find("PlayerSliderParent"); 
-        endGameParent = GameObject.Find("EndGameParent");
-
+        
         finalScoreText = GameObject.Find("UI_FinalScore").GetComponent<Text>();
         answerText = GameObject.Find("UI_Answer").GetComponent<Text>();
         listeningToText = GameObject.Find("UI_ListeningTo").GetComponent<Text>();
         detailsText = GameObject.Find("UI_DetailsText").GetComponent<Text>();
         continuingInText = GameObject.Find("UI_ContinuingIn").GetComponent<Text>();
         playerPickedBtn = GameObject.Find("UI_WhichPlayerPicked");
-        lookingForBtn = GameObject.Find("UI_LookingForPlayer"); 
-}
+        lookingForBtn = GameObject.Find("UI_LookingForPlayer");
+
+        playerSliderParent = GameObject.Find("PlayerSliderParent");
+        endGameParent = GameObject.Find("EndGameParent");
+        HideMainView();
+    }
 
     // Update is called once per frame
     void Update () {
@@ -249,5 +250,13 @@ public class GUIManagerScript : MonoBehaviour {
             if (endGameParent != null)
                 endGameParent.SetActive(false);
         }
+    }
+
+    public static void HideMainView()
+    {
+        if (playerSliderParent != null)
+            playerSliderParent.SetActive(false);
+        if (endGameParent != null)
+            endGameParent.SetActive(false);
     }
 }
