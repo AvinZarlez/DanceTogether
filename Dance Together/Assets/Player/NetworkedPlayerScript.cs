@@ -8,6 +8,8 @@ using DG.Tweening;
 
 public class NetworkedPlayerScript : CaptainsMessPlayer
 {
+    private const string versionNum = "0.0.3";
+
     private enum Score
     {
         Time, First, WasGuessed, Correct
@@ -193,7 +195,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public void Update()
     {
         if (isServer)
+        {
             captainsCountdown = mess.CountdownTimer();
+        }
 
         // Hacky bullshit that might end up being too many calls? But hopefully not?
         GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
@@ -284,6 +288,16 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         GUIManagerScript.SetInput(true);
 
         SetReady(false);
+
+        if (isServer)
+        {
+            GUIManagerScript.versionText.text = "v" + versionNum + " Host";
+        }
+        else
+        {
+            GUIManagerScript.versionText.text = "v" + versionNum + " Client";
+        }
+
 
         base.OnStartLocalPlayer();
     }

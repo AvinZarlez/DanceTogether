@@ -45,9 +45,13 @@ public class GUIManagerScript : MonoBehaviour {
 
     private static Renderer bgRenderer;
 
+    public static Text versionText;
+
     // Use this for initialization
     void Start ()
     {
+        versionText = GameObject.Find("UI_Version").GetComponent<Text>();
+
         gameButtonObject = GameObject.Find("UI_GameButton");
         //gameButton = gameButtonObject.GetComponent<Button>();
         buttonText = gameButtonObject.GetComponentInChildren<Text>();
