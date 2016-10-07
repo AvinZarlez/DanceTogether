@@ -64,6 +64,41 @@ public class AudioManagerScript : MonoBehaviour {
         return gameMusic.Length;
     }
 
+    public static string GetSongName(int songID)
+    {
+        switch (songID)
+        {
+            case 0:
+                return "Honky Tonk";
+            case 1:
+                return "Big Band";
+            case 2:
+                return "Drum & Bass";
+            case 3:
+                return "Congo";
+            case 4:
+                return "Dubstep";
+            case 5:
+                return "Hip Hop";
+            case 6:
+                return "Irish Jig";
+            case 7:
+                return "Mariachi";
+            case 8:
+                return "Metal";
+            case 9:
+                return "Polka";
+            case 10:
+                return "Salsa";
+            case 11:
+                return "Waltz";
+            case 12:
+                return "Tango";
+            default: //Error
+                return "!Error!";
+        }
+    }
+
     public void StartMenuMusic()
     {
         menuSource.Stop();

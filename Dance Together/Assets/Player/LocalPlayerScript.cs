@@ -38,15 +38,14 @@ public class LocalPlayerScript : MonoBehaviour
         infoText = GUIManagerScript.infoText;
 
         // Assigned GUI elements based on
-        // GUIManagerScript.endGameParent
         finalScoreText = GUIManagerScript.finalScoreText;
         answerText = GUIManagerScript.answerText;
-        listeningToText = GUIManagerScript.listeningToText;
+        listeningToText = GUIManagerScript.listeningToText; //TODO
         detailsText = GUIManagerScript.detailsText;
         continuingInText = GUIManagerScript.continuingInText;
 
-        playerPickedBtn = GUIManagerScript.playerPickedBtn;
-        lookingForBtn = GUIManagerScript.lookingForBtn;
+        playerPickedBtn = GUIManagerScript.playerPickedBtn; //TODO
+        lookingForBtn = GUIManagerScript.lookingForBtn; //TODO
 
         Application.runInBackground = true;
         // Disable screen dimming
@@ -98,18 +97,42 @@ public class LocalPlayerScript : MonoBehaviour
             infoText.enabled = false;
             countdownText.enabled = false;
 
+            string details = "";
+
+            if (networkedPScript.GetFirstBonus())
+            {
+                details = "(First to guess: +100)\n";
+            }
+
             int song = networkedPScript.GetSongID();
             int match = networkedPScript.GetMatchSongID();
             if (song == match)
             {
                 answerText.text = "Correct!";
+                details += "(Found Dance Partner: +250)\n(Time Bonus: +" + networkedPScript.GetTimeBonus() + ")\n";
+
+                listeningToText.text = "You were dancing to:\n" + AudioManagerScript.GetSongName(song);
             }
             else
             {
                 answerText.text = "Wrong!";
+
+                listeningToText.text = "You heard: " + AudioManagerScript.GetSongName(song) + "\nThey heard: "+ AudioManagerScript.GetSongName(match);
             }
-            finalScoreText.text = "Score: "+ networkedPScript.GetScoredThisRound().ToString();
-            detailsText.text = "Scored this round:\n+";
+            finalScoreText.text = "Score: +"+ networkedPScript.GetScoredThisRound().ToString();
+
+            if (networkedPScript.GetWasGuessed())
+            {
+                details += "(Partner found you: +500)";
+            }
+
+            if (details != "")
+            {
+                details = "Score breakdown:\n" + details;
+            }
+
+            detailsText.text = details;
+
             continuingInText.text = "Automatically continuing in " + Mathf.CeilToInt(gameManager.endgameCountDown);
         }
         else

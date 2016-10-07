@@ -5,8 +5,14 @@ using UnityEngine.Assertions;
 using UnityEngine.UI;
 using DG.Tweening;
 
+
 public class NetworkedPlayerScript : CaptainsMessPlayer
 {
+    private enum Score
+    {
+        Time, First, WasGuessed, Correct
+    };
+
     [SerializeField]
     private float movementSpeed = 1.0f;
     public float fastMovementSpeed = 0.5f;
@@ -23,8 +29,15 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
     [SyncVar]
     private int score;
+
     [SyncVar]
     private int scoredThisRound;
+    [SyncVar]
+    private int time_bonus;
+    [SyncVar]
+    private bool first_bonus;
+    [SyncVar]
+    private bool was_guessed;
 
     [SyncVar]
     public bool scored_GuessedCorrect;
@@ -249,8 +262,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         score = 0;
         scoredThisRound = 0;
+        time_bonus = 0;
+        first_bonus = false;
+        was_guessed = false;
 
-        AudioManagerScript.instance.PlaySFX(AudioManagerScript.SFXClips.DanceTogether);
+    AudioManagerScript.instance.PlaySFX(AudioManagerScript.SFXClips.DanceTogether);
 
         GUIManagerScript.SetRulesButton(true);
         GUIManagerScript.SetInput(true);
@@ -299,6 +315,21 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public int GetScoredThisRound()
     {
         return scoredThisRound;
+    }
+
+    public int GetTimeBonus()
+    {
+        return time_bonus;
+    }
+
+    public bool GetWasGuessed()
+    {
+        return was_guessed;
+    }
+
+    public bool GetFirstBonus()
+    {
+        return first_bonus;
     }
 
     public int GetSongID()
@@ -448,7 +479,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     }
 
     [ClientRpc]
-    public void RpcAddScore(int value)
+    public void RpcAddScore(int value, int s)
     {
         score += value;
         scoredThisRound += value;
@@ -456,6 +487,13 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         if (isLocalPlayer)
         {
             GUIManagerScript.SetScoreText(score);
+
+            if (s == (int)(Score.First))
+                first_bonus = true;
+            if (s == (int)(Score.WasGuessed))
+                was_guessed = true;
+            if (s == (int)(Score.Time))
+                time_bonus = value;
         }
     }
 
@@ -616,6 +654,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     {
         songID = s;
         scoredThisRound = 0;
+        time_bonus = 0;
+        first_bonus = false;
+        was_guessed = false;
 
         //playerParent.GetComponent<PlayerParentScript>().Unlock();
 
@@ -673,8 +714,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             if (nps.scored_GuessedCorrect)
             {
                 float currentMatchTime = nps.matchTime;
-
-                nps.RpcAddScore(5 * Mathf.FloorToInt(currentMatchTime));
+                
+                nps.RpcAddScore(5 * Mathf.FloorToInt(currentMatchTime), (int)Score.Time);
 
                 if (currentMatchTime > longestMatchTime)
                 {
@@ -689,7 +730,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         //Bonus for player who guessed first.
         if (bonusPlayer != null) //If this is null, nobody guessed anything. Lame!
         {
-            bonusPlayer.RpcAddScore(100);
+            bonusPlayer.RpcAddScore(100, (int)Score.WasGuessed);
         }
 
         foreach (CaptainsMessPlayer player in players)
@@ -698,11 +739,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
             if (nps.scored_GuessedCorrect)
             {
-                nps.RpcAddScore(250);
+                nps.RpcAddScore(250, (int)Score.Correct);
             }
             if (scoringSongs.Contains(nps.songID))
             {
-                nps.RpcAddScore(500);
+                nps.RpcAddScore(500, (int)Score.WasGuessed);
             }
 
             nps.RpcEndGame();
