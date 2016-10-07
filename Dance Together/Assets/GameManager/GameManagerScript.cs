@@ -19,7 +19,8 @@ public class GameManagerScript : NetworkBehaviour
     // 200+ means the game is running
 
     private const float gameLength = 60; // How long the game lasts, in seconds.
-    
+    private const float endGameLength = 20; // How long the game lasts, in seconds.
+
     private NetworkedPlayerScript networkedPScript;
 
     private int roundCount;
@@ -131,7 +132,7 @@ public class GameManagerScript : NetworkBehaviour
     public void RpcEndGame()
     {
         countDown = 0;
-        endgameCountDown = 5;
+        endgameCountDown = endGameLength;
         currentGameState = 210;
         GUIManagerScript.SetEndGameScreen(true);
     }

@@ -39,6 +39,8 @@ public class LocalPlayerScript : MonoBehaviour
 
         // Assigned GUI elements based on
         // GUIManagerScript.endGameParent
+        GameObject endGameParent = GUIManagerScript.endGameParent;
+        answerText = endGameParent.transform.Find("UI_Answer").GetComponent<Text>();
 
         Application.runInBackground = true;
         // Disable screen dimming
@@ -87,8 +89,8 @@ public class LocalPlayerScript : MonoBehaviour
         {
             sliderText.text = "";
 
+            infoText.enabled = false;
             countdownText.enabled = false;
-            detailsText.enabled = true;
 
             int song = networkedPScript.GetSongID();
             int match = networkedPScript.GetMatchSongID();
@@ -100,12 +102,10 @@ public class LocalPlayerScript : MonoBehaviour
             {
                 answerText.text = "Wrong!";
             }
-            oldDetailsText.text = "Scored this round:\n+" + networkedPScript.GetScoredThisRound().ToString() + "\nAuto advancing in " + Mathf.CeilToInt(gameManager.endgameCountDown);
+            detailsText.text = "Scored this round:\n+" + networkedPScript.GetScoredThisRound().ToString() + "\nAuto advancing in " + Mathf.CeilToInt(gameManager.endgameCountDown);
         }
         else
         {
-            oldDetailsText.enabled = false;
-
             float countDown = gameManager.countDown;
 
             float captainsCountdown = networkedPScript.captainsCountdown;
