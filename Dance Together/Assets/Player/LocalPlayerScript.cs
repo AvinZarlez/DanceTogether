@@ -20,8 +20,8 @@ public class LocalPlayerScript : MonoBehaviour
     private Text detailsText; // UI text object named "UI_DetailsText"
     private Text continuingInText; // UI text object named "UI_ContinuingIn"
 
-    private Button playerPickedBtn; // UI Button named "UI_WhichPlayerPicked"
-    private Button lookingForBtn; // UI Button named "UI_LookingForPlayer"
+    private GameObject playerPickedBtn; // UI Button named "UI_WhichPlayerPicked"
+    private GameObject lookingForBtn; // UI Button named "UI_LookingForPlayer"
 
     public bool reminded = false;
 
@@ -39,8 +39,14 @@ public class LocalPlayerScript : MonoBehaviour
 
         // Assigned GUI elements based on
         // GUIManagerScript.endGameParent
-        GameObject endGameParent = GUIManagerScript.endGameParent;
-        answerText = endGameParent.transform.Find("UI_Answer").GetComponent<Text>();
+        finalScoreText = GUIManagerScript.finalScoreText;
+        answerText = GUIManagerScript.answerText;
+        listeningToText = GUIManagerScript.listeningToText;
+        detailsText = GUIManagerScript.detailsText;
+        continuingInText = GUIManagerScript.continuingInText;
+
+        playerPickedBtn = GUIManagerScript.playerPickedBtn;
+        lookingForBtn = GUIManagerScript.lookingForBtn;
 
         Application.runInBackground = true;
         // Disable screen dimming
@@ -102,7 +108,9 @@ public class LocalPlayerScript : MonoBehaviour
             {
                 answerText.text = "Wrong!";
             }
-            detailsText.text = "Scored this round:\n+" + networkedPScript.GetScoredThisRound().ToString() + "\nAuto advancing in " + Mathf.CeilToInt(gameManager.endgameCountDown);
+            finalScoreText.text = "Score: "+ networkedPScript.GetScoredThisRound().ToString();
+            detailsText.text = "Scored this round:\n+";
+            continuingInText.text = "Automatically continuing in " + Mathf.CeilToInt(gameManager.endgameCountDown);
         }
         else
         {
