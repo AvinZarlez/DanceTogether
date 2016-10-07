@@ -29,12 +29,14 @@ public class GUIManagerScript : MonoBehaviour {
 
     public static Text finalScoreText; // UI text object named "UI_FinalScore"
     public static Text answerText; // UI text object named "UI_Answer"
+    public static Text noGuessText; // UI text object named "UI_NoGuess"
     public static Text listeningToText; // UI text object named "UI_ListeningTo"
     public static Text detailsText; // UI text object named "UI_DetailsText"
     public static Text continuingInText; // UI text object named "UI_ContinuingIn"
     public static GameObject playerPickedBtn; // UI Button named "UI_WhichPlayerPicked"
     public static GameObject lookingForBtn; // UI Button named "UI_LookingForPlayer"
     public static GameObject lookingForParent;
+    public static GameObject answerParent;
 
     public static GameObject playerParent;
     private static GameObject playerSliderParent;
@@ -86,12 +88,14 @@ public class GUIManagerScript : MonoBehaviour {
         
         finalScoreText = GameObject.Find("UI_FinalScore").GetComponent<Text>();
         answerText = GameObject.Find("UI_Answer").GetComponent<Text>();
+        noGuessText = GameObject.Find("UI_NoGuess").GetComponent<Text>();
         listeningToText = GameObject.Find("UI_ListeningTo").GetComponent<Text>();
         detailsText = GameObject.Find("UI_DetailsText").GetComponent<Text>();
         continuingInText = GameObject.Find("UI_ContinuingIn").GetComponent<Text>();
         playerPickedBtn = GameObject.Find("UI_WhichPlayerPicked");
         lookingForBtn = GameObject.Find("UI_LookingForPlayer");
 
+        answerParent = GameObject.Find("AnswerParent");
         lookingForParent = GameObject.Find("LookingForParent");
 
         playerSliderParent = GameObject.Find("PlayerSliderParent");

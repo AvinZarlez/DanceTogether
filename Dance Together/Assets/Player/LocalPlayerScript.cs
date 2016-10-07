@@ -16,6 +16,7 @@ public class LocalPlayerScript : MonoBehaviour
 
     private Text finalScoreText; // UI text object named "UI_FinalScore"
     private Text answerText; // UI text object named "UI_Answer"
+    private Text noGuessText;
     private Text listeningToText; // UI text object named "UI_ListeningTo"
     private Text detailsText; // UI text object named "UI_DetailsText"
     private Text continuingInText; // UI text object named "UI_ContinuingIn"
@@ -23,6 +24,7 @@ public class LocalPlayerScript : MonoBehaviour
     private GameObject playerPickedBtn; // UI Button named "UI_WhichPlayerPicked"
     private GameObject lookingForBtn; // UI Button named "UI_LookingForPlayer"
     private GameObject lookingForParent;
+    private GameObject answerParent;
 
     public bool reminded = false;
 
@@ -41,13 +43,15 @@ public class LocalPlayerScript : MonoBehaviour
         // Assigned GUI elements based on
         finalScoreText = GUIManagerScript.finalScoreText;
         answerText = GUIManagerScript.answerText;
+        noGuessText = GUIManagerScript.noGuessText;
         listeningToText = GUIManagerScript.listeningToText;
         detailsText = GUIManagerScript.detailsText;
         continuingInText = GUIManagerScript.continuingInText;
 
-        playerPickedBtn = GUIManagerScript.playerPickedBtn; //TODO
-        lookingForBtn = GUIManagerScript.lookingForBtn; //TODO
+        playerPickedBtn = GUIManagerScript.playerPickedBtn;
+        lookingForBtn = GUIManagerScript.lookingForBtn;
 
+        answerParent = GUIManagerScript.answerParent;
         lookingForParent = GUIManagerScript.lookingForParent;
 
         Application.runInBackground = true;
@@ -112,8 +116,15 @@ public class LocalPlayerScript : MonoBehaviour
 
             if (match != -1)
             {
+                answerParent.SetActive(true);
                 playerPickedBtn.GetComponent<Image>().color = ColorScript.GetColor(networkedPScript.picked_color);
                 playerPickedBtn.GetComponentInChildren<Text>().text = networkedPScript.picked_nameText;
+                noGuessText.enabled = false;
+            }
+            else
+            {
+                answerParent.SetActive(false);
+                noGuessText.enabled = true;
             }
 
             if (song == match)
