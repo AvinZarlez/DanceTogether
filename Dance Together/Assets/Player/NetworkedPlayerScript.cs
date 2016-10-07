@@ -523,6 +523,10 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public void RpcResetScore()
     {
         score = 0;
+        if (isLocalPlayer)
+        {
+            GUIManagerScript.SetScoreText(score);
+        }
     }
 
     [Command]
