@@ -120,33 +120,36 @@ public class LocalPlayerScript : MonoBehaviour
                 playerPickedBtn.GetComponent<Image>().color = ColorScript.GetColor(networkedPScript.picked_color);
                 playerPickedBtn.GetComponentInChildren<Text>().text = networkedPScript.picked_nameText;
                 noGuessText.enabled = false;
+
+                if (song == match)
+                {
+                    lookingForParent.SetActive(false);
+
+                    answerText.text = "Correct!";
+                    details += "(Found Dance Partner: +250)\n(Time Bonus: +" + networkedPScript.GetTimeBonus() + ")\n";
+
+                    listeningToText.text = "You were dancing to:\n" + AudioManagerScript.GetSongName(song);
+                }
+                else
+                {
+                    lookingForParent.SetActive(true);
+
+                    lookingForBtn.GetComponent<Image>().color = ColorScript.GetColor(networkedPScript.match_color);
+                    lookingForBtn.GetComponentInChildren<Text>().text = networkedPScript.match_nameText;
+
+                    answerText.text = "Wrong!";
+
+                    listeningToText.text = "You heard: " + AudioManagerScript.GetSongName(song) + "\nThey heard: " + AudioManagerScript.GetSongName(match);
+                }
             }
             else
             {
                 answerParent.SetActive(false);
                 noGuessText.enabled = true;
-            }
-
-            if (song == match)
-            {
-                lookingForParent.SetActive(false);
-
-                answerText.text = "Correct!";
-                details += "(Found Dance Partner: +250)\n(Time Bonus: +" + networkedPScript.GetTimeBonus() + ")\n";
 
                 listeningToText.text = "You were dancing to:\n" + AudioManagerScript.GetSongName(song);
             }
-            else
-            {
-                lookingForParent.SetActive(true);
-
-                lookingForBtn.GetComponent<Image>().color = ColorScript.GetColor(networkedPScript.match_color);
-                lookingForBtn.GetComponentInChildren<Text>().text = networkedPScript.match_nameText;
-
-                answerText.text = "Wrong!";
-
-                listeningToText.text = "You heard: " + AudioManagerScript.GetSongName(song) + "\nThey heard: "+ AudioManagerScript.GetSongName(match);
-            }
+            
             finalScoreText.text = "Score: +"+ networkedPScript.GetScoredThisRound().ToString();
 
             if (networkedPScript.GetWasGuessed())

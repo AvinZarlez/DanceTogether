@@ -756,8 +756,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                     {
                         if (nps.color != other_nps.color)
                         {
-                            match_color = other_nps.color;
-                            match_nameText = other_nps.nameText;
+                            nps.match_color = other_nps.color;
+                            nps.match_nameText = other_nps.nameText;
                             break;
                         }
                     }
