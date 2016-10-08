@@ -231,7 +231,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         if (isLocalPlayer)
         {
-            if (to_sort)
+            if (to_sort && !gameManager.IsGameStarted() )
             {
                 to_sort = false;
                 SortPlayers();
