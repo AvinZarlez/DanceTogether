@@ -9,7 +9,7 @@ using System.Linq;
 
 public class NetworkedPlayerScript : CaptainsMessPlayer
 {
-    private const string versionNum = "0.0.4";
+    private const string versionNum = "0.0.5";
 
     private enum Score
     {
