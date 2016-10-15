@@ -1,5 +1,7 @@
 ﻿# \#DanceTogether #
 
+[Like the game on Facebook](https://www.facebook.com/DanceTogetherGame/)!
+
 ## About The Game:
 
 \#DanceTogether is game about expressing music through dance.
