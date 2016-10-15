@@ -16,7 +16,7 @@ Find your dance partner.
 
 ### Requirements:
 
-- 4 to 9 players (even numbers recommended)
+- 4 to 16 players (even numbers recommended)
 - A "dance floor" large enough for everyone to dance simultaneously 
 - Each player has their own device **with headphones**.
 
@@ -158,5 +158,6 @@ What's next for \#DanceTogether?
 
 ### Version History
 
+- **0.0.5** - IndieCade prototype. New UI, supports up to 16 players.
 - **0.0.2** - First prototype
 - **0.0.1** - Initial Upload
