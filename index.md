@@ -1,5 +1,9 @@
 ﻿# \#DanceTogether #
 
+[Like the game on Facebook](https://www.facebook.com/DanceTogetherGame/)!
+
+[Support development of this game (and others) on Patreon](https://www.patreon.com/tobiah)!
+
 ## About The Game:
 
 \#DanceTogether is game about expressing music through dance.
@@ -14,7 +18,7 @@ Find your dance partner.
 
 ### Requirements:
 
-- 4 to 9 players (even numbers recommended)
+- 4 to 16 players (even numbers recommended)
 - A "dance floor" large enough for everyone to dance simultaneously 
 - Each player has their own device **with headphones**.
 
@@ -44,7 +48,7 @@ Once you hear music, start dancing!
 
 Watch the other players closely, and decide which player is listening to the same song as you.
 
-**NOTE:** Remember to show the other players your screen so they can see your color/identity characters!
+**NOTE:** Remember to show the other players your screen so they can see your color/identity!
 
 Once you've decided, tap the player you think is right. Don't stop dancing yet! Other players need to decide if they're a match to you.
 
@@ -104,7 +108,17 @@ Yes! See [CONTRIBUTE](Contribute.md) file for details.
 
 This game was created by [Tobiah Zarlez](http://www.TobiahZ.com).
 
+### Who also contributed art assets?
+
+- Desiree Dixon
+
 ### Who created the music?
+
+- Paul Mburu
+    - Congo, Calypso, Waltz, Ballet, Big Band, Drum n base, DubStep, Hip Hop, Mariachi, Metal, Polka, RnB, Trance, Salsa
+
+- Jose Beck
+    - Honky Tonk
 
 #### Public Domain Music:
 
@@ -142,10 +156,10 @@ What's next for \#DanceTogether?
 
 ### To Do List
 
-- [ ] Art and UI/UX Polish
-- [ ] More Songs
-- [ ] Settle on a tag line ("Find your dance partner"?)
+- See [Projects](https://github.com/TobiahZ/DanceTogether/projects) page
 
 ### Version History
 
+- **0.0.5** - IndieCade prototype. New UI, supports up to 16 players.
+- **0.0.2** - First prototype
 - **0.0.1** - Initial Upload
