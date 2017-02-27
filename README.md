@@ -1,6 +1,7 @@
 ﻿# \#DanceTogether #
 
-[Like the game on Facebook](https://www.facebook.com/DanceTogetherGame/)!
+[Like the game on Facebook](https://www.facebook.com/DanceTogetherGame/)! 
+[Support development of this game and others on Patreon](https://www.patreon.com/tobiah)!
 
 ## About The Game:
 
@@ -46,7 +47,7 @@ Once you hear music, start dancing!
 
 Watch the other players closely, and decide which player is listening to the same song as you.
 
-**NOTE:** Remember to show the other players your screen so they can see your color/identity characters!
+**NOTE:** Remember to show the other players your screen so they can see your color/identity!
 
 Once you've decided, tap the player you think is right. Don't stop dancing yet! Other players need to decide if they're a match to you.
 
