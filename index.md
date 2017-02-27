@@ -1,5 +1,3 @@
-﻿# \#DanceTogether #
-
 [Like the game on Facebook](https://www.facebook.com/DanceTogetherGame/)!
 
 [Support development of this game (and others) on Patreon](https://www.patreon.com/tobiah)!
