@@ -16,7 +16,8 @@ public class GUIManagerScript : MonoBehaviour {
     private static Text buttonText;
 
     private static Text scoreText;
-    private static GameObject resetScoreBtn;
+    
+    private static Button resetScoreBtn; //Changed to stay in view, part of top menu now.
 
     private static GameObject nameInputObject;
     private static GameObject colorShowObject;
@@ -76,8 +77,11 @@ public class GUIManagerScript : MonoBehaviour {
         scoreText = GameObject.Find("UI_Score").GetComponent<Text>();
         scoreText.enabled = false;
 
-        resetScoreBtn = GameObject.Find("UI_ResetScore");
-        resetScoreBtn.SetActive(false);
+        resetScoreBtn = GameObject.Find("UI_ResetScore").GetComponent<Button>();
+        resetScoreBtn.interactable = false;
+
+        // Dump solution to getting resetScoreBtn before the top menu parent is hidden?
+        GameObject.Find("TopMenuParent").SetActive(false);
 
         GameObject obj1 = GameObject.Find("UI_Countdown");
         countdownText = obj1.GetComponent<Text>();
@@ -210,14 +214,14 @@ public class GUIManagerScript : MonoBehaviour {
         scoreText.enabled = true;
         scoreText.text = "Score:\n" + score.ToString();
 
-        resetScoreBtn.SetActive(true);
+        resetScoreBtn.interactable = true;
     }
 
     public static void HideScoreText()
     {
         scoreText.enabled = false;
 
-        resetScoreBtn.SetActive(false);
+        resetScoreBtn.interactable = false;
     }
 
     public static void SetMainButtonHighlight(bool highlight)

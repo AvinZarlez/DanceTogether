@@ -20,6 +20,7 @@ public class GameListenerScript : CaptainsMessListener
     //public ExampleGameSession gameSession;
 
     public GameObject disconnectButton;
+    public GameObject topMenuParent;
     public GameObject menuParent;
     public GameObject mainViewParent;
 
@@ -161,5 +162,10 @@ public class GameListenerScript : CaptainsMessListener
         {
             gameManager.ResetScore();
         }
+    }
+
+    public void ToggleTopMenu()
+    {
+        topMenuParent.SetActive(!topMenuParent.active);
     }
 }
