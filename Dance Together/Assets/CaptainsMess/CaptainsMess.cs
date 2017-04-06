@@ -57,7 +57,7 @@ public class CaptainsMess : MonoBehaviour
 
     public void ValidateConfig()
     {
-        if (broadcastIdentifier == "Spaceteam" && !Application.bundleIdentifier.Contains("com.sleepingbeastgames"))
+        if (broadcastIdentifier == "Spaceteam" && !Application.identifier.Contains("com.sleepingbeastgames"))
         {
             Debug.LogError("#CaptainsMess# You should pick a unique Broadcast Identifier for your game", this);
         }
