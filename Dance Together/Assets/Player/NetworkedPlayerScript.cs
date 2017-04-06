@@ -272,7 +272,10 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             OnClientExitLobby();
         }
+
+        base.OnDestroy();
     }
+
     public override void OnNetworkDestroy()
     {
         OnDestroy();
