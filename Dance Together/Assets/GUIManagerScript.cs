@@ -43,6 +43,7 @@ public class GUIManagerScript : MonoBehaviour {
     public static GameObject playerParent;
     private static GameObject playerSliderParent;
     private static GameObject endGameParent;
+    private static GameObject topMenuParent;
 
     private static Renderer bgRenderer;
 
@@ -84,7 +85,8 @@ public class GUIManagerScript : MonoBehaviour {
         resetScoreBtn.interactable = false;
 
         // Dump solution to getting resetScoreBtn before the top menu parent is hidden?
-        GameObject.Find("TopMenuParent").SetActive(false);
+        topMenuParent = GameObject.Find("TopMenuParent");
+        topMenuParent.SetActive(false);
 
         GameObject obj1 = GameObject.Find("UI_Countdown");
         countdownText = obj1.GetComponent<Text>();
@@ -291,5 +293,71 @@ public class GUIManagerScript : MonoBehaviour {
     public static void ClearNumberInput()
     {
         numberTextField.text = "";
+        GameObject.Find("UI_NameInputButton").GetComponent<Button>().interactable = false;
+    }
+
+    public void ResetScore()
+    {
+        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+        if (gameManager != null)
+        {
+            gameManager.ResetScore();
+        }
+    }
+
+    public void ToggleTopMenu()
+    {
+        topMenuParent.SetActive(!topMenuParent.activeSelf);
+    }
+
+    public void NumberInputChanged()
+    {
+        NumberInputProcessed(false);
+    }
+    public void NumberInputEnded()
+    {
+        NumberInputProcessed(true);
+    }
+    private static void NumberInputProcessed(bool del)
+    {
+        GameObject player = GameObject.Find("LOCAL Player");
+        NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
+
+        if (numberTextField.text != null)
+        {
+            int input = -1;
+            if (System.Int32.TryParse(numberTextField.text, out input))
+            {
+                if (nps.DoesPlayerNumberExist(input) != -1)
+                {
+                    GUIManagerScript.SetNumberInputFieldColor(ColorScript.GetColor(input));
+
+                    GameObject.Find("UI_NameInputButton").GetComponent<Button>().interactable = true;
+                }
+                else
+                {
+                    Color clr = ColorScript.GetColor(nps.GetColor());
+                    clr = clr * 0.5f;
+                    GUIManagerScript.SetNumberInputFieldColor(clr);
+                    
+                    if(del)
+                        GUIManagerScript.ClearNumberInput();
+                }
+            }
+        }
+    }
+
+    public static void NumberInputLocked(bool locked)
+    {
+        if (locked)
+        {
+            numberTextField.interactable = false;
+            GameObject.Find("UI_NameInputButton").GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            numberTextField.interactable = true;
+            GameObject.Find("UI_NameInputButton").GetComponent<Button>().interactable = true;
+        }
     }
 }

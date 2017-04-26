@@ -103,7 +103,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         return allPlayersMatched;
     }
 
-    public bool DoesPlayerNumberExist(int s)
+    public int DoesPlayerNumberExist(int s)
     {
         List<CaptainsMessPlayer> players = mess.Players();
         
@@ -111,11 +111,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             if (player.GetComponent<NetworkedPlayerScript>().color == s)
             {
-                return true;
+                return player.GetComponent<NetworkedPlayerScript>().GetSongID();
             }
         }
 
-        return false;
+        return -1;
     }
 
     void SetReady(bool ready)
@@ -425,38 +425,45 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             if (gameManager.IsGameStarted())
             {
-                PlayerMadeChoice();
+                List<CaptainsMessPlayer> players = GetPlayers();
+                foreach (CaptainsMessPlayer player in players)
+                {
+                    NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
+                    if (player.name == "LOCAL Player")
+                    {
+                        nps.CmdSetMatchSongID(songID, color);
+                    }
+                    nps.playerButton.SetActive(false);
+                    nps.playerButton.GetComponent<Button>().interactable = false;
+                }
+
+                playerButton.SetActive(true);
+                playerButton.GetComponent<Button>().interactable = false;
+                playerButton.transform.DOLocalMove(new Vector3(30, 20, 0), fastMovementSpeed);
+                playerButton.transform.DOScale(new Vector3(1.5f, 1.5f, 1f), fastMovementSpeed);
+
+                playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(170, 140);
+
+                GUIManagerScript.SetBackButton(true);
             }
         }
     }
 
     public void LockChoiceButtonPressed()
     {
+        InputField numberTextField = GUIManagerScript.numberTextField;
 
-    }
-
-    private void PlayerMadeChoice()
-    {
-        List<CaptainsMessPlayer> players = GetPlayers();
-        foreach (CaptainsMessPlayer player in players)
+        int input = -1;
+        if (System.Int32.TryParse(numberTextField.text, out input))
         {
-            NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
-            if (player.name == "LOCAL Player")
+            int s = DoesPlayerNumberExist(input);
+            if (s != -1)
             {
-                nps.CmdSetMatchSongID(songID, color);
+                CmdSetMatchSongID(s, input);
+                GUIManagerScript.NumberInputLocked(true);
+                GUIManagerScript.SetBackButton(true);
             }
-            nps.playerButton.SetActive(false);
-            nps.playerButton.GetComponent<Button>().interactable = false;
         }
-
-        playerButton.SetActive(true);
-        playerButton.GetComponent<Button>().interactable = false;
-        playerButton.transform.DOLocalMove(new Vector3(30, 20, 0), fastMovementSpeed);
-        playerButton.transform.DOScale(new Vector3(1.5f, 1.5f, 1f), fastMovementSpeed);
-
-        playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(170, 140);
-
-        GUIManagerScript.SetBackButton(true);
     }
 
     [Command]

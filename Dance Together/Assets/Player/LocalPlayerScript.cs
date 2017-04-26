@@ -63,7 +63,9 @@ public class LocalPlayerScript : MonoBehaviour
     {
         // Oops, let's reset the match ID
         networkedPScript.CmdResetMatchSongID();
-        
+
+        GUIManagerScript.NumberInputLocked(false);
+
         List<CaptainsMessPlayer> players = networkedPScript.GetPlayers();
 
         int size = players.Count;
