@@ -254,11 +254,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         if (isLocalPlayer)
         {
-            GUIManagerScript.SetInput(false);
+            GUIManagerScript.SetPregameParent(false);
             GUIManagerScript.SetButton(false);
             GUIManagerScript.SetRulesButton(false);
             GUIManagerScript.SetBackButton(false);
-            GUIManagerScript.HideColorShow();
+            GUIManagerScript.HideClassicGameParent();
             if (GUIManagerScript.countdownText != null)
                 GUIManagerScript.countdownText.enabled = false;
 
@@ -305,7 +305,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         AudioManagerScript.instance.PlaySFX(AudioManagerScript.SFXClips.DanceTogether);
 
         GUIManagerScript.SetRulesButton(true);
-        GUIManagerScript.SetInput(true);
+        GUIManagerScript.SetPregameParent(true);
 
         SetReady(false);
 
@@ -425,29 +425,38 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             if (gameManager.IsGameStarted())
             {
-
-                List<CaptainsMessPlayer> players = GetPlayers();
-                foreach (CaptainsMessPlayer player in players)
-                {
-                    NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
-                    if (player.name == "LOCAL Player")
-                    {
-                        nps.CmdSetMatchSongID(songID, color);
-                    }
-                    nps.playerButton.SetActive(false);
-                    nps.playerButton.GetComponent<Button>().interactable = false;
-                }
-
-                playerButton.SetActive(true);
-                playerButton.GetComponent<Button>().interactable = false;
-                playerButton.transform.DOLocalMove(new Vector3(30, 20, 0), fastMovementSpeed);
-                playerButton.transform.DOScale(new Vector3(1.5f, 1.5f, 1f), fastMovementSpeed);
-
-                playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(170, 140);
-
-                GUIManagerScript.SetBackButton(true);
+                PlayerMadeChoice();
             }
         }
+    }
+
+    public void LockChoiceButtonPressed()
+    {
+
+    }
+
+    private void PlayerMadeChoice()
+    {
+        List<CaptainsMessPlayer> players = GetPlayers();
+        foreach (CaptainsMessPlayer player in players)
+        {
+            NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
+            if (player.name == "LOCAL Player")
+            {
+                nps.CmdSetMatchSongID(songID, color);
+            }
+            nps.playerButton.SetActive(false);
+            nps.playerButton.GetComponent<Button>().interactable = false;
+        }
+
+        playerButton.SetActive(true);
+        playerButton.GetComponent<Button>().interactable = false;
+        playerButton.transform.DOLocalMove(new Vector3(30, 20, 0), fastMovementSpeed);
+        playerButton.transform.DOScale(new Vector3(1.5f, 1.5f, 1f), fastMovementSpeed);
+
+        playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(170, 140);
+
+        GUIManagerScript.SetBackButton(true);
     }
 
     [Command]
@@ -732,7 +741,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
             AudioManagerScript.instance.StartGameMusic();
 
-            GUIManagerScript.SetColorShow(color, ColorScript.GetColor(color), ColorScript.GetColorName(color));
+            GUIManagerScript.SetClassicGameParent(color, ColorScript.GetColor(color), ColorScript.GetColorName(color));
 
             localPScript.reminded = false;
         }
@@ -840,7 +849,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
             AudioManagerScript.instance.PlayRoundEnd(scored_GuessedCorrect);
 
-            GUIManagerScript.HideColorShow();
+            GUIManagerScript.HideClassicGameParent();
         }
     }
 }

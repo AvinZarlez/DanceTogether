@@ -170,7 +170,7 @@ public class GameManagerScript : NetworkBehaviour
             AudioManagerScript.instance.PrepareGameMusic();
             AudioManagerScript.instance.PlayCountdown();
             GUIManagerScript.SetRulesButton(false);
-            GUIManagerScript.SetInput(false);
+            GUIManagerScript.SetPregameParent(false);
         }
         else {
             //playerParent.GetComponent<PlayerParentScript>().Unlock();
@@ -178,7 +178,7 @@ public class GameManagerScript : NetworkBehaviour
             AudioManagerScript.instance.StopSFX();
             AudioManagerScript.instance.StartMenuMusic();
             GUIManagerScript.SetRulesButton(true);
-            GUIManagerScript.SetInput(true);
+            GUIManagerScript.SetPregameParent(true);
             
             if (networkedPScript == null)
             {

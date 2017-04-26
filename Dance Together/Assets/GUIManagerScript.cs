@@ -19,8 +19,8 @@ public class GUIManagerScript : MonoBehaviour {
     
     private static Button resetScoreBtn; //Changed to stay in view, part of top menu now.
 
-    private static GameObject numberObject;
-    private static GameObject colorShowObject;
+    private static GameObject pregameParent;
+    private static GameObject classicGameParent;
 
     private static Text whichColorText;
     private static Image whichColorPanel;
@@ -71,12 +71,11 @@ public class GUIManagerScript : MonoBehaviour {
 
         whichColorPanel = GameObject.Find("UI_WhichColorPanel").GetComponent<Image>();
 
-        numberObject = GameObject.Find("NumberParent");
+        pregameParent = GameObject.Find("PregameParent");
         whichColorText = GameObject.Find("UI_WhichColor").GetComponent<Text>();
-        SetInput(false);
 
-        colorShowObject = GameObject.Find("ColorShowParent");
-        HideColorShow();
+        classicGameParent = GameObject.Find("ClassicGameParent");
+        HideClassicGameParent();
 
         scoreText = GameObject.Find("UI_Score").GetComponent<Text>();
         scoreText.enabled = false;
@@ -116,6 +115,9 @@ public class GUIManagerScript : MonoBehaviour {
 
         playerSliderParent = GameObject.Find("PlayerSliderParent");
         endGameParent = GameObject.Find("EndGameParent");
+
+        SetPregameParent(false);
+
         HideMainView();
     }
 
@@ -142,9 +144,15 @@ public class GUIManagerScript : MonoBehaviour {
         gm.GetComponent<LocalPlayerScript>().BackButtonPressed();
     }
 
+    public void LockChoiceButtonPressed()
+    {
+        GameObject gm = GameObject.Find("LOCAL Player");
+        gm.GetComponent<NetworkedPlayerScript>().LockChoiceButtonPressed();
+    }
+
     public static void FillPlayerNumber(int n)
     {
-        Text field = numberObject.transform.Find("UI_NumberOfPlayer").GetComponent<Text>();
+        Text field = GameObject.Find("UI_NumberOfPlayer").GetComponent<Text>();
         field.text = n.ToString();
     }
 
@@ -156,16 +164,17 @@ public class GUIManagerScript : MonoBehaviour {
         }
     }
 
-    public static void SetInput(bool enabled)
+    public static void SetPregameParent(bool enabled)
     {
-        if (numberObject != null)
-            numberObject.SetActive(enabled);
+        if (pregameParent != null)
+            pregameParent.SetActive(enabled);
     }
 
     public static void SetInputColor(Color c, string name)
     {
-        if (numberObject != null)
-            numberObject.transform.Find("UI_NumberColorPanel").GetComponent<Image>().color = c;
+        GameObject obj = GameObject.Find("UI_NumberColorPanel");
+        if (obj != null)
+            obj.GetComponent<Image>().color = c;
         if (whichColorText != null)
             whichColorText.text = name;
         if (whichColorPanel != null)
@@ -231,21 +240,21 @@ public class GUIManagerScript : MonoBehaviour {
         bgRenderer.material.SetColor("_Color", c);
     }
 
-    public static void SetColorShow(int number, Color c, string color_name)
+    public static void SetClassicGameParent(int number, Color c, string color_name)
     {
-        if (colorShowObject != null)
+        if (classicGameParent != null)
         {
-            colorShowObject.SetActive(true);
-            colorShowObject.transform.Find("UI_ColorShowColorPanel").GetComponent<Image>().color = c;
+            classicGameParent.SetActive(true);
+            classicGameParent.transform.Find("UI_ColorShowColorPanel").GetComponent<Image>().color = c;
             string txt = number + "\n(" + color_name +")";
-            colorShowObject.transform.Find("UI_ColorShowPlayerName").GetComponent<Text>().text = txt;
+            classicGameParent.transform.Find("UI_ColorShowPlayerName").GetComponent<Text>().text = txt;
         }
     }
 
-    public static void HideColorShow()
+    public static void HideClassicGameParent()
     {
-        if (colorShowObject != null)
-            colorShowObject.SetActive(false);
+        if (classicGameParent != null)
+            classicGameParent.SetActive(false);
     }
     
     public static void SetEndGameScreen(bool b)
