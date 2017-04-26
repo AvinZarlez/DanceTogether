@@ -501,6 +501,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             GUIManagerScript.SetBGColor(clr);
             GUIManagerScript.FillPlayerNumber(c);
             GUIManagerScript.SetNumberInputFieldColor(clr);
+            GUIManagerScript.ClearNumberInput();
         }
     }
 

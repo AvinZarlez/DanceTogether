@@ -278,4 +278,9 @@ public class GUIManagerScript : MonoBehaviour {
     {
         numberTextField.GetComponent<Image>().color = c;
     }
+
+    public static void ClearNumberInput()
+    {
+        numberTextField.text = "";
+    }
 }

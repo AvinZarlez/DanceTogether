@@ -201,7 +201,7 @@ public class GameListenerScript : CaptainsMessListener
                     GUIManagerScript.SetNumberInputFieldColor(clr);
                     
                     if(del)
-                        numberTextField.text = "";
+                        GUIManagerScript.ClearNumberInput();
                 }
             }
         }
