@@ -184,11 +184,6 @@ public class GameManagerScript : NetworkBehaviour
             {
                 SetNPS();
             }
-            if (networkedPScript.nameText == ColorScript.GetColorName(networkedPScript.GetColor()))
-            {
-                networkedPScript.nameText = "";
-                GUIManagerScript.FillPlayerText("");
-            }
         }
     }
 

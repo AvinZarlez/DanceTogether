@@ -19,7 +19,7 @@ public class GUIManagerScript : MonoBehaviour {
     
     private static Button resetScoreBtn; //Changed to stay in view, part of top menu now.
 
-    private static GameObject nameInputObject;
+    private static GameObject numberObject;
     private static GameObject colorShowObject;
 
     private static Text whichColorText;
@@ -67,7 +67,7 @@ public class GUIManagerScript : MonoBehaviour {
 
         whichColorPanel = GameObject.Find("UI_WhichColorPanel").GetComponent<Image>();
 
-        nameInputObject = GameObject.Find("NameInputParent");
+        numberObject = GameObject.Find("NumberParent");
         whichColorText = GameObject.Find("UI_WhichColor").GetComponent<Text>();
         SetInput(false);
 
@@ -137,20 +137,11 @@ public class GUIManagerScript : MonoBehaviour {
         GameObject gm = GameObject.Find("LOCAL Player");
         gm.GetComponent<LocalPlayerScript>().BackButtonPressed();
     }
-    
-    public void SetPlayerText()
-    {
-        InputField field = nameInputObject.GetComponentInChildren<InputField>();
 
-        GameObject player = GameObject.Find("LOCAL Player");
-        NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
-        nps.CmdSetPlayerText(field.text);
-    }
-
-    public static void FillPlayerText(string s)
+    public static void FillPlayerNumber(int n)
     {
-        InputField field = nameInputObject.GetComponentInChildren<InputField>();
-        field.text = s;
+        Text field = numberObject.transform.Find("UI_NumberOfPlayer").GetComponent<Text>();
+        field.text = n.ToString();
     }
 
     public static void SetButton(bool enabled)
@@ -163,20 +154,14 @@ public class GUIManagerScript : MonoBehaviour {
 
     public static void SetInput(bool enabled)
     {
-        if (nameInputObject != null)
-            nameInputObject.SetActive(enabled);
-    }
-
-    public static void DisableInput(bool enabled)
-    {
-        if (nameInputObject != null)
-            nameInputObject.GetComponentInChildren<InputField>().interactable = !enabled;
+        if (numberObject != null)
+            numberObject.SetActive(enabled);
     }
 
     public static void SetInputColor(Color c, string name)
     {
-        if (nameInputObject != null)
-            nameInputObject.transform.Find("UI_NameInput").GetComponent<Image>().color = c;
+        if (numberObject != null)
+            numberObject.transform.Find("UI_NumberColorPanel").GetComponent<Image>().color = c;
         if (whichColorText != null)
             whichColorText.text = name;
         if (whichColorPanel != null)
@@ -242,17 +227,14 @@ public class GUIManagerScript : MonoBehaviour {
         bgRenderer.material.SetColor("_Color", c);
     }
 
-    public static void SetColorShow(string player_name, Color c, string color_name)
+    public static void SetColorShow(int number, Color c, string color_name)
     {
         if (colorShowObject != null)
         {
             colorShowObject.SetActive(true);
             colorShowObject.transform.Find("UI_ColorShowColorPanel").GetComponent<Image>().color = c;
-            string txt;
-            if (player_name == color_name || player_name == "") txt = color_name;
-            else txt = player_name + "\n(" + color_name +")";
+            string txt = number + "\n(" + color_name +")";
             colorShowObject.transform.Find("UI_ColorShowPlayerName").GetComponent<Text>().text = txt;
-
         }
     }
 

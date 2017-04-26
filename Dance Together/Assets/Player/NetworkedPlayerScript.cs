@@ -55,11 +55,11 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     private int matchSongID; // The other player this player has picked as a match
 
     [SyncVar]
-    public string picked_nameText;
+    public int picked_number;
     [SyncVar]
     public int picked_color;
     [SyncVar]
-    public string match_nameText;
+    public int match_number;
     [SyncVar]
     public int match_color;
 
@@ -69,8 +69,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     [SyncVar]
     private int color = -1;
 
-    [SyncVar(hook = "OnNameTextChanged")]
-    public string nameText = "";
+    [SyncVar(hook = "OnNumberChanged")]
+    public int playerNumber = -1;
     private bool to_sort = false;
 
     [SyncVar, HideInInspector]
@@ -133,7 +133,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         int i = 0;
         int size = players.Count;
 
-        List<CaptainsMessPlayer> SortedList = players.OrderBy(o => o.GetComponent<NetworkedPlayerScript>().nameText).ToList();
+        List<CaptainsMessPlayer> SortedList = players.OrderBy(o => o.GetComponent<NetworkedPlayerScript>().playerNumber).ToList();
 
         foreach (CaptainsMessPlayer player in SortedList)
         {
@@ -155,7 +155,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 nps.playerButton.transform.DOScale(Vector3.one, movementSpeed);
             }
             nps.SetColor();
-            nps.SetNameText();
+            nps.SetNumber();
         }
 
         if (size >= 4)
@@ -187,12 +187,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             playerButton.GetComponent<Button>().interactable = false;
             playerButton.transform.localPosition = Vector3.zero;
-
-            GUIManagerScript.DisableInput(false);
+            
             GUIManagerScript.SetBackButton(false);
-
-            nameText = "";
-            GUIManagerScript.FillPlayerText(nameText);
         }
     }
 
@@ -326,22 +322,14 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         Invoke("SortPlayers", 0.5f);
     }
 
-    public void SetNameText()
+    public void SetNumber()
     {
-        OnNameTextChanged(nameText);
+        OnNumberChanged(playerNumber);
     }
-    public void OnNameTextChanged(string s)
+    public void OnNumberChanged(int s)
     {
-        if (s == "")
-        {
-            nameText = ColorScript.GetColorName(color);
-        }
-        else
-        {
-            nameText = s;
-        }
-
-        playerButton.GetComponentInChildren<Text>().text = nameText;
+        playerNumber = s;
+        playerButton.GetComponentInChildren<Text>().text = playerNumber.ToString();
         to_sort = true;
     }
 
@@ -390,7 +378,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         matchSongID = -1;
         matchTime = -1;
 
-        picked_nameText = "";
+        picked_number = -1;
         picked_color = -1;
 
         scored_GuessedCorrect = false;
@@ -441,7 +429,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                     NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
                     if (player.name == "LOCAL Player")
                     {
-                        nps.CmdSetMatchSongID(songID, color, nameText);
+                        nps.CmdSetMatchSongID(songID, color, playerNumber);
                     }
                     nps.playerButton.SetActive(false);
                     nps.playerButton.GetComponent<Button>().interactable = false;
@@ -509,20 +497,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             clr = clr * 0.5f;
             GUIManagerScript.SetBGColor(clr);
         }
-
-        if (nameText == ColorScript.GetColorName(oldColor) || nameText == "") OnNameTextChanged(clr_name);
-    }
-
-    [Command]
-    public void CmdSetPlayerText(string t)
-    {
-        RpcSetPlayerText(t);
-    }
-
-    [ClientRpc]
-    public void RpcSetPlayerText(string t)
-    {
-        nameText = t;
     }
 
     [ClientRpc]
@@ -570,15 +544,15 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     }
 
     [Command]
-    public void CmdSetMatchSongID(int song, int color, string name)
+    public void CmdSetMatchSongID(int song, int color, int number)
     {
         Assert.AreNotEqual<int>(-1, song, "No player was matched");
 
-        RpcSetMatchSongID(song, color, name);
+        RpcSetMatchSongID(song, color, number);
     }
 
     [ClientRpc]
-    public void RpcSetMatchSongID(int song, int c, string name)
+    public void RpcSetMatchSongID(int song, int c, int number)
     {
         GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
 
@@ -587,7 +561,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         matchSongID = song;
         matchTime = gameManager.countDown;
 
-        picked_nameText = name;
+        picked_number = number;
         picked_color = c;
 
         if (songID == matchSongID)
@@ -632,8 +606,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     [ClientRpc]
     public void RpcReplayGame()
     {
-        GUIManagerScript.DisableInput(false);
-
         List<CaptainsMessPlayer> players = GetPlayers();
         int size = players.Count;
 
@@ -749,16 +721,13 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         if (isLocalPlayer)
         {
-            GUIManagerScript.FillPlayerText(nameText);
-
             GUIManagerScript.SetButton(false);
 
-            GUIManagerScript.DisableInput(true);
             GUIManagerScript.SetBackButton(false);
 
             AudioManagerScript.instance.StartGameMusic();
 
-            GUIManagerScript.SetColorShow(nameText, ColorScript.GetColor(color), ColorScript.GetColorName(color));
+            GUIManagerScript.SetColorShow(playerNumber, ColorScript.GetColor(color), ColorScript.GetColorName(color));
 
             localPScript.reminded = false;
         }
@@ -819,7 +788,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                         if (nps.color != other_nps.color)
                         {
                             nps.match_color = other_nps.color;
-                            nps.match_nameText = other_nps.nameText;
+                            nps.match_number = other_nps.playerNumber;
                             break;
                         }
                     }
