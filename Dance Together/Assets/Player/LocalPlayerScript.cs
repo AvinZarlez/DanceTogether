@@ -118,7 +118,7 @@ public class LocalPlayerScript : MonoBehaviour
             {
                 answerParent.SetActive(true);
                 playerPickedBtn.GetComponent<Image>().color = ColorScript.GetColor(networkedPScript.picked_color);
-                playerPickedBtn.GetComponentInChildren<Text>().text = networkedPScript.picked_number.ToString();
+                playerPickedBtn.GetComponentInChildren<Text>().text = networkedPScript.picked_color.ToString();
                 noGuessText.enabled = false;
 
                 if (song == match)
@@ -135,7 +135,7 @@ public class LocalPlayerScript : MonoBehaviour
                     lookingForParent.SetActive(true);
 
                     lookingForBtn.GetComponent<Image>().color = ColorScript.GetColor(networkedPScript.match_color);
-                    lookingForBtn.GetComponentInChildren<Text>().text = networkedPScript.match_number.ToString();
+                    lookingForBtn.GetComponentInChildren<Text>().text = networkedPScript.match_color.ToString();
 
                     answerText.text = "Wrong!";
 
