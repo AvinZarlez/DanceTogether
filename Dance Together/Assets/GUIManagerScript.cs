@@ -269,4 +269,11 @@ public class GUIManagerScript : MonoBehaviour {
         if (endGameParent != null)
             endGameParent.SetActive(false);
     }
+
+    public static void SetNumberInputFieldColor(Color c)
+    {
+        InputField numberTextField = GameObject.Find("UI_NumberInputField").GetComponent<InputField>();
+
+        numberTextField.GetComponent<Image>().color = c;
+    }
 }

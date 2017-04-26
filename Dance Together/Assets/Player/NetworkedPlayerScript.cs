@@ -103,6 +103,21 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         return allPlayersMatched;
     }
 
+    public bool DoesPlayerNumberExist(int s)
+    {
+        List<CaptainsMessPlayer> players = mess.Players();
+        
+        foreach (CaptainsMessPlayer player in players)
+        {
+            if (player.GetComponent<NetworkedPlayerScript>().color == s)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     void SetReady(bool ready)
     {
         if (ready)
@@ -485,6 +500,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             clr = clr * 0.5f;
             GUIManagerScript.SetBGColor(clr);
             GUIManagerScript.FillPlayerNumber(c);
+            GUIManagerScript.SetNumberInputFieldColor(clr);
         }
     }
 
