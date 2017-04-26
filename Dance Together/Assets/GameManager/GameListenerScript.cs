@@ -179,7 +179,8 @@ public class GameListenerScript : CaptainsMessListener
     }
     private void NumberInputProcessed(bool del)
     {
-        InputField numberTextField = GameObject.Find("UI_NumberInputField").GetComponent<InputField>();
+        //InputField numberTextField = GameObject.Find("UI_NumberInputField").GetComponent<InputField>();
+        InputField numberTextField = GUIManagerScript.numberTextField;
 
         GameObject player = GameObject.Find("LOCAL Player");
         NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();

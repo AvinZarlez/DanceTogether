@@ -48,10 +48,14 @@ public class GUIManagerScript : MonoBehaviour {
 
     public static Text versionText;
 
+    public static InputField numberTextField;
+
     // Use this for initialization
     void Start ()
     {
         versionText = GameObject.Find("UI_Version").GetComponent<Text>();
+
+        numberTextField = GameObject.Find("UI_NumberInputField").GetComponent<InputField>();
 
         gameButtonObject = GameObject.Find("UI_GameButton");
         //gameButton = gameButtonObject.GetComponent<Button>();
@@ -272,8 +276,6 @@ public class GUIManagerScript : MonoBehaviour {
 
     public static void SetNumberInputFieldColor(Color c)
     {
-        InputField numberTextField = GameObject.Find("UI_NumberInputField").GetComponent<InputField>();
-
         numberTextField.GetComponent<Image>().color = c;
     }
 }
