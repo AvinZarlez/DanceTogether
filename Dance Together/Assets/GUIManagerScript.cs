@@ -293,7 +293,12 @@ public class GUIManagerScript : MonoBehaviour {
     public static void ClearNumberInput()
     {
         numberTextField.text = "";
-        GameObject.Find("UI_NameInputButton").GetComponent<Button>().interactable = false;
+
+        GameObject obj = GameObject.Find("UI_NameInputButton");
+        if (obj != null)
+        {
+            obj.GetComponent<Button>().interactable = false;
+        }
     }
 
     public void ResetScore()
