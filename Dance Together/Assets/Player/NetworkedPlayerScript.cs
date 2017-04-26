@@ -167,7 +167,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             GUIManagerScript.SetButton(false);
         }
 
-        playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(170, 120 * (size + 1));
+        playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(170, 120 * (size));
     }
 
     void Start()
@@ -658,7 +658,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             nps.playerButton.transform.localScale = Vector3.one;
         }
 
-        playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(170,120 * (size + 1));
+        playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(170,120 * (size));
 
         SetReady(true); //Auto advance
     }
