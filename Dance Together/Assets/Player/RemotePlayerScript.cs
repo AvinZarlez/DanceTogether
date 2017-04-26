@@ -26,8 +26,8 @@ public class RemotePlayerScript : MonoBehaviour {
     {
         Vector3 goal = Vector3.zero;
 
-        goal.y = -20;
-        goal.x = 160 * (position);
+        goal.x = 15;
+        goal.y = -120 * (position);
 
         return goal;
     }
