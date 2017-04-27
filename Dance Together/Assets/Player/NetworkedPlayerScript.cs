@@ -62,7 +62,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     [SyncVar]
     public float matchTime;
 
-    [SyncVar(hook = "OnNumberChanged")]
+    [SyncVar]
     private int color = -1;
     
     private bool to_sort = false;
@@ -83,6 +83,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             Color c = ColorScript.GetColor(color);
             playerButton.GetComponent<Image>().color = c;
+            playerButton.GetComponentInChildren<Text>().text = color.ToString();
         }
     }
 
@@ -329,13 +330,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         // Brief delay to let SyncVars propagate
         Invoke("SortPlayers", 0.5f);
     }
-    
-    public void OnNumberChanged(int s)
-    {
-        color = s;
-        playerButton.GetComponentInChildren<Text>().text = color.ToString();
-        to_sort = true;
-    }
 
     public List<CaptainsMessPlayer> GetPlayers()
     {
@@ -496,21 +490,22 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         }
 
         //RpcSetColor(playerColors[0]);   // Always get first. 
+
         RpcSetColor(playerColors[Random.Range(0, playerColors.Count)]);   //old random way 
     }
 
     [ClientRpc]
     void RpcSetColor(int c)
     {
-        int oldColor = color;
-
         color = c;
-        SetColor();
+        to_sort = true;
 
-        string clr_name = ColorScript.GetColorName(c);
+        SetColor();
 
         if (isLocalPlayer)
         {
+            string clr_name = ColorScript.GetColorName(c);
+
             Color clr = ColorScript.GetColor(c);
             GUIManagerScript.SetInputColor(clr, clr_name);
             clr = clr * 0.5f;
@@ -745,6 +740,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             GUIManagerScript.SetButton(false);
 
             GUIManagerScript.SetBackButton(false);
+
+            GUIManagerScript.ClearNumberInput();
 
             AudioManagerScript.instance.StartGameMusic();
 

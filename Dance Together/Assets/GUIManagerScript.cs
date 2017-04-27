@@ -247,9 +247,9 @@ public class GUIManagerScript : MonoBehaviour {
         if (classicGameParent != null)
         {
             classicGameParent.SetActive(true);
-            classicGameParent.transform.Find("UI_ColorShowColorPanel").GetComponent<Image>().color = c;
+            GameObject.Find("UI_ColorShowColorPanel").GetComponent<Image>().color = c;
             string txt = number + "\n(" + color_name +")";
-            classicGameParent.transform.Find("UI_ColorShowPlayerName").GetComponent<Text>().text = txt;
+            GameObject.Find("UI_ColorShowPlayerName").GetComponent<Text>().text = txt;
         }
     }
 
@@ -293,6 +293,7 @@ public class GUIManagerScript : MonoBehaviour {
     public static void ClearNumberInput()
     {
         numberTextField.text = "";
+        numberTextField.interactable = true;
 
         GameObject obj = GameObject.Find("UI_NameInputButton");
         if (obj != null)
