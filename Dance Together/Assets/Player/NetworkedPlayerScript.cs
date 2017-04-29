@@ -802,9 +802,15 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
                 scoringSongs.Add(sid);
 
+                //Hacky bullshit for finding which kind of game we're in?
+                GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+                Assert.IsNotNull<GameManagerScript>(gameManager);
+                int songType = gameManager.GetSongType();
+
                 Analytics.CustomEvent("guessedCorrect", new Dictionary<string, object>
                   {
-                    { "matchTime", currentMatchTime },
+                    { "matchTime", currentMatchTime }
+                    { "songType", songType },
                     { "songID", sid }
                 });
             }
