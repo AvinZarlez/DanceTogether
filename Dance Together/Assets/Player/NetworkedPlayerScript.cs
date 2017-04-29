@@ -741,6 +741,9 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
             GUIManagerScript.SetBackButton(false);
 
+            Color clr = ColorScript.GetColor(GetColor());
+            clr = clr * 0.5f;
+            GUIManagerScript.SetNumberInputFieldColor(clr);
             GUIManagerScript.ClearNumberInput();
 
             AudioManagerScript.instance.StartGameMusic();

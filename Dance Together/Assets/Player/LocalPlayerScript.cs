@@ -89,6 +89,11 @@ public class LocalPlayerScript : MonoBehaviour
             }
         }
 
+        // Optional clear colors after backing out of choice?
+        /*Color clr = ColorScript.GetColor(networkedPScript.GetColor());
+        clr = clr * 0.5f;
+        GUIManagerScript.SetNumberInputFieldColor(clr);
+        GUIManagerScript.ClearNumberInput();*/
 
         GUIManagerScript.SetBackButton(false);
     }
@@ -146,6 +151,7 @@ public class LocalPlayerScript : MonoBehaviour
             }
             else
             {
+                lookingForParent.SetActive(false);
                 answerParent.SetActive(false);
                 noGuessText.enabled = true;
 

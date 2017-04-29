@@ -46,10 +46,10 @@ public class GUIManagerScript : MonoBehaviour {
     private static GameObject topMenuParent;
 
     private static Renderer bgRenderer;
-
     public static Text versionText;
 
     public static InputField numberTextField;
+    public static Button nameInputButton;
 
     // Use this for initialization
     void Start ()
@@ -57,6 +57,7 @@ public class GUIManagerScript : MonoBehaviour {
         versionText = GameObject.Find("UI_Version").GetComponent<Text>();
 
         numberTextField = GameObject.Find("UI_NumberInputField").GetComponent<InputField>();
+        nameInputButton = GameObject.Find("UI_NameInputButton").GetComponent<Button>();
 
         gameButtonObject = GameObject.Find("UI_GameButton");
         //gameButton = gameButtonObject.GetComponent<Button>();
@@ -285,21 +286,18 @@ public class GUIManagerScript : MonoBehaviour {
             endGameParent.SetActive(false);
     }
 
-    public static void SetNumberInputFieldColor(Color c)
+    public static void SetNumberInputFieldColor(Color c, bool interactable = false)
     {
         numberTextField.GetComponent<Image>().color = c;
+
+        nameInputButton.interactable = interactable;
     }
 
     public static void ClearNumberInput()
     {
         numberTextField.text = "";
         numberTextField.interactable = true;
-
-        GameObject obj = GameObject.Find("UI_NameInputButton");
-        if (obj != null)
-        {
-            obj.GetComponent<Button>().interactable = false;
-        }
+        nameInputButton.interactable = false;
     }
 
     public void ResetScore()
@@ -336,9 +334,7 @@ public class GUIManagerScript : MonoBehaviour {
             {
                 if (nps.DoesPlayerNumberExist(input) != -1)
                 {
-                    GUIManagerScript.SetNumberInputFieldColor(ColorScript.GetColor(input));
-
-                    GameObject.Find("UI_NameInputButton").GetComponent<Button>().interactable = true;
+                    GUIManagerScript.SetNumberInputFieldColor(ColorScript.GetColor(input), true);
                 }
                 else
                 {
@@ -358,12 +354,12 @@ public class GUIManagerScript : MonoBehaviour {
         if (locked)
         {
             numberTextField.interactable = false;
-            GameObject.Find("UI_NameInputButton").GetComponent<Button>().interactable = false;
+            nameInputButton.interactable = false;
         }
         else
         {
             numberTextField.interactable = true;
-            GameObject.Find("UI_NameInputButton").GetComponent<Button>().interactable = true;
+            nameInputButton.interactable = true;
         }
     }
 }
