@@ -21,7 +21,10 @@ public class AudioManagerScript : MonoBehaviour {
     public AudioMixerSnapshot inGameStarted;
     public AudioMixerSnapshot inGameplay;
 
-    public AudioClip[] gameMusic;
+    [SerializeField]
+    private AudioClip[] genreGameMusic;
+    [SerializeField]
+    private AudioClip[] danceGameMusic;
 
     public AudioClip[] soundEffects;
 
@@ -59,43 +62,60 @@ public class AudioManagerScript : MonoBehaviour {
 	
 	}
 
-    public int GetNumSongs()
+    public int GetNumSongs(int index)
     {
-        return gameMusic.Length;
+        return GetMusic(index).Length;
     }
 
-    public static string GetSongName(int songID)
+    private AudioClip[] GetMusic(int index)
     {
-        switch (songID)
+        switch (index)
         {
-            case 0:
-                return "Honky Tonk";
             case 1:
-                return "Big Band";
-            case 2:
-                return "Drum & Bass";
-            case 3:
-                return "Congo";
-            case 4:
-                return "Dubstep";
-            case 5:
-                return "Hip Hop";
-            case 6:
-                return "Irish Jig";
-            case 7:
-                return "Mariachi";
-            case 8:
-                return "Metal";
-            case 9:
-                return "Polka";
-            case 10:
-                return "Salsa";
-            case 11:
-                return "Waltz";
-            case 12:
-                return "Tango";
-            default: //Error
-                return "!Error!";
+                return danceGameMusic;
+            default:
+                return genreGameMusic;
+        }
+    }
+
+    public static string GetSongName(int index, int songID)
+    {
+        switch (index)
+        {
+            case 1:
+                return "Dance " + songID;
+            default:
+                switch (songID)
+                {
+                    case 0:
+                        return "Honky Tonk";
+                    case 1:
+                        return "Big Band";
+                    case 2:
+                        return "Drum & Bass";
+                    case 3:
+                        return "Congo";
+                    case 4:
+                        return "Dubstep";
+                    case 5:
+                        return "Hip Hop";
+                    case 6:
+                        return "Irish Jig";
+                    case 7:
+                        return "Mariachi";
+                    case 8:
+                        return "Metal";
+                    case 9:
+                        return "Polka";
+                    case 10:
+                        return "Salsa";
+                    case 11:
+                        return "Waltz";
+                    case 12:
+                        return "Tango";
+                    default: //Error
+                        return "!Error!";
+                }
         }
     }
 
@@ -116,10 +136,10 @@ public class AudioManagerScript : MonoBehaviour {
         inGameStarted.TransitionTo(m_TransitionOut);
     }
 
-    public void StartGameMusic()
+    public void StartGameMusic(int index)
     {
         GameObject gm = GameObject.Find("LOCAL Player");
-        gameplaySource.clip = gameMusic[gm.GetComponent<NetworkedPlayerScript>().GetSongID()];
+        gameplaySource.clip = GetMusic(index)[gm.GetComponent<NetworkedPlayerScript>().GetSongID()];
         gameplaySource.Stop();
         gameplaySource.Play();
         inGameplay.TransitionTo(m_TransitionIn);

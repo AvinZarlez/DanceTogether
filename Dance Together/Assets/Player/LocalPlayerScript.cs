@@ -120,6 +120,9 @@ public class LocalPlayerScript : MonoBehaviour
 
             int song = networkedPScript.GetSongID();
             int match = networkedPScript.GetMatchSongID();
+            
+            int songTypeIndex = gameManager.GetSongType();
+
 
             if (match != -1)
             {
@@ -135,7 +138,7 @@ public class LocalPlayerScript : MonoBehaviour
                     answerText.text = "Correct!";
                     details += "(Found Dance Partner: +250)\n(Time Bonus: +" + networkedPScript.GetTimeBonus() + ")\n";
 
-                    listeningToText.text = "You were dancing to:\n" + AudioManagerScript.GetSongName(song);
+                    listeningToText.text = "You were dancing to:\n" + AudioManagerScript.GetSongName(songTypeIndex,song);
                 }
                 else
                 {
@@ -146,7 +149,7 @@ public class LocalPlayerScript : MonoBehaviour
 
                     answerText.text = "Wrong!";
 
-                    listeningToText.text = "You heard: " + AudioManagerScript.GetSongName(song) + "\nThey heard: " + AudioManagerScript.GetSongName(match);
+                    listeningToText.text = "You heard: " + AudioManagerScript.GetSongName(songTypeIndex,song) + "\nThey heard: " + AudioManagerScript.GetSongName(songTypeIndex,match);
                 }
             }
             else
@@ -155,7 +158,7 @@ public class LocalPlayerScript : MonoBehaviour
                 answerParent.SetActive(false);
                 noGuessText.enabled = true;
 
-                listeningToText.text = "You were dancing to:\n" + AudioManagerScript.GetSongName(song);
+                listeningToText.text = "You were dancing to:\n" + AudioManagerScript.GetSongName(songTypeIndex,song);
             }
             
             finalScoreText.text = "Score: +"+ networkedPScript.GetScoredThisRound().ToString();

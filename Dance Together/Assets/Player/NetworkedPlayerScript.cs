@@ -667,7 +667,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
             List<int> songs = new List<int>(); //List of the songID's we'll use this game.
 
-            int numberOfSongs = AudioManagerScript.instance.GetNumSongs();
+            //Hacky bullshit for finding which kind of game we're in?
+            GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+            Assert.IsNotNull<GameManagerScript>(gameManager);
+            int index = gameManager.GetSongType();
+
+            int numberOfSongs = AudioManagerScript.instance.GetNumSongs(index);
             for (int i = 0; i < numSongsToPick; i++)
             {
                 int rand;
@@ -746,7 +751,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             GUIManagerScript.SetNumberInputFieldColor(clr);
             GUIManagerScript.ClearNumberInput();
 
-            AudioManagerScript.instance.StartGameMusic();
+            //Hacky bullshit for finding which kind of game we're in?
+            GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+            Assert.IsNotNull<GameManagerScript>(gameManager);
+            int index = gameManager.GetSongType();
+
+            AudioManagerScript.instance.StartGameMusic(index);
 
             GUIManagerScript.SetClassicGameParent(color, ColorScript.GetColor(color), ColorScript.GetColorName(color));
 
