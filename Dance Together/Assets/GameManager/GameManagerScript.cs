@@ -20,7 +20,7 @@ public class GameManagerScript : NetworkBehaviour
 
     private const float gameLength = 60; // How long the game lasts, in seconds.
     private const float endGameLength = 20; // How long the game lasts, in seconds.
-    private const int songType = 0; // Hard coded song type. To make choice available later.
+    private const int songType = 1; // Hard coded song type. To make choice available later.
 
     private NetworkedPlayerScript networkedPScript;
 

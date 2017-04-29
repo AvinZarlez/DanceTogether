@@ -809,7 +809,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
                 Analytics.CustomEvent("guessedCorrect", new Dictionary<string, object>
                   {
-                    { "matchTime", currentMatchTime }
+                    { "matchTime", currentMatchTime },
                     { "songType", songType },
                     { "songID", sid }
                 });
