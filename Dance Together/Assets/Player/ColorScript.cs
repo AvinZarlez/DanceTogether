@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Assertions;
 
 public class ColorScript : MonoBehaviour {
     static public Color[] colors = new Color[] {
@@ -69,6 +70,8 @@ public class ColorScript : MonoBehaviour {
 
     static public Color GetColor(int index)
     {
+        Assert.IsTrue(index < colors.Length);
+        
         return colors[index];
     }
 }

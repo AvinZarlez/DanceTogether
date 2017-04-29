@@ -63,7 +63,9 @@ public class LocalPlayerScript : MonoBehaviour
     {
         // Oops, let's reset the match ID
         networkedPScript.CmdResetMatchSongID();
-        
+
+        GUIManagerScript.NumberInputLocked(false);
+
         List<CaptainsMessPlayer> players = networkedPScript.GetPlayers();
 
         int size = players.Count;
@@ -87,6 +89,11 @@ public class LocalPlayerScript : MonoBehaviour
             }
         }
 
+        // Optional clear colors after backing out of choice?
+        /*Color clr = ColorScript.GetColor(networkedPScript.GetColor());
+        clr = clr * 0.5f;
+        GUIManagerScript.SetNumberInputFieldColor(clr);
+        GUIManagerScript.ClearNumberInput();*/
 
         GUIManagerScript.SetBackButton(false);
     }
@@ -118,7 +125,7 @@ public class LocalPlayerScript : MonoBehaviour
             {
                 answerParent.SetActive(true);
                 playerPickedBtn.GetComponent<Image>().color = ColorScript.GetColor(networkedPScript.picked_color);
-                playerPickedBtn.GetComponentInChildren<Text>().text = networkedPScript.picked_nameText;
+                playerPickedBtn.GetComponentInChildren<Text>().text = networkedPScript.picked_color.ToString();
                 noGuessText.enabled = false;
 
                 if (song == match)
@@ -135,7 +142,7 @@ public class LocalPlayerScript : MonoBehaviour
                     lookingForParent.SetActive(true);
 
                     lookingForBtn.GetComponent<Image>().color = ColorScript.GetColor(networkedPScript.match_color);
-                    lookingForBtn.GetComponentInChildren<Text>().text = networkedPScript.match_nameText;
+                    lookingForBtn.GetComponentInChildren<Text>().text = networkedPScript.match_color.ToString();
 
                     answerText.text = "Wrong!";
 
@@ -144,6 +151,7 @@ public class LocalPlayerScript : MonoBehaviour
             }
             else
             {
+                lookingForParent.SetActive(false);
                 answerParent.SetActive(false);
                 noGuessText.enabled = true;
 
