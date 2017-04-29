@@ -327,25 +327,32 @@ public class GUIManagerScript : MonoBehaviour {
         GameObject player = GameObject.Find("LOCAL Player");
         NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
 
+        bool shouldClear = true;
+
         if (numberTextField.text != null)
         {
             int input = -1;
             if (System.Int32.TryParse(numberTextField.text, out input))
             {
-                if (nps.DoesPlayerNumberExist(input) != -1)
+                if (nps.GetColor() != input)
                 {
-                    GUIManagerScript.SetNumberInputFieldColor(ColorScript.GetColor(input), true);
-                }
-                else
-                {
-                    Color clr = ColorScript.GetColor(nps.GetColor());
-                    clr = clr * 0.5f;
-                    GUIManagerScript.SetNumberInputFieldColor(clr);
-                    
-                    if(del)
-                        GUIManagerScript.ClearNumberInput();
+                    if (nps.DoesPlayerNumberExist(input) != -1)
+                    {
+                        GUIManagerScript.SetNumberInputFieldColor(ColorScript.GetColor(input), true);
+                        shouldClear = false;
+                    }
                 }
             }
+        }
+  
+        if (shouldClear)
+        {
+            Color clr = ColorScript.GetColor(nps.GetColor());
+            clr = clr * 0.5f;
+            GUIManagerScript.SetNumberInputFieldColor(clr);
+
+            if (del)
+                GUIManagerScript.ClearNumberInput();
         }
     }
 

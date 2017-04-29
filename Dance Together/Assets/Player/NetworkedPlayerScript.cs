@@ -110,7 +110,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         
         foreach (CaptainsMessPlayer player in players)
         {
-            if (player.GetComponent<NetworkedPlayerScript>().color == s)
+            if (player.GetComponent<NetworkedPlayerScript>().GetColor() == s)
             {
                 return player.GetComponent<NetworkedPlayerScript>().GetSongID();
             }
