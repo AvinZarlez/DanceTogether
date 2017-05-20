@@ -18,6 +18,7 @@ public class GUIManagerScript : MonoBehaviour {
     private static Text scoreText;
     
     private static Button resetScoreBtn; //Changed to stay in view, part of top menu now.
+    private static Button songSetBtn; //Changed to stay in view, part of top menu now.
 
     private static GameObject pregameParent;
     private static GameObject classicGameParent;
@@ -84,6 +85,9 @@ public class GUIManagerScript : MonoBehaviour {
 
         resetScoreBtn = GameObject.Find("UI_ResetScore").GetComponent<Button>();
         resetScoreBtn.interactable = false;
+
+        songSetBtn = GameObject.Find("UI_SongSet").GetComponent<Button>();
+        songSetBtn.interactable = false; // Probably redundant as setting in UGUI
 
         // Dump solution to getting resetScoreBtn before the top menu parent is hidden?
         topMenuParent = GameObject.Find("TopMenuParent");
@@ -159,6 +163,15 @@ public class GUIManagerScript : MonoBehaviour {
         field.text = n.ToString();
     }
 
+    public void SongSetButtonPressed()
+    {
+        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+        if (gameManager != null)
+        {
+            gameManager.CmdIterateSongSet();
+        }
+    }
+
     public static void SetButton(bool enabled)
     {
         if (gameButtonObject != null)
@@ -223,6 +236,16 @@ public class GUIManagerScript : MonoBehaviour {
         scoreText.enabled = false;
 
         resetScoreBtn.interactable = false;
+    }
+
+    public static void SetSongSetButton(bool value)
+    {
+        songSetBtn.interactable = value;
+    }
+
+    public static void SetSongSetButtonText(string s)
+    {
+        songSetBtn.GetComponentInChildren<Text>().text = "Mode: "+s;
     }
 
     public static void SetMainButtonHighlight(bool highlight)

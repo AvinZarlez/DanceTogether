@@ -260,6 +260,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             GUIManagerScript.SetRulesButton(false);
             GUIManagerScript.SetBackButton(false);
             GUIManagerScript.HideClassicGameParent();
+            GUIManagerScript.SetSongSetButton(false);
             if (GUIManagerScript.countdownText != null)
                 GUIManagerScript.countdownText.enabled = false;
 
@@ -307,6 +308,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         GUIManagerScript.SetRulesButton(true);
         GUIManagerScript.SetPregameParent(true);
+        GUIManagerScript.SetSongSetButton(true);
 
         SetReady(false);
 
@@ -750,6 +752,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             clr = clr * 0.5f;
             GUIManagerScript.SetNumberInputFieldColor(clr);
             GUIManagerScript.ClearNumberInput();
+            GUIManagerScript.SetSongSetButton(false);
 
             //Hacky bullshit for finding which kind of game we're in?
             GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
@@ -873,6 +876,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             AudioManagerScript.instance.PlayRoundEnd(scored_GuessedCorrect);
 
             GUIManagerScript.HideClassicGameParent();
+            
+            GUIManagerScript.SetSongSetButton(true);
         }
     }
 }

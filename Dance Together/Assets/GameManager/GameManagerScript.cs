@@ -20,7 +20,10 @@ public class GameManagerScript : NetworkBehaviour
 
     private const float gameLength = 60; // How long the game lasts, in seconds.
     private const float endGameLength = 20; // How long the game lasts, in seconds.
-    private const int songType = 1; // Hard coded song type. To make choice available later.
+
+    [SyncVar]
+    private int songType = 1; // Hard coded song type. To make choice available later.
+    private string[] songNames = new string[] { "Genre / Classic", "Dance Tests 1" };
 
     private NetworkedPlayerScript networkedPScript;
 
@@ -42,6 +45,7 @@ public class GameManagerScript : NetworkBehaviour
         endgameCountDown = -1;
         roundCount = 0;
         GUIManagerScript.SetEndGameScreen(false);
+        GUIManagerScript.SetSongSetButtonText(GetSongTypeText(songType));
 
         Random.InitState((int)System.Environment.TickCount);
     }
@@ -92,6 +96,11 @@ public class GameManagerScript : NetworkBehaviour
     {
         GameObject player = GameObject.Find("LOCAL Player");
         networkedPScript = player.GetComponent<NetworkedPlayerScript>();
+    }
+
+    private string GetSongTypeText(int i)
+    {
+        return songNames[i];
     }
 
     [Command]
@@ -197,7 +206,22 @@ public class GameManagerScript : NetworkBehaviour
         }
         networkedPScript.CmdSetColor();
     }
-    
+
+
+    [Command]
+    public void CmdIterateSongSet()
+    {
+        RpcIterateSongSet();
+    }
+
+    [ClientRpc]
+    public void RpcIterateSongSet()
+    {
+        songType++;
+        if (songType >= songNames.Length) songType = 0;
+        GUIManagerScript.SetSongSetButtonText(GetSongTypeText(songType));
+    }
+
     public void ResetScore()
     {
         Debug.Log("GM ResetScore");
