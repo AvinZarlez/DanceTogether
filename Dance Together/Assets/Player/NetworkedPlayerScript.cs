@@ -53,7 +53,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
     [SyncVar]
     private int matchSongID; // The other player this player has picked as a match
-    
+
     [SyncVar]
     public int picked_color;
     [SyncVar]
@@ -64,7 +64,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
     [SyncVar]
     private int color = -1;
-    
+
     private bool to_sort = false;
 
     [SyncVar, HideInInspector]
@@ -107,7 +107,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     public int DoesPlayerNumberExist(int s)
     {
         List<CaptainsMessPlayer> players = mess.Players();
-        
+
         foreach (CaptainsMessPlayer player in players)
         {
             if (player.GetComponent<NetworkedPlayerScript>().GetColor() == s)
@@ -158,7 +158,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 if (nps.playerButton.activeSelf == false)
                 {
                     nps.playerButton.SetActive(true);
-                    nps.playerButton.transform.localPosition = new Vector3(240,i * -120, 0);
+                    nps.playerButton.transform.localPosition = new Vector3(240, i * -120, 0);
                 }
 
                 nps.playerButton.transform.DOLocalMove(goal, movementSpeed);
@@ -196,7 +196,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             playerButton.GetComponent<Button>().interactable = false;
             playerButton.transform.localPosition = Vector3.zero;
-            
+
             GUIManagerScript.SetBackButton(false);
         }
     }
@@ -236,7 +236,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         if (isLocalPlayer)
         {
-            if (to_sort && !gameManager.IsGameStarted() )
+            if (to_sort && !gameManager.IsGameStarted())
             {
                 to_sort = false;
                 SortPlayers();
@@ -377,7 +377,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     {
         matchSongID = -1;
         matchTime = -1;
-        
+
         picked_color = -1;
 
         scored_GuessedCorrect = false;
@@ -579,7 +579,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         matchSongID = song;
         matchTime = gameManager.countDown;
-        
+
         picked_color = c;
 
         if (songID == matchSongID)
@@ -648,7 +648,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             nps.playerButton.transform.localScale = Vector3.one;
         }
 
-        playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(170,120 * (size));
+        playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(170, 120 * (size));
 
         SetReady(true); //Auto advance
     }
@@ -672,7 +672,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             //Hacky bullshit for finding which kind of game we're in?
             GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
             Assert.IsNotNull<GameManagerScript>(gameManager);
-            int index = gameManager.GetSongType();
+            int index = gameManager.GetSongSet();
 
             int numberOfSongs = AudioManagerScript.instance.GetNumSongs(index);
             for (int i = 0; i < numSongsToPick; i++)
@@ -757,7 +757,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             //Hacky bullshit for finding which kind of game we're in?
             GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
             Assert.IsNotNull<GameManagerScript>(gameManager);
-            int index = gameManager.GetSongType();
+            int index = gameManager.GetSongSet();
 
             AudioManagerScript.instance.StartGameMusic(index);
 
@@ -808,12 +808,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 //Hacky bullshit for finding which kind of game we're in?
                 GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
                 Assert.IsNotNull<GameManagerScript>(gameManager);
-                int songType = gameManager.GetSongType();
+                int songSet = gameManager.GetSongSet();
 
                 Analytics.CustomEvent("guessedCorrect", new Dictionary<string, object>
                   {
                     { "matchTime", currentMatchTime },
-                    { "songType", songType },
+                    { "songSet", songSet },
                     { "songID", sid }
                 });
             }
@@ -876,8 +876,17 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             AudioManagerScript.instance.PlayRoundEnd(scored_GuessedCorrect);
 
             GUIManagerScript.HideClassicGameParent();
-            
+
             GUIManagerScript.SetSongSetButton(true);
         }
+    }
+
+    [Command]
+    public void CmdIterateSongSet()
+    {
+        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+        
+        Assert.IsNotNull<GameManagerScript>(gameManager);
+        gameManager.CmdIterateSongSet();
     }
 }

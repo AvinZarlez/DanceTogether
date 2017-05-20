@@ -121,7 +121,7 @@ public class LocalPlayerScript : MonoBehaviour
             int song = networkedPScript.GetSongID();
             int match = networkedPScript.GetMatchSongID();
             
-            int songTypeIndex = gameManager.GetSongType();
+            int songTypeIndex = gameManager.GetSongSet();
 
 
             if (match != -1)

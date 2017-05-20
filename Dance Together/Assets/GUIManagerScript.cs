@@ -165,11 +165,8 @@ public class GUIManagerScript : MonoBehaviour {
 
     public void SongSetButtonPressed()
     {
-        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
-        if (gameManager != null)
-        {
-            gameManager.CmdIterateSongSet();
-        }
+        GameObject gm = GameObject.Find("LOCAL Player");
+        gm.GetComponent<NetworkedPlayerScript>().CmdIterateSongSet();
     }
 
     public static void SetButton(bool enabled)
@@ -240,7 +237,8 @@ public class GUIManagerScript : MonoBehaviour {
 
     public static void SetSongSetButton(bool value)
     {
-        songSetBtn.interactable = value;
+        if (songSetBtn != null)
+            songSetBtn.interactable = value;
     }
 
     public static void SetSongSetButtonText(string s)
