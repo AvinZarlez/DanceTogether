@@ -63,7 +63,9 @@ public class LocalPlayerScript : MonoBehaviour
     {
         // Oops, let's reset the match ID
         networkedPScript.CmdResetMatchSongID();
-        
+
+        GUIManagerScript.NumberInputLocked(false);
+
         List<CaptainsMessPlayer> players = networkedPScript.GetPlayers();
 
         int size = players.Count;
@@ -87,6 +89,11 @@ public class LocalPlayerScript : MonoBehaviour
             }
         }
 
+        // Optional clear colors after backing out of choice?
+        /*Color clr = ColorScript.GetColor(networkedPScript.GetColor());
+        clr = clr * 0.5f;
+        GUIManagerScript.SetNumberInputFieldColor(clr);
+        GUIManagerScript.ClearNumberInput();*/
 
         GUIManagerScript.SetBackButton(false);
     }
@@ -113,12 +120,15 @@ public class LocalPlayerScript : MonoBehaviour
 
             int song = networkedPScript.GetSongID();
             int match = networkedPScript.GetMatchSongID();
+            
+            int songTypeIndex = gameManager.GetSongSet();
+
 
             if (match != -1)
             {
                 answerParent.SetActive(true);
                 playerPickedBtn.GetComponent<Image>().color = ColorScript.GetColor(networkedPScript.picked_color);
-                playerPickedBtn.GetComponentInChildren<Text>().text = networkedPScript.picked_nameText;
+                playerPickedBtn.GetComponentInChildren<Text>().text = networkedPScript.picked_color.ToString();
                 noGuessText.enabled = false;
 
                 if (song == match)
@@ -128,26 +138,27 @@ public class LocalPlayerScript : MonoBehaviour
                     answerText.text = "Correct!";
                     details += "(Found Dance Partner: +250)\n(Time Bonus: +" + networkedPScript.GetTimeBonus() + ")\n";
 
-                    listeningToText.text = "You were dancing to:\n" + AudioManagerScript.GetSongName(song);
+                    listeningToText.text = "You were dancing to:\n" + AudioManagerScript.GetSongName(songTypeIndex,song);
                 }
                 else
                 {
                     lookingForParent.SetActive(true);
 
                     lookingForBtn.GetComponent<Image>().color = ColorScript.GetColor(networkedPScript.match_color);
-                    lookingForBtn.GetComponentInChildren<Text>().text = networkedPScript.match_nameText;
+                    lookingForBtn.GetComponentInChildren<Text>().text = networkedPScript.match_color.ToString();
 
                     answerText.text = "Wrong!";
 
-                    listeningToText.text = "You heard: " + AudioManagerScript.GetSongName(song) + "\nThey heard: " + AudioManagerScript.GetSongName(match);
+                    listeningToText.text = "You heard: " + AudioManagerScript.GetSongName(songTypeIndex,song) + "\nThey heard: " + AudioManagerScript.GetSongName(songTypeIndex,match);
                 }
             }
             else
             {
+                lookingForParent.SetActive(false);
                 answerParent.SetActive(false);
                 noGuessText.enabled = true;
 
-                listeningToText.text = "You were dancing to:\n" + AudioManagerScript.GetSongName(song);
+                listeningToText.text = "You were dancing to:\n" + AudioManagerScript.GetSongName(songTypeIndex,song);
             }
             
             finalScoreText.text = "Score: +"+ networkedPScript.GetScoredThisRound().ToString();

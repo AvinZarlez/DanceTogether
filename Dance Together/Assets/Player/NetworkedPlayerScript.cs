@@ -9,7 +9,7 @@ using System.Linq;
 
 public class NetworkedPlayerScript : CaptainsMessPlayer
 {
-    private const string versionNum = "0.0.5";
+    private const string versionNum = "0.0.6";
 
     private enum Score
     {
@@ -55,11 +55,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     private int matchSongID; // The other player this player has picked as a match
 
     [SyncVar]
-    public string picked_nameText;
-    [SyncVar]
     public int picked_color;
-    [SyncVar]
-    public string match_nameText;
     [SyncVar]
     public int match_color;
 
@@ -69,8 +65,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     [SyncVar]
     private int color = -1;
 
-    [SyncVar(hook = "OnNameTextChanged")]
-    public string nameText = "";
     private bool to_sort = false;
 
     [SyncVar, HideInInspector]
@@ -89,6 +83,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             Color c = ColorScript.GetColor(color);
             playerButton.GetComponent<Image>().color = c;
+            playerButton.GetComponentInChildren<Text>().text = color.ToString();
         }
     }
 
@@ -107,6 +102,21 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         }
 
         return allPlayersMatched;
+    }
+
+    public int DoesPlayerNumberExist(int s)
+    {
+        List<CaptainsMessPlayer> players = mess.Players();
+
+        foreach (CaptainsMessPlayer player in players)
+        {
+            if (player.GetComponent<NetworkedPlayerScript>().GetColor() == s)
+            {
+                return player.GetComponent<NetworkedPlayerScript>().GetSongID();
+            }
+        }
+
+        return -1;
     }
 
     void SetReady(bool ready)
@@ -133,7 +143,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         int i = 0;
         int size = players.Count;
 
-        List<CaptainsMessPlayer> SortedList = players.OrderBy(o => o.GetComponent<NetworkedPlayerScript>().nameText).ToList();
+        List<CaptainsMessPlayer> SortedList = players.OrderBy(o => o.GetComponent<NetworkedPlayerScript>().color).ToList();
 
         foreach (CaptainsMessPlayer player in SortedList)
         {
@@ -148,14 +158,13 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                 if (nps.playerButton.activeSelf == false)
                 {
                     nps.playerButton.SetActive(true);
-                    nps.playerButton.transform.localPosition = new Vector3(i * 160, -340, 0);
+                    nps.playerButton.transform.localPosition = new Vector3(240, i * -120, 0);
                 }
 
                 nps.playerButton.transform.DOLocalMove(goal, movementSpeed);
                 nps.playerButton.transform.DOScale(Vector3.one, movementSpeed);
             }
             nps.SetColor();
-            nps.SetNameText();
         }
 
         if (size >= 4)
@@ -167,7 +176,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             GUIManagerScript.SetButton(false);
         }
 
-        playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(160 * (size + 1), 340);
+        playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(170, 120 * (size));
     }
 
     void Start()
@@ -188,11 +197,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             playerButton.GetComponent<Button>().interactable = false;
             playerButton.transform.localPosition = Vector3.zero;
 
-            GUIManagerScript.DisableInput(false);
             GUIManagerScript.SetBackButton(false);
-
-            nameText = "";
-            GUIManagerScript.FillPlayerText(nameText);
         }
     }
 
@@ -231,7 +236,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         if (isLocalPlayer)
         {
-            if (to_sort && !gameManager.IsGameStarted() )
+            if (to_sort && !gameManager.IsGameStarted())
             {
                 to_sort = false;
                 SortPlayers();
@@ -242,7 +247,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     // Redundant? Possible. But I am not sure
     // Unity says this is the one to use, yet OnDestroy works and possibly works better?
     // Let's do both to be safe.
-    void OnDestroy()
+    new void OnDestroy()
     {
         //print("Player was was destroyed");
         if (playerButton != null)
@@ -250,11 +255,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         if (isLocalPlayer)
         {
-            GUIManagerScript.SetInput(false);
+            GUIManagerScript.SetPregameParent(false);
             GUIManagerScript.SetButton(false);
             GUIManagerScript.SetRulesButton(false);
             GUIManagerScript.SetBackButton(false);
-            GUIManagerScript.HideColorShow();
+            GUIManagerScript.HideClassicGameParent();
+            GUIManagerScript.SetSongSetButton(false);
             if (GUIManagerScript.countdownText != null)
                 GUIManagerScript.countdownText.enabled = false;
 
@@ -272,7 +278,10 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             OnClientExitLobby();
         }
+
+        base.OnDestroy();
     }
+
     public override void OnNetworkDestroy()
     {
         OnDestroy();
@@ -298,7 +307,8 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         AudioManagerScript.instance.PlaySFX(AudioManagerScript.SFXClips.DanceTogether);
 
         GUIManagerScript.SetRulesButton(true);
-        GUIManagerScript.SetInput(true);
+        GUIManagerScript.SetPregameParent(true);
+        GUIManagerScript.SetSongSetButton(true);
 
         SetReady(false);
 
@@ -321,25 +331,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         // Brief delay to let SyncVars propagate
         Invoke("SortPlayers", 0.5f);
-    }
-
-    public void SetNameText()
-    {
-        OnNameTextChanged(nameText);
-    }
-    public void OnNameTextChanged(string s)
-    {
-        if (s == "")
-        {
-            nameText = ColorScript.GetColorName(color);
-        }
-        else
-        {
-            nameText = s;
-        }
-
-        playerButton.GetComponentInChildren<Text>().text = nameText;
-        to_sort = true;
     }
 
     public List<CaptainsMessPlayer> GetPlayers()
@@ -387,7 +378,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         matchSongID = -1;
         matchTime = -1;
 
-        picked_nameText = "";
         picked_color = -1;
 
         scored_GuessedCorrect = false;
@@ -431,14 +421,13 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         {
             if (gameManager.IsGameStarted())
             {
-
                 List<CaptainsMessPlayer> players = GetPlayers();
                 foreach (CaptainsMessPlayer player in players)
                 {
                     NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
                     if (player.name == "LOCAL Player")
                     {
-                        nps.CmdSetMatchSongID(songID, color, nameText);
+                        nps.CmdSetMatchSongID(songID, color);
                     }
                     nps.playerButton.SetActive(false);
                     nps.playerButton.GetComponent<Button>().interactable = false;
@@ -446,11 +435,28 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
                 playerButton.SetActive(true);
                 playerButton.GetComponent<Button>().interactable = false;
-                playerButton.transform.DOLocalMove(new Vector3(40, 0, 0), fastMovementSpeed);
+                playerButton.transform.DOLocalMove(new Vector3(30, 20, 0), fastMovementSpeed);
                 playerButton.transform.DOScale(new Vector3(1.5f, 1.5f, 1f), fastMovementSpeed);
 
-                playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(180, 340);
+                playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(170, 140);
 
+                GUIManagerScript.SetBackButton(true);
+            }
+        }
+    }
+
+    public void LockChoiceButtonPressed()
+    {
+        InputField numberTextField = GUIManagerScript.numberTextField;
+
+        int input = -1;
+        if (System.Int32.TryParse(numberTextField.text, out input))
+        {
+            int s = DoesPlayerNumberExist(input);
+            if (s != -1)
+            {
+                CmdSetMatchSongID(s, input);
+                GUIManagerScript.NumberInputLocked(true);
                 GUIManagerScript.SetBackButton(true);
             }
         }
@@ -486,40 +492,30 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         }
 
         //RpcSetColor(playerColors[0]);   // Always get first. 
+
         RpcSetColor(playerColors[Random.Range(0, playerColors.Count)]);   //old random way 
     }
 
     [ClientRpc]
     void RpcSetColor(int c)
     {
-        int oldColor = color;
-
         color = c;
-        SetColor();
+        to_sort = true;
 
-        string clr_name = ColorScript.GetColorName(c);
+        SetColor();
 
         if (isLocalPlayer)
         {
+            string clr_name = ColorScript.GetColorName(c);
+
             Color clr = ColorScript.GetColor(c);
             GUIManagerScript.SetInputColor(clr, clr_name);
             clr = clr * 0.5f;
             GUIManagerScript.SetBGColor(clr);
+            GUIManagerScript.FillPlayerNumber(c);
+            GUIManagerScript.SetNumberInputFieldColor(clr);
+            GUIManagerScript.ClearNumberInput();
         }
-
-        if (nameText == ColorScript.GetColorName(oldColor) || nameText == "") OnNameTextChanged(clr_name);
-    }
-
-    [Command]
-    public void CmdSetPlayerText(string t)
-    {
-        RpcSetPlayerText(t);
-    }
-
-    [ClientRpc]
-    public void RpcSetPlayerText(string t)
-    {
-        nameText = t;
     }
 
     [ClientRpc]
@@ -567,15 +563,15 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     }
 
     [Command]
-    public void CmdSetMatchSongID(int song, int color, string name)
+    public void CmdSetMatchSongID(int song, int color)
     {
         Assert.AreNotEqual<int>(-1, song, "No player was matched");
 
-        RpcSetMatchSongID(song, color, name);
+        RpcSetMatchSongID(song, color);
     }
 
     [ClientRpc]
-    public void RpcSetMatchSongID(int song, int c, string name)
+    public void RpcSetMatchSongID(int song, int c)
     {
         GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
 
@@ -584,7 +580,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
         matchSongID = song;
         matchTime = gameManager.countDown;
 
-        picked_nameText = name;
         picked_color = c;
 
         if (songID == matchSongID)
@@ -629,8 +624,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
     [ClientRpc]
     public void RpcReplayGame()
     {
-        GUIManagerScript.DisableInput(false);
-
         List<CaptainsMessPlayer> players = GetPlayers();
         int size = players.Count;
 
@@ -655,7 +648,7 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
             nps.playerButton.transform.localScale = Vector3.one;
         }
 
-        playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(160 * (size + 1), 340);
+        playerParent.GetComponent<RectTransform>().sizeDelta = new Vector2(170, 120 * (size));
 
         SetReady(true); //Auto advance
     }
@@ -676,7 +669,12 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
             List<int> songs = new List<int>(); //List of the songID's we'll use this game.
 
-            int numberOfSongs = AudioManagerScript.instance.GetNumSongs();
+            //Hacky bullshit for finding which kind of game we're in?
+            GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+            Assert.IsNotNull<GameManagerScript>(gameManager);
+            int index = gameManager.GetSongSet();
+
+            int numberOfSongs = AudioManagerScript.instance.GetNumSongs(index);
             for (int i = 0; i < numSongsToPick; i++)
             {
                 int rand;
@@ -746,16 +744,24 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
         if (isLocalPlayer)
         {
-            GUIManagerScript.FillPlayerText(nameText);
-
             GUIManagerScript.SetButton(false);
 
-            GUIManagerScript.DisableInput(true);
             GUIManagerScript.SetBackButton(false);
 
-            AudioManagerScript.instance.StartGameMusic();
+            Color clr = ColorScript.GetColor(GetColor());
+            clr = clr * 0.5f;
+            GUIManagerScript.SetNumberInputFieldColor(clr);
+            GUIManagerScript.ClearNumberInput();
+            GUIManagerScript.SetSongSetButton(false);
 
-            GUIManagerScript.SetColorShow(nameText, ColorScript.GetColor(color), ColorScript.GetColorName(color));
+            //Hacky bullshit for finding which kind of game we're in?
+            GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+            Assert.IsNotNull<GameManagerScript>(gameManager);
+            int index = gameManager.GetSongSet();
+
+            AudioManagerScript.instance.StartGameMusic(index);
+
+            GUIManagerScript.SetClassicGameParent(color, ColorScript.GetColor(color), ColorScript.GetColorName(color));
 
             localPScript.reminded = false;
         }
@@ -799,9 +805,15 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
                 scoringSongs.Add(sid);
 
+                //Hacky bullshit for finding which kind of game we're in?
+                GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+                Assert.IsNotNull<GameManagerScript>(gameManager);
+                int songSet = gameManager.GetSongSet();
+
                 Analytics.CustomEvent("guessedCorrect", new Dictionary<string, object>
                   {
                     { "matchTime", currentMatchTime },
+                    { "songSet", songSet },
                     { "songID", sid }
                 });
             }
@@ -816,7 +828,6 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
                         if (nps.color != other_nps.color)
                         {
                             nps.match_color = other_nps.color;
-                            nps.match_nameText = other_nps.nameText;
                             break;
                         }
                     }
@@ -864,7 +875,18 @@ public class NetworkedPlayerScript : CaptainsMessPlayer
 
             AudioManagerScript.instance.PlayRoundEnd(scored_GuessedCorrect);
 
-            GUIManagerScript.HideColorShow();
+            GUIManagerScript.HideClassicGameParent();
+
+            GUIManagerScript.SetSongSetButton(true);
         }
+    }
+
+    [Command]
+    public void CmdIterateSongSet()
+    {
+        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+        
+        Assert.IsNotNull<GameManagerScript>(gameManager);
+        gameManager.CmdIterateSongSet();
     }
 }

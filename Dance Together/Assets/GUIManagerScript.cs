@@ -16,10 +16,12 @@ public class GUIManagerScript : MonoBehaviour {
     private static Text buttonText;
 
     private static Text scoreText;
-    private static GameObject resetScoreBtn;
+    
+    private static Button resetScoreBtn; //Changed to stay in view, part of top menu now.
+    private static Button songSetBtn; //Changed to stay in view, part of top menu now.
 
-    private static GameObject nameInputObject;
-    private static GameObject colorShowObject;
+    private static GameObject pregameParent;
+    private static GameObject classicGameParent;
 
     private static Text whichColorText;
     private static Image whichColorPanel;
@@ -42,15 +44,21 @@ public class GUIManagerScript : MonoBehaviour {
     public static GameObject playerParent;
     private static GameObject playerSliderParent;
     private static GameObject endGameParent;
+    private static GameObject topMenuParent;
 
     private static Renderer bgRenderer;
-
     public static Text versionText;
+
+    public static InputField numberTextField;
+    public static Button nameInputButton;
 
     // Use this for initialization
     void Start ()
     {
         versionText = GameObject.Find("UI_Version").GetComponent<Text>();
+
+        numberTextField = GameObject.Find("UI_NumberInputField").GetComponent<InputField>();
+        nameInputButton = GameObject.Find("UI_NameInputButton").GetComponent<Button>();
 
         gameButtonObject = GameObject.Find("UI_GameButton");
         //gameButton = gameButtonObject.GetComponent<Button>();
@@ -66,18 +74,24 @@ public class GUIManagerScript : MonoBehaviour {
 
         whichColorPanel = GameObject.Find("UI_WhichColorPanel").GetComponent<Image>();
 
-        nameInputObject = GameObject.Find("NameInputParent");
+        pregameParent = GameObject.Find("PregameParent");
         whichColorText = GameObject.Find("UI_WhichColor").GetComponent<Text>();
-        SetInput(false);
 
-        colorShowObject = GameObject.Find("ColorShowParent");
-        HideColorShow();
+        classicGameParent = GameObject.Find("ClassicGameParent");
+        HideClassicGameParent();
 
         scoreText = GameObject.Find("UI_Score").GetComponent<Text>();
         scoreText.enabled = false;
 
-        resetScoreBtn = GameObject.Find("UI_ResetScore");
-        resetScoreBtn.SetActive(false);
+        resetScoreBtn = GameObject.Find("UI_ResetScore").GetComponent<Button>();
+        resetScoreBtn.interactable = false;
+
+        songSetBtn = GameObject.Find("UI_SongSet").GetComponent<Button>();
+        songSetBtn.interactable = false; // Probably redundant as setting in UGUI
+
+        // Dump solution to getting resetScoreBtn before the top menu parent is hidden?
+        topMenuParent = GameObject.Find("TopMenuParent");
+        topMenuParent.SetActive(false);
 
         GameObject obj1 = GameObject.Find("UI_Countdown");
         countdownText = obj1.GetComponent<Text>();
@@ -108,6 +122,9 @@ public class GUIManagerScript : MonoBehaviour {
 
         playerSliderParent = GameObject.Find("PlayerSliderParent");
         endGameParent = GameObject.Find("EndGameParent");
+
+        SetPregameParent(false);
+
         HideMainView();
     }
 
@@ -133,20 +150,23 @@ public class GUIManagerScript : MonoBehaviour {
         GameObject gm = GameObject.Find("LOCAL Player");
         gm.GetComponent<LocalPlayerScript>().BackButtonPressed();
     }
-    
-    public void SetPlayerText()
-    {
-        InputField field = nameInputObject.GetComponentInChildren<InputField>();
 
-        GameObject player = GameObject.Find("LOCAL Player");
-        NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
-        nps.CmdSetPlayerText(field.text);
+    public void LockChoiceButtonPressed()
+    {
+        GameObject gm = GameObject.Find("LOCAL Player");
+        gm.GetComponent<NetworkedPlayerScript>().LockChoiceButtonPressed();
     }
 
-    public static void FillPlayerText(string s)
+    public static void FillPlayerNumber(int n)
     {
-        InputField field = nameInputObject.GetComponentInChildren<InputField>();
-        field.text = s;
+        Text field = GameObject.Find("UI_NumberOfPlayer").GetComponent<Text>();
+        field.text = n.ToString();
+    }
+
+    public void SongSetButtonPressed()
+    {
+        GameObject gm = GameObject.Find("LOCAL Player");
+        gm.GetComponent<NetworkedPlayerScript>().CmdIterateSongSet();
     }
 
     public static void SetButton(bool enabled)
@@ -157,22 +177,17 @@ public class GUIManagerScript : MonoBehaviour {
         }
     }
 
-    public static void SetInput(bool enabled)
+    public static void SetPregameParent(bool enabled)
     {
-        if (nameInputObject != null)
-            nameInputObject.SetActive(enabled);
-    }
-
-    public static void DisableInput(bool enabled)
-    {
-        if (nameInputObject != null)
-            nameInputObject.GetComponentInChildren<InputField>().interactable = !enabled;
+        if (pregameParent != null)
+            pregameParent.SetActive(enabled);
     }
 
     public static void SetInputColor(Color c, string name)
     {
-        if (nameInputObject != null)
-            nameInputObject.transform.Find("UI_NameInput").GetComponent<Image>().color = c;
+        GameObject obj = GameObject.Find("UI_NumberColorPanel");
+        if (obj != null)
+            obj.GetComponent<Image>().color = c;
         if (whichColorText != null)
             whichColorText.text = name;
         if (whichColorPanel != null)
@@ -210,14 +225,25 @@ public class GUIManagerScript : MonoBehaviour {
         scoreText.enabled = true;
         scoreText.text = "Score:\n" + score.ToString();
 
-        resetScoreBtn.SetActive(true);
+        resetScoreBtn.interactable = true;
     }
 
     public static void HideScoreText()
     {
         scoreText.enabled = false;
 
-        resetScoreBtn.SetActive(false);
+        resetScoreBtn.interactable = false;
+    }
+
+    public static void SetSongSetButton(bool value)
+    {
+        if (songSetBtn != null)
+            songSetBtn.interactable = value;
+    }
+
+    public static void SetSongSetButtonText(string s)
+    {
+        songSetBtn.GetComponentInChildren<Text>().text = "Mode: "+s;
     }
 
     public static void SetMainButtonHighlight(bool highlight)
@@ -238,24 +264,21 @@ public class GUIManagerScript : MonoBehaviour {
         bgRenderer.material.SetColor("_Color", c);
     }
 
-    public static void SetColorShow(string player_name, Color c, string color_name)
+    public static void SetClassicGameParent(int number, Color c, string color_name)
     {
-        if (colorShowObject != null)
+        if (classicGameParent != null)
         {
-            colorShowObject.SetActive(true);
-            colorShowObject.transform.Find("UI_ColorShowColorPanel").GetComponent<Image>().color = c;
-            string txt;
-            if (player_name == color_name || player_name == "") txt = color_name;
-            else txt = player_name + "\n(" + color_name +")";
-            colorShowObject.transform.Find("UI_ColorShowPlayerName").GetComponent<Text>().text = txt;
-
+            classicGameParent.SetActive(true);
+            GameObject.Find("UI_ColorShowColorPanel").GetComponent<Image>().color = c;
+            string txt = number + "\n(" + color_name +")";
+            GameObject.Find("UI_ColorShowPlayerName").GetComponent<Text>().text = txt;
         }
     }
 
-    public static void HideColorShow()
+    public static void HideClassicGameParent()
     {
-        if (colorShowObject != null)
-            colorShowObject.SetActive(false);
+        if (classicGameParent != null)
+            classicGameParent.SetActive(false);
     }
     
     public static void SetEndGameScreen(bool b)
@@ -282,5 +305,89 @@ public class GUIManagerScript : MonoBehaviour {
             playerSliderParent.SetActive(false);
         if (endGameParent != null)
             endGameParent.SetActive(false);
+    }
+
+    public static void SetNumberInputFieldColor(Color c, bool interactable = false)
+    {
+        numberTextField.GetComponent<Image>().color = c;
+
+        nameInputButton.interactable = interactable;
+    }
+
+    public static void ClearNumberInput()
+    {
+        numberTextField.text = "";
+        numberTextField.interactable = true;
+        nameInputButton.interactable = false;
+    }
+
+    public void ResetScore()
+    {
+        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
+        if (gameManager != null)
+        {
+            gameManager.ResetScore();
+        }
+    }
+
+    public void ToggleTopMenu()
+    {
+        topMenuParent.SetActive(!topMenuParent.activeSelf);
+    }
+
+    public void NumberInputChanged()
+    {
+        NumberInputProcessed(false);
+    }
+    public void NumberInputEnded()
+    {
+        NumberInputProcessed(true);
+    }
+    private static void NumberInputProcessed(bool del)
+    {
+        GameObject player = GameObject.Find("LOCAL Player");
+        NetworkedPlayerScript nps = player.GetComponent<NetworkedPlayerScript>();
+
+        bool shouldClear = true;
+
+        if (numberTextField.text != null)
+        {
+            int input = -1;
+            if (System.Int32.TryParse(numberTextField.text, out input))
+            {
+                if (nps.GetColor() != input)
+                {
+                    if (nps.DoesPlayerNumberExist(input) != -1)
+                    {
+                        GUIManagerScript.SetNumberInputFieldColor(ColorScript.GetColor(input), true);
+                        shouldClear = false;
+                    }
+                }
+            }
+        }
+  
+        if (shouldClear)
+        {
+            Color clr = ColorScript.GetColor(nps.GetColor());
+            clr = clr * 0.5f;
+            GUIManagerScript.SetNumberInputFieldColor(clr);
+
+            if (del)
+                GUIManagerScript.ClearNumberInput();
+        }
+    }
+
+    public static void NumberInputLocked(bool locked)
+    {
+        if (locked)
+        {
+            numberTextField.interactable = false;
+            nameInputButton.interactable = false;
+        }
+        else
+        {
+            numberTextField.interactable = true;
+            nameInputButton.interactable = true;
+        }
     }
 }

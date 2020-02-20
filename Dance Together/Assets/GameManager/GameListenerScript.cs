@@ -19,7 +19,8 @@ public class GameListenerScript : CaptainsMessListener
 	public Text networkStateField;
     //public ExampleGameSession gameSession;
 
-    public GameObject disconnectButton;
+    public Button disconnectButton;
+    public GameObject topMenuParent;
     public GameObject menuParent;
     public GameObject mainViewParent;
 
@@ -34,7 +35,7 @@ public class GameListenerScript : CaptainsMessListener
         //networkStateField = GameObject.Find("UI_NetworkStateField").GetComponent<Text>();
 
         mainViewParent.SetActive(false);
-        disconnectButton.SetActive(false);
+        disconnectButton.interactable = false;
     }
 
     public override void OnServerCreated()
@@ -58,7 +59,7 @@ public class GameListenerScript : CaptainsMessListener
 
         networkState = NetworkState.Connecting;
 
-        disconnectButton.SetActive(true);
+        disconnectButton.interactable = true;
         menuParent.SetActive(false);
     }
 
@@ -68,7 +69,7 @@ public class GameListenerScript : CaptainsMessListener
 
         networkState = NetworkState.Offline;
 
-        disconnectButton.SetActive(false);
+        disconnectButton.interactable = false;
         menuParent.SetActive(true);
         GUIManagerScript.HideScoreText();
 
@@ -84,7 +85,7 @@ public class GameListenerScript : CaptainsMessListener
 
         //gameSession.OnJoinedLobby();
 
-        disconnectButton.SetActive(true);
+        disconnectButton.interactable = true;
         menuParent.SetActive(false);
     }
 
@@ -96,7 +97,7 @@ public class GameListenerScript : CaptainsMessListener
 
         //gameSession.OnLeftLobby();
 
-        disconnectButton.SetActive(false);
+        disconnectButton.interactable = false;
         menuParent.SetActive(true);
         GUIManagerScript.HideScoreText();
 
@@ -152,14 +153,5 @@ public class GameListenerScript : CaptainsMessListener
 	void Update()
 	{
 		networkStateField.text = "Status: " + networkState.ToString();
-    }
-    
-    public void ResetScore()
-    {
-        GameManagerScript gameManager = FindObjectOfType<GameManagerScript>();
-        if (gameManager != null)
-        {
-            gameManager.ResetScore();
-        }
     }
 }
