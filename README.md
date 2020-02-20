@@ -160,6 +160,7 @@ What's next for \#DanceTogether?
 
 ### Version History
 
+- **0.0.6** - Develop work where I left off, updated to 2018 LTS
 - **0.0.5** - IndieCade prototype. New UI, supports up to 16 players.
 - **0.0.2** - First prototype
 - **0.0.1** - Initial Upload
