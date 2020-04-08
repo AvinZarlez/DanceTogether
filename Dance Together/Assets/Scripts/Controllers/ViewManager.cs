@@ -64,6 +64,10 @@ namespace App.Controllers
 
         }
 
+        /// <summary>
+        /// Controls the view that is show, also controls the Screen.sleepTimeout setting.
+        /// </summary>
+        /// <param name="_state"></param>
         public void ResponseToGameStateEvent(GameEventPayLoad.States _state)
         {
             switch (_state)
@@ -73,31 +77,49 @@ namespace App.Controllers
                     break;
                 case GameEventPayLoad.States.StandBy:
                     HideAllViews();
+                    // set screen to stay awake
+                    Screen.sleepTimeout = SleepTimeout.SystemSetting;
                     break;
                 case GameEventPayLoad.States.Initialize:
                     ShowSpecificView(LoadScreenIntro);
+                    // set screen to stay awake
+                    Screen.sleepTimeout = SleepTimeout.SystemSetting;
                     break;
                 case GameEventPayLoad.States.MainMenu:
                     ShowSpecificView(MainMenu);
                     PauseMenu?.CloseView(); // pause menu can be open in all view except main menu.
+                                            // set screen to stay awake
+                    Screen.sleepTimeout = SleepTimeout.SystemSetting;
                     break;
                 case GameEventPayLoad.States.SearchingForGame:
                     ShowSpecificView(SearchingForGameMenu);
+                    // set screen to stay awake
+                    Screen.sleepTimeout = SleepTimeout.SystemSetting;
                     break;
                 case GameEventPayLoad.States.Lobby:
                     ShowSpecificView(LobbyMenu);
+                    // set screen to stay awake
+                    Screen.sleepTimeout = SleepTimeout.NeverSleep;
                     break;
                 case GameEventPayLoad.States.GameInitialize:
                     CountDownView?.OpenView(); // special case. I want this to popup over the current view.
+                                               // set screen to stay awake
+                    Screen.sleepTimeout = SleepTimeout.NeverSleep;
                     break;
                 case GameEventPayLoad.States.GameActive:
                     ShowSpecificView(GameActiveMenu);
+                    // set screen to stay awake
+                    Screen.sleepTimeout = SleepTimeout.NeverSleep;
                     break;
                 case GameEventPayLoad.States.GameEnded:
                     ShowSpecificView(GameEndMenu);
+                    // set screen to stay awake
+                    Screen.sleepTimeout = SleepTimeout.NeverSleep;
                     break;
                 case GameEventPayLoad.States.GamePost:
                     ShowSpecificView(GamePostMenu);
+                    // set screen to stay awake
+                    Screen.sleepTimeout = SleepTimeout.NeverSleep;
                     break;
                 default:
 
