@@ -96,7 +96,6 @@ namespace App.Controllers {
             {
                 localPlayerIcon.UpdateAll(_player.playerColor, _player.PlayerID);
                 readyButton.interactable = !_player.IsReady; // if ready, dont hit that button anymore : maybe this is harsh?
-                genreButton.interactable = _player.isServer; // set genre button to only be active on server.
             }
 
             if (lobbyIcons.ContainsKey(_player))
@@ -122,6 +121,9 @@ namespace App.Controllers {
         {
             readyButton.interactable = true;
             RefreshIcons();
+
+            // if the client is the server, allow user to change the genre.
+            genreButton.interactable = networkController.LocalPlayer.isServer;
         }
         private void OnDestroy()
         {
