@@ -144,6 +144,8 @@ namespace App.Networking
         {
             CurrentState = NetworkState.InLobby;
             networkManager.JoinGame(_connectionInfo);
+
+            networkDiscovery.Reset();
         }
 
         public void LeaveLanGame()
