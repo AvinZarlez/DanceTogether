@@ -65,7 +65,7 @@ namespace App.Controllers
         }
 
         /// <summary>
-        /// Controls the view that is show, also controls the Screen.sleepTimeout setting.
+        /// Controls the view that is shown, also controls the Screen.sleepTimeout setting.
         /// </summary>
         /// <param name="_state"></param>
         public void ResponseToGameStateEvent(GameEventPayLoad.States _state)
