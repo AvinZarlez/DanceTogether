@@ -23,7 +23,7 @@ namespace App.UnitTests
                 playerList.Add(newPlayer);
             }
 
-            DanceTogetherUtility.AssignPairs(playerList, NumberOfSongs, GroupSize, false);
+            DanceTogetherUtility.AssignPlayerGroups(playerList, NumberOfSongs, GroupSize, false);
         }
     }
 }
