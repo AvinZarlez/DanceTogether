@@ -87,7 +87,7 @@ namespace App.Utility
         /// <param name="playerList"></param>
         /// <param name="tracklistLength"></param>
         /// <param name="groupSize"></param>
-        static public void AssignPairs(List<DanceTogetherPlayer> playerList, int tracklistLength, int groupSize, bool network = true)
+        static public void AssignPlayerGroups(List<DanceTogetherPlayer> playerList, int tracklistLength, int groupSize, bool network = true)
         {
             // test player count
             if (playerList.Count%2 == 0)
