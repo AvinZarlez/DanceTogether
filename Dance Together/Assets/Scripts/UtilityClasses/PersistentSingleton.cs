@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace App.Utility
+﻿namespace App.Utility
 {
     /// <summary>
     /// Singleton that persists across multiple scenes
