@@ -55,11 +55,17 @@ namespace App.Events
     {
         public string name;
         public GameEvent GameEvent;
+        [Header("Generic Response")]
         public UnityEvent Response;
+        [Header("Response to string data")]
         public ResponseWithString ResponseForSentString;
+        [Header("Response to Int data")]
         public ResponseWithInt ResponseForSentInt;
+        [Header("Response to Float data")]
         public ResponseWithFloat ResponseForSentFloat;
+        [Header("Response to Bool data")]
         public ResponseWithBool ResponseForSentBool;
+        [Header("Response to GameState data")]
         public ResponseWithGameState ResponseForSentGameState;
 
         public bool HasEventAndResponse
