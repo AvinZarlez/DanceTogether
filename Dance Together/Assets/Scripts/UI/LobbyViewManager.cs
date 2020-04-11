@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -9,7 +10,7 @@ namespace App.Controllers {
     public class LobbyViewManager : MonoBehaviour
     {
         // controller reference
-        private NetworkController networkController;
+        //private NetworkController networkController;
 
         // private VARs set in inspector.
         [Header("Prefab References")]
@@ -31,6 +32,9 @@ namespace App.Controllers {
         [Header("Text References")]
         [SerializeField]
         private TextMeshProUGUI genreText;
+
+        private NetworkController networkController;
+        private DanceTogetherGameManager gameController;
 
         //private internal VARs
         private Dictionary<DanceTogetherPlayer, LobbyPlayerIcon> lobbyIcons = new Dictionary<DanceTogetherPlayer, LobbyPlayerIcon>();
@@ -77,13 +81,22 @@ namespace App.Controllers {
 
         }
 
-        public void Init(NetworkController _networkController)
+        private void Awake()
         {
-            networkController = _networkController;
+            if (NetworkController.s_InstanceExists)
+            {
+                networkController = NetworkController.s_Instance;
 
-            networkController.Controller.GameController.MusicGenreChanged += UpdateGenre;
+                networkController.PlayerRegisteredEvent += OnPlayerRegisteredEvent;
+                networkController.PlayerUnRegisteredEvent += OnPlayerUnRegisteredEvent;
+            }
+            if (MainController.s_Instance.GameController != null)
+            {
+                gameController = MainController.s_Instance.GameController;
 
-            UpdateGenre(networkController.Controller.GameController.GetCurrentTrackList().Genre); // init the genre field
+                gameController.MusicGenreChanged += UpdateGenre; // attach to genre update event
+                UpdateGenre(gameController.GetCurrentTrackList().Genre); // refresh current interface.
+            }
         }
 
         /// <summary>
@@ -96,17 +109,30 @@ namespace App.Controllers {
             {
                 localPlayerIcon.UpdateAll(_player.playerColor, _player.PlayerID);
                 readyButton.interactable = !_player.IsReady; // if ready, dont hit that button anymore : maybe this is harsh?
+
+                //genreButton.interactable = _player.isServer; // allow user to use the genre button. they are the server.
             }
 
             if (lobbyIcons.ContainsKey(_player))
             {
                 lobbyIcons[_player].UpdateAll(_player.playerColor.Color, _player.PlayerID, _player.IsReady);
             }
+
+            genreButton.interactable = networkController.LocalPlayer.isServer; // allow user to use the genre button. they are the server.
         }
 
         private void UpdateGenre(SongGenre _genre)
         {
             genreText.text = "Genre: " + _genre.name;
+        }
+
+        private void OnPlayerRegisteredEvent(DanceTogetherPlayer _player)
+        {
+            AddNewLobbyIcon(_player);
+        }
+        private void OnPlayerUnRegisteredEvent(DanceTogetherPlayer _player)
+        {
+            RemoveLobbyIcon(_player);
         }
 
         public void RefreshIcons()
@@ -119,11 +145,8 @@ namespace App.Controllers {
 
         private void OnEnable()
         {
-            readyButton.interactable = true;
-            RefreshIcons();
-
-            // if the client is the server, allow user to change the genre.
-            genreButton.interactable = networkController.LocalPlayer.isServer;
+            StopAllCoroutines();
+            StartCoroutine(DelayedInit());
         }
         private void OnDestroy()
         {
@@ -132,7 +155,10 @@ namespace App.Controllers {
                 kvp.Key.syncVarsChangedEvent -= UpdateIcons;
             }
 
-            networkController.Controller.GameController.MusicGenreChanged -= UpdateGenre;
+            if (gameController != null)
+            {
+                gameController.MusicGenreChanged -= UpdateGenre;
+            }
         }
 
         /// <summary>
@@ -140,7 +166,7 @@ namespace App.Controllers {
         /// </summary>
         public void TogglePlayerReady()
         {
-            if(networkController?.LocalPlayer != null)
+            if(networkController.LocalPlayer != null)
             {
                 networkController.LocalPlayer.CmdSetReady();
             }
@@ -150,7 +176,16 @@ namespace App.Controllers {
         /// </summary>
         public void ChangeGenre()
         {
-            networkController.Controller.GameController.CmdChangeMusicGenre();
+            gameController.CmdChangeMusicGenre();
+        }
+
+        private IEnumerator DelayedInit()
+        {
+            yield return new WaitForSeconds(0.5f);
+            readyButton.interactable = true;
+            RefreshIcons();
+            UpdateGenre(MainController.s_Instance.GameController.GetCurrentGenre());
+            yield return null;
         }
     }
 }

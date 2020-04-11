@@ -36,6 +36,10 @@ namespace App.Controllers
             get { return availableMusicList; }
         }
 
+        //private MainController mainController;
+        //private NetworkController networkController;
+        //private DanceTogetherAudioManager audioController;
+
         /// <summary>
         /// The Index of Available Music Genres List
         /// A Vector2Int is used. Value X is used for genre selection. Value Y is uesd for track selection.
@@ -43,16 +47,9 @@ namespace App.Controllers
         [SyncVar(hook = "OnGenreChange")]
         public int currentGenreIndex = 0;
 
-        //  Init Var
-        private bool isInitialized = false;
-        public bool IsInitialized
-        {
-            get { return isInitialized; }
-        }
-
         public DanceTogetherPlayer LocalPlayer
         {
-            get { return Controller.NetworkController.LocalPlayer; }
+            get { return NetworkController.s_Instance.LocalPlayer; }
         }
 
         // GameEvents ScriptableObjects
@@ -94,7 +91,7 @@ namespace App.Controllers
         {
             List<DanceTogetherPlayer> activePlayerList = new List<DanceTogetherPlayer>();
 
-            foreach(DanceTogetherPlayer player in Controller.NetworkController.PlayerList)
+            foreach(DanceTogetherPlayer player in NetworkController.s_Instance.PlayerList)
             {
                 if (player.IsActivePlayer)
                 {
@@ -124,13 +121,6 @@ namespace App.Controllers
             private set;
         }
 
-        //public event Action something
-        public MainController Controller
-        {
-            get;
-            private set;
-        }
-
         /// <summary>
         /// Check if all player have selected a match
         /// </summary>
@@ -139,11 +129,11 @@ namespace App.Controllers
             get
             {
                 // if no controller set up. false
-                if (Controller == null || Controller?.NetworkController == null)
+                if (MainController.s_Instance == null || NetworkController.s_Instance == null)
                     return false;
 
                 // if any player checked 
-                foreach(DanceTogetherPlayer player in Controller.NetworkController.PlayerList)
+                foreach(DanceTogetherPlayer player in NetworkController.s_Instance.PlayerList)
                 {
                     if (player.IsActivePlayer && player.SelectedMatchSongId != -1) // check only active players if made a partner selection
                         return false;
@@ -159,24 +149,11 @@ namespace App.Controllers
         /// </summary>
         public void Init(MainController _controller)
         {
-            if (isInitialized)
-            {
-                Debug.LogError("Game Manager Has Already Been Initialized.");
-                return;
-            }
-
-            Controller = _controller;
-
             if (_controller == null)
             {
                 Debug.LogWarning("Game Manager Failed to Init due to null MainController." );
                 return;
             }
-
-            isInitialized = true;
-            // Init children
-            endGameManager?.Init(this);
-            postGameManager?.Init(this);
         }
         /// <summary>
         /// Attempt to obtain the selected music track from current genre.
@@ -194,12 +171,31 @@ namespace App.Controllers
                 return null;
             }
         }
+        /// <summary>
+        /// Attempt to get current track list
+        /// </summary>
+        /// <returns></returns>
         public TrackList GetCurrentTrackList()
         {
             if(availableMusicList[currentGenreIndex] != null)
             {
                 return availableMusicList[currentGenreIndex];
             } else
+            {
+                return null;
+            }
+        }
+        /// <summary>
+        /// Attempt to get current track list genre.
+        /// </summary>
+        /// <returns></returns>
+        public SongGenre GetCurrentGenre()
+        {
+            if (availableMusicList[currentGenreIndex] != null)
+            {
+                return availableMusicList[currentGenreIndex].Genre;
+            }
+            else
             {
                 return null;
             }
@@ -298,7 +294,7 @@ namespace App.Controllers
         {
             if (isServer)
             {
-                foreach (DanceTogetherPlayer player in Controller.NetworkController.PlayerList)
+                foreach (DanceTogetherPlayer player in NetworkController.s_Instance.PlayerList)
                 {
                     player.CmdSetActive(false);
                     player.CmdClearReady();
@@ -313,7 +309,7 @@ namespace App.Controllers
         /// </summary>
         public void LocalGotoPostGame()
         {
-            if (!Controller.NetworkController.LocalPlayer.IsActivePlayer)
+            if (!LocalPlayer.IsActivePlayer)
             {
                 Debug.Log("Game Post Called, but you are not an active player");
                 return;
@@ -325,7 +321,7 @@ namespace App.Controllers
             }
 
             // audio stuff
-            Controller.AudioController.BeginLobbyMusic();
+            DanceTogetherAudioManager.s_Instance.BeginLobbyMusic();
 
             CurrentGameState = GameStates.Post;
 
@@ -377,7 +373,7 @@ namespace App.Controllers
         [Command, Server]
         public void CmdStartMainCountdown()
         {
-            if (Controller.NetworkController.CheckAllPlayersReady)
+            if (NetworkController.s_Instance.CheckAllPlayersReady)
             {
                 Debug.Log("All Players Are Ready!. Begin Game!");
 
@@ -413,7 +409,7 @@ namespace App.Controllers
         [ClientRpc]
         void RpcBeginGame()
         {
-            if (!Controller.NetworkController.LocalPlayer.IsActivePlayer)
+            if (!LocalPlayer.IsActivePlayer)
             {
                 Debug.Log("Game Begin Called, but you are not an active player");
                 return;
@@ -425,14 +421,14 @@ namespace App.Controllers
             }
 
             // audio stuff
-            Controller.AudioController.BeginGameMusic(GetSong(LocalPlayer.SongID), 1f);
+            DanceTogetherAudioManager.s_Instance.BeginGameMusic(GetSong(LocalPlayer.SongID), 1f);
 
             CurrentGameState = GameStates.Active;
 
             // increment round count.
             roundCount++;
             // set game time to the length noted in CurrentGameType
-            currentGameTime = Controller.CurrentGameType.Data.GameTime;
+            currentGameTime = MainController.s_Instance.CurrentGameType.Data.GameTime;
 
             if (GameBeginEvent != null)
             {
@@ -442,7 +438,7 @@ namespace App.Controllers
         [ClientRpc]
         void RpcEndGame()
         {
-            if (!Controller.NetworkController.LocalPlayer.IsActivePlayer)
+            if (!LocalPlayer.IsActivePlayer)
             {
                 Debug.Log("Game End Called, but you are not an active player");
                 return;
@@ -454,8 +450,8 @@ namespace App.Controllers
             }
 
             // Audio stuff
-            Controller.AudioController.EndGameMusic();
-            Controller.AudioController.PlayFindSFX();
+            DanceTogetherAudioManager.s_Instance.EndGameMusic();
+            DanceTogetherAudioManager.s_Instance.PlayFindSFX();
 
             CurrentGameState = GameStates.Ended;
 
@@ -467,7 +463,7 @@ namespace App.Controllers
         [ClientRpc]
         void RpcPostGame()
         {
-            if (!Controller.NetworkController.LocalPlayer.IsActivePlayer)
+            if (!LocalPlayer.IsActivePlayer)
             {
                 Debug.Log("Game End Called, but you are not an active player");
                 return;
@@ -478,7 +474,7 @@ namespace App.Controllers
         void RpcCompleteGame()
         {
             // audio stuff
-            Controller.AudioController.BeginLobbyMusic();
+            DanceTogetherAudioManager.s_Instance.BeginLobbyMusic();
 
             CurrentGameState = GameStates.Inactive;
 
@@ -501,9 +497,9 @@ namespace App.Controllers
             ClearActivePlayers();
 
             // Check If enough players Exist.
-            if (Controller.CurrentGameType.Data.MinPlayers > Controller.NetworkController.PlayerList.Count)
+            if (MainController.s_Instance.CurrentGameType.Data.MinPlayers > NetworkController.s_Instance.PlayerList.Count)
             {
-                Debug.Log("game Cannot Start without minimum players : " + Controller.CurrentGameType.Data.MinPlayers + " - Has : " + Controller.NetworkController.PlayerList.Count);
+                Debug.Log("game Cannot Start without minimum players : " + MainController.s_Instance.CurrentGameType.Data.MinPlayers + " - Has : " + NetworkController.s_Instance.PlayerList.Count);
                 CmdCompleteGame();
                 return;
             }
@@ -516,11 +512,11 @@ namespace App.Controllers
             }
 
             // attempt to assign song ids to pairs of players..
-            if (availableMusicList[currentGenreIndex].MusicTrackList.Count >= Controller.NetworkController.PlayerList.Count / 2)
+            if (availableMusicList[currentGenreIndex].MusicTrackList.Count >= NetworkController.s_Instance.PlayerList.Count / 2)
             {
                 Debug.Log("assign!");
                 if(isServer)
-                    DanceTogetherUtility.AssignPairs(Controller.NetworkController.PlayerList, availableMusicList[currentGenreIndex].MusicTrackList.Count, Controller.CurrentGameType.Data.GroupSize); // assign this only from server command
+                    DanceTogetherUtility.AssignPlayerGroups(NetworkController.s_Instance.PlayerList, availableMusicList[currentGenreIndex].MusicTrackList.Count, MainController.s_Instance.CurrentGameType.Data.GroupSize); // assign this only from server command
             }
             else
             {
@@ -529,7 +525,7 @@ namespace App.Controllers
                 return;
             }
 
-            foreach (DanceTogetherPlayer player in Controller.NetworkController.PlayerList)
+            foreach (DanceTogetherPlayer player in NetworkController.s_Instance.PlayerList)
             {
                 if (isServer)
                 {
@@ -541,8 +537,8 @@ namespace App.Controllers
             }
 
             // audio stuff
-            Controller.AudioController.RoundBegin();
-            Controller.AudioController.PlayCountdownSFX();
+            DanceTogetherAudioManager.s_Instance.RoundBegin();
+            DanceTogetherAudioManager.s_Instance.PlayCountdownSFX();
 
             // set timer amount
             currentCountDownTime = 3f;

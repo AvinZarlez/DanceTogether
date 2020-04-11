@@ -10,8 +10,6 @@ namespace App.Controllers
 {
     public class EndGameManager : MonoBehaviour
     {
-        private DanceTogetherGameManager controller;
-
         [Header("Button Prefab")]
         [SerializeField]
         private ChoosePlayerButton buttonPrefab;
@@ -35,25 +33,13 @@ namespace App.Controllers
 
         private List<ChoosePlayerButton> playerButtons = new List<ChoosePlayerButton>();
 
-
-        public void Init(DanceTogetherGameManager _controller)
-        {
-            controller = _controller;
-
-            if(controller == null)
-            {
-                Debug.Log("Controller was assigned null.");
-                return;
-            }
-        }
-
         /// <summary>
         /// Call Populate List from UI button.
         /// </summary>
         public void PopulateList()
         {
             ClearButtons();
-            foreach(PlayerDataSnapShot playerSS in controller.ActivePlayerData)
+            foreach(PlayerDataSnapShot playerSS in MainController.s_Instance.GameController.ActivePlayerData)
             {
                 // dont add ourselves to the choosable list.
                 if (!playerSS.IsLocalPlayer)
@@ -81,14 +67,14 @@ namespace App.Controllers
         /// </summary>
         public void Continue()
         {
-            controller.LocalGotoPostGame();
+            MainController.s_Instance.GameController.LocalGotoPostGame();
         }
 
         public void ChoosePlayer(PlayerDataSnapShot player)
         {
             // set local view
             //Debug.Log("local player ? : " + controller.LocalPlayer.PlayerID);
-            controller.LocalPlayer.CmdSetSongMatchID(player.SongID);
+            MainController.s_Instance.GameController.LocalPlayer.CmdSetSongMatchID(player.SongID);
             continueButton.interactable = true;
             // close popup
             PopupView.CloseView();
@@ -99,14 +85,14 @@ namespace App.Controllers
 
         private void OnEnable()
         {
-            if(controller.LocalPlayer == null)
+            if(MainController.s_Instance.GameController.LocalPlayer == null)
             {
                 Debug.LogWarning("Local Player is null");
                 return;
             }
-            playerColor.color = controller.LocalPlayer.playerColor.Color;
-            playerID.text = controller.LocalPlayer.PlayerID.ToString();
-            if (controller.ActivePlayerData.Count > 1)
+            playerColor.color = MainController.s_Instance.GameController.LocalPlayer.playerColor.Color;
+            playerID.text = MainController.s_Instance.GameController.LocalPlayer.PlayerID.ToString();
+            if (MainController.s_Instance.GameController.ActivePlayerData.Count > 1)
                 continueButton.interactable = false; // default behaviour.
             else
                 continueButton.interactable = true; // for testing app with single player.

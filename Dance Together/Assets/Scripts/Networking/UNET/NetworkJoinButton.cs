@@ -8,20 +8,17 @@ namespace App.Networking
         [SerializeField]
         private TextMeshProUGUI text;
 
-        private NetworkController controller;
-
         public LanConnectionInfo Info;
 
-        public void Init(LanConnectionInfo _lanConnectionInfo, NetworkController _controller)
+        public void Init(LanConnectionInfo _lanConnectionInfo)
         {
-            controller = _controller;
             text.text = (_lanConnectionInfo.Name);
             Info = _lanConnectionInfo;
         }
 
         public void Clicked()
         {
-            controller.JoinSpecificGame(new LanConnectionInfo(Info));
+            NetworkController.s_Instance.JoinSpecificGame(new LanConnectionInfo(Info));
         }
     }
 }

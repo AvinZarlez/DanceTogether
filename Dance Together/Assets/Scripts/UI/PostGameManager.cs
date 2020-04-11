@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 using App.Networking;
 using App.Data;
+using App.Audio;
 
 namespace App.Controllers
 {
@@ -30,24 +31,10 @@ namespace App.Controllers
         [SerializeField]
         private Image playerReadyImage;
 
-
-        private DanceTogetherGameManager controller;
-
-        public void Init(DanceTogetherGameManager _controller)
-        {
-            controller = _controller;
-
-            if (controller == null)
-            {
-                Debug.LogWarning("PostGameManager could not be Initialized. controller reference is null.");
-                return;
-            }
-        }
-
         public void PlayerReady()
         {
             // check local player ready for another round!
-            controller.LocalPlayer.CmdSetReady();
+            MainController.s_Instance.GameController.LocalPlayer.CmdSetReady();
         }
 
         /// <summary>
@@ -55,7 +42,7 @@ namespace App.Controllers
         /// </summary>
         public void ReturnToLobby()
         {
-            controller.CmdCompleteGame();
+            MainController.s_Instance.GameController.CmdCompleteGame();
         }
 
         /// <summary>
@@ -80,15 +67,15 @@ namespace App.Controllers
         private void OnEnable()
         {
             // Check controller status.
-            if (controller == null)
+            if (MainController.s_Instance.GameController == null)
                 return;
 
             // Check local player status.
-            if (controller.LocalPlayer == null)
+            if (MainController.s_Instance.GameController.LocalPlayer == null)
                 return;
 
             // Check server status.
-            if (controller.isServer)
+            if (MainController.s_Instance.GameController.LocalPlayer.isServer)
             {
                 lobbyReturnButton.gameObject.SetActive(true);
             }
@@ -100,14 +87,14 @@ namespace App.Controllers
             playerReadyImage.enabled = false;
 
             // Check player snapshots
-            PlayerDataSnapShot otherPlayer = controller.OtherPlayerWithSongID(controller.LocalPlayer.SelectedMatchSongId); // attempt to find and return the first player with same song.
+            PlayerDataSnapShot otherPlayer = MainController.s_Instance.GameController.OtherPlayerWithSongID(MainController.s_Instance.GameController.LocalPlayer.SelectedMatchSongId); // attempt to find and return the first player with same song.
             if (otherPlayer == null)
             {
                 Debug.LogWarning("Data has failed to pass");
                 return;
             }
 
-            PlayerDataSnapShot correctPlayer = controller.OtherPlayerWithSongID(controller.LocalPlayer.SongID); // attempt to fine correct player
+            PlayerDataSnapShot correctPlayer = MainController.s_Instance.GameController.OtherPlayerWithSongID(MainController.s_Instance.GameController.LocalPlayer.SongID); // attempt to fine correct player
             if (correctPlayer == null)
             {
                 Debug.LogWarning("Data has failed to pass");
@@ -115,21 +102,21 @@ namespace App.Controllers
             }
 
             // is correct?
-            if (controller.LocalPlayer.CheckAnsweredCorrect())
+            if (MainController.s_Instance.GameController.LocalPlayer.CheckAnsweredCorrect())
             {
                 correctText.text = "Correct!";
                 correctText.color = Color.green;
-                controller.Controller.AudioController.PlayCorrectSFX();
+                DanceTogetherAudioManager.s_Instance.PlayCorrectSFX();
             } else
             {
                 correctText.text = "Incorrect";
                 correctText.color = Color.red;
-                controller.Controller.AudioController.PlayWrongSFX();
+                DanceTogetherAudioManager.s_Instance.PlayWrongSFX();
             }
 
             // song titles.
-            songOneText.text = "You heard: " + controller.AvailableMusicList[controller.currentGenreIndex].MusicTrackList[controller.LocalPlayer.SongID].TrackName; // local player song
-            songTwoText.text = "Your choice heard: " + controller.AvailableMusicList[controller.currentGenreIndex].MusicTrackList[controller.LocalPlayer.SelectedMatchSongId].TrackName; // song of partner you chose.
+            songOneText.text = "You heard: " + MainController.s_Instance.GameController.AvailableMusicList[MainController.s_Instance.GameController.currentGenreIndex].MusicTrackList[MainController.s_Instance.GameController.LocalPlayer.SongID].TrackName; // local player song
+            songTwoText.text = "Your choice heard: " + MainController.s_Instance.GameController.AvailableMusicList[MainController.s_Instance.GameController.currentGenreIndex].MusicTrackList[MainController.s_Instance.GameController.LocalPlayer.SelectedMatchSongId].TrackName; // song of partner you chose.
 
             partnerColorImage.color = otherPlayer.PlayerColor.Color;
             partnerIdText.text = otherPlayer.PlayerID.ToString();
@@ -138,7 +125,7 @@ namespace App.Controllers
             partnerIdCorrectText.text = correctPlayer.PlayerID.ToString();
 
             // set delegates
-            controller.LocalPlayer.playerReadyEvent += OnPlayerReadyAction;
+            NetworkController.s_Instance.LocalPlayer.playerReadyEvent += OnPlayerReadyAction;
         }
 
         private void OnDisable()
@@ -156,7 +143,10 @@ namespace App.Controllers
             partnerIdCorrectText.text = "0";
 
             // remove delegates
-            controller.LocalPlayer.playerReadyEvent -= OnPlayerReadyAction;
+            if (NetworkController.s_Instance.LocalPlayer != null)
+            {
+                NetworkController.s_Instance.LocalPlayer.playerReadyEvent -= OnPlayerReadyAction;
+            }
         }
     }
 }

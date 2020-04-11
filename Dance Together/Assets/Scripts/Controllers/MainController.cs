@@ -1,15 +1,15 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using App.Data;
 using App.Events;
 using App.Networking;
 using App.Audio;
+using App.Utility;
 
 namespace App.Controllers
 {
-    public class MainController : MonoBehaviour
+    public class MainController : Singleton<MainController>
     {
         // private VARS
         // inspector visible Vars
@@ -17,22 +17,25 @@ namespace App.Controllers
         [SerializeField]
         private GameType currentGameType; // this might make more sense in Game Controller.
 
-        //[SerializeField]
-        //private GameCommandList commands;
-
+        /// <summary>
+        /// GameState Event Passed by Manager
+        /// </summary>
         [Header("Game Events")]
-        // Events
         [SerializeField]
         private GameEvent gameStateEvent;
+        /// <summary>
+        /// Error Event fired by main manager when disconnected by fault
+        /// </summary>
+        [SerializeField]
+        private GameEvent errorEvent;
+
+        [SerializeField, Header("Game Controller Reference")]
+        private DanceTogetherGameManager gameController;
+        private NetworkController networkController;
+        private DanceTogetherAudioManager audioController;
 
         // gameObject references.
         [Header("Controller Linkage")]
-        [SerializeField]
-        private NetworkController networkController;
-        [SerializeField]
-        private DanceTogetherGameManager gameController;
-        [SerializeField]
-        private DanceTogetherAudioManager audioController;
 
         [Header("Dev Options")]
         public bool verboseLogging = false; // use to get deep messaging in logs about networking.
@@ -41,47 +44,24 @@ namespace App.Controllers
         [SerializeField]
         private GameEventPayLoad.States currentGameState;
 
-
-        // Getter VARS
-        public NetworkController NetworkController
-        {
-            get { return networkController; }
-        }
-        public DanceTogetherGameManager GameController
-        {
-            get { return gameController; }
-        }
-        public DanceTogetherAudioManager AudioController
-        {
-            get { return audioController; }
-        }
         public GameType CurrentGameType
         {
             get { return currentGameType; }
         }
 
-        // MonoBehaviour Functionality.
-        /// <summary>
-        /// Using the Monobehavior Method "Awake" to begin the "Init" Cascade sequence.
-        /// The purpose of this has a few main Advantages. 
-        /// Advantages :
-        /// 1. To force a Primary flow of controller logic, to make changes and reading of code a bit more Straight forward.
-        /// 2. With this method, multiple controllers of various types can be Controlled in a single scene.
-        /// 3. The "MainController" can act as a State-Machine That ensures all other managers and sub controllers are acting as intended.
-        /// Disadvantages:
-        /// 1. Compared to a singleton strategy, This method has issues if loading scenes that may have the same redundant controllers placed for testing or intent.
-        /// 2. Not as easy to grab reference to a singular controller from random scripts.
-        /// 
-        /// Notes :
-        /// Currently in DanceTogether The Controllers are designed to always be in the "MainScene", or persistant scene frome Beggining to End.
-        /// How to handle this Can be accomplished by a custom SceneManager, that will load in all additional levels with the Async load scene methods.
-        /// It will be important for those Async loaded levels to not have competing controllers placed in them.
-        /// Currently I have NOT implemented a scenemanager to do this, as the current game doesnt seem complex enough to support scene change over prefab loading.
-        /// -Brandon 03/29/2020
-        /// </summary>
-        private void Awake()
+        public DanceTogetherGameManager GameController
         {
+            get { return gameController; }
+        }
+        
+        protected override void Awake()
+        {
+            // clean Game Event Scriptable Objects.
+            gameStateEvent?.Data.Clear();
+            errorEvent?.Data.Clear();
+
             Initialize();
+            base.Awake();
         }
 
         public void Initialize()
@@ -93,7 +73,7 @@ namespace App.Controllers
         // Public functionality
         public void AutoConnect()
         {
-            networkController.AutoJoinGame(); // TODO - this function is currently empty.
+            NetworkController.s_Instance.AutoJoinGame();
             //networkManager.minPlayers = currentGameType.Data.MinPlayers;
             //networkManager.AutoConnect();
             //lobbyEnterEvent?.Raise();
@@ -102,24 +82,24 @@ namespace App.Controllers
         public void CreateGame()
         {
             // start game as host.
-            networkController.StartNewLanGame();
-            //SetGameState(GameEventPayLoad.States.Lobby);
+            networkController?.StartNewLanGame();
         }
 
         public void JoinGame()
         {
             // browse games
-            networkController.StartSearching();
+            networkController?.StartSearching();
             SetGameState(GameEventPayLoad.States.SearchingForGame);
         }
 
         public void GoToMainMenu()
         {
             // leave any game and return to main menu
+            StopAllCoroutines();
             SetGameState(GameEventPayLoad.States.MainMenu);
-            networkController.Reset();
-            gameController.Reset();
-            audioController.Reset();
+            networkController?.Reset();
+            gameController?.Reset();
+            audioController?.Reset();
         }
 
         private void SetGameState(GameEventPayLoad.States state)
@@ -136,39 +116,44 @@ namespace App.Controllers
         private void OnClientConnectedAction(NetworkConnection conn)
         {
             SetGameState(GameEventPayLoad.States.Lobby);
-            audioController.BeginLobbyMusic();
+            audioController?.BeginLobbyMusic();
         }
         private void OnClientDisconnectedAction(NetworkConnection conn)
         {
             GoToMainMenu();
+
+            if (conn.lastError != NetworkError.Ok)
+            {
+                errorEvent?.Raise("Connection Ended : " + conn.lastError.ToString());
+            }
         }
         #endregion
 
         #region CallBacks 
-        public void OnGameInitialized()
+        private void OnGameInitialized()
         {
             SetGameState(GameEventPayLoad.States.GameInitialize);
         }
-        public void OnGameBegin()
+        private void OnGameBegin()
         {
             SetGameState(GameEventPayLoad.States.GameActive);
         }
-        public void OnGameEnd()
+        private void OnGameEnd()
         {
             SetGameState(GameEventPayLoad.States.GameEnded);
         }
-        public void OnGamePost()
+        private void OnGamePost()
         {
             SetGameState(GameEventPayLoad.States.GamePost);
         }
-        public void OnGameComplete()
+        private void OnGameComplete()
         {
             SetGameState(GameEventPayLoad.States.Lobby);
         }
-        public void OnLocalPlayerReady()
+        private void OnLocalPlayerReady()
         {
             // This will be called fo every local client when ready is checked. Game Controller will verify if conditions are correct.
-            if (networkController.LocalPlayer.isServer)
+            if (gameController.LocalPlayer.isServer)
             {
                 gameController.CmdStartMainCountdown();
             }
@@ -179,43 +164,42 @@ namespace App.Controllers
         private IEnumerator InitSequence()
         {
             SetGameState(GameEventPayLoad.States.Initialize);
-            //commands.ClearAllCommandData();
-            if (networkController != null)
-            {
-                networkController.Init(this);
 
+            yield return new WaitForSecondsRealtime(1f);
+
+            if (NetworkController.s_InstanceExists)
+            {
+                // save ref
+                networkController = NetworkController.s_Instance;
                 // Add Event Call Backs
+                networkController.LocalPlayerReadyEvent += OnLocalPlayerReady;
                 networkController.NetworkManager.clientConnected += OnClientConnectedAction;
                 networkController.NetworkManager.clientDisconnected += OnClientDisconnectedAction;
             } else
             {
-                Debug.LogWarning("The Network manager cannot be Initialized as it is Null.");
+                Debug.LogWarning("The Network manager instance cannot be found as it is Null.");
             }
 
             if (gameController != null)
             {
-                gameController.Init(this);
-
+                // Add EventCallBacks
                 gameController.GameInitializedEvent += OnGameInitialized;
                 gameController.GameBeginEvent += OnGameBegin;
                 gameController.GameEndEvent += OnGameEnd;
                 gameController.GamePostEvent += OnGamePost;
                 gameController.GameCompleteEvent += OnGameComplete;
-
-
-
             } else
             {
-                Debug.LogWarning("The Game manager cannot be Initialized as it is Null.");
+                Debug.LogWarning("The Game manager instance cannot be found as it is Null.");
             }
 
-            if(audioController != null)
+            if (DanceTogetherAudioManager.s_InstanceExists)
             {
-                audioController.Init(this);
+                audioController = DanceTogetherAudioManager.s_Instance;
             }
-            else
+            else 
             {
-                Debug.LogWarning("The Audio manager cannot be Initialized as it is Null.");
+                Debug.LogWarning("The Audio manager instance cannot be found as it is Null.");
             }
 
             yield return new WaitForSeconds(0.5f);
@@ -225,18 +209,19 @@ namespace App.Controllers
 
         public void Reset()
         {
-            networkController.Reset();
-            gameController.Reset();
-            audioController.Reset();
+            networkController?.Reset();
+            gameController?.Reset();
+            audioController?.Reset();
             SetGameState(GameEventPayLoad.States.MainMenu);
             Debug.Log("Global Reset Called");
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             // Remove Event Call Backs
-            if (networkController?.NetworkManager != null)
+            if (networkController != null)
             {
+                networkController.LocalPlayerReadyEvent -= OnLocalPlayerReady;
                 networkController.NetworkManager.clientConnected -= OnClientConnectedAction;
                 networkController.NetworkManager.clientDisconnected -= OnClientDisconnectedAction;
             }
@@ -249,6 +234,8 @@ namespace App.Controllers
                 gameController.GamePostEvent -= OnGamePost;
                 gameController.GameCompleteEvent -= OnGameComplete;
             }
+
+            base.OnDestroy();
         }
     }
 }

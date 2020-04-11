@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using App.Controllers;
 
 namespace App.Networking
 {
@@ -103,20 +104,20 @@ namespace App.Networking
 
             StartClient();
 
-            if (controller.verboseLogging) Debug.Log("Attempting to Join Lan-game at Adress : " + _connectionInfo.IpAddress + " : Using Port : " + _connectionInfo.Port);
+            if (MainController.s_Instance.verboseLogging) Debug.Log("Attempting to Join Lan-game at Adress : " + _connectionInfo.IpAddress + " : Using Port : " + _connectionInfo.Port);
         }
 
         
         public void RegisterClientPrefab(GameObject _object)
         {
             ClientScene.RegisterPrefab(_object);
-            if (controller.verboseLogging) Debug.Log("A prefab was registered with client : " + _object.name);
+            if (MainController.s_Instance.verboseLogging) Debug.Log("A prefab was registered with client : " + _object.name);
         }
 
         public void SpawnPrefab(GameObject _object)
         {
             NetworkServer.Spawn(_object);
-            if (controller.verboseLogging) Debug.Log("A prefab has been spawned on the server : " + _object.name);
+            if (MainController.s_Instance.verboseLogging) Debug.Log("A prefab has been spawned on the server : " + _object.name);
         }
 
         public void Reset()
@@ -144,7 +145,7 @@ namespace App.Networking
                 clientConnected(conn);
             }
 
-            if (controller.verboseLogging) Debug.Log("Client Connected : " + conn.hostId.ToString());
+            if (MainController.s_Instance.verboseLogging) Debug.Log("Client Connected : " + conn.hostId.ToString());
         }
         public override void OnClientDisconnect(NetworkConnection conn)
         {
@@ -158,9 +159,9 @@ namespace App.Networking
             
             if (conn.lastError != NetworkError.Ok)
             {
-                if (controller.verboseLogging) { Debug.LogError("ClientDisconnected due to error: " + conn.lastError); }
+                if (MainController.s_Instance.verboseLogging) { Debug.LogError("ClientDisconnected due to error: " + conn.lastError); }
             }
-            if (controller.verboseLogging) Debug.Log("Client disconnected from server: " + conn);
+            if (MainController.s_Instance.verboseLogging) Debug.Log("Client disconnected from server: " + conn);
         }
         public override void OnClientError(NetworkConnection conn, int errorCode)
         {
@@ -169,21 +170,21 @@ namespace App.Networking
             {
                 clientError(conn, errorCode);
             }
-            if (controller.verboseLogging) Debug.Log("Client Error : " + conn.hostId.ToString() + " : code - " + errorCode.ToString());
+            if (MainController.s_Instance.verboseLogging) Debug.Log("Client Error : " + conn.hostId.ToString() + " : code - " + errorCode.ToString());
         }
         public override void OnClientNotReady(NetworkConnection conn)
         {
             base.OnClientNotReady(conn);
-            if (controller.verboseLogging) Debug.Log("Client Not Ready : " + conn.hostId.ToString());
+            if (MainController.s_Instance.verboseLogging) Debug.Log("Client Not Ready : " + conn.hostId.ToString());
         }
         public override void OnDropConnection(bool success, string extendedInfo)
         {
             base.OnDropConnection(success, extendedInfo);
-            if (controller.verboseLogging) Debug.Log("Drop Connection : " + success + " : " + extendedInfo.ToString());
+            if (MainController.s_Instance.verboseLogging) Debug.Log("Drop Connection : " + success + " : " + extendedInfo.ToString());
         }
         public override void OnServerConnect(NetworkConnection conn)
         {
-            if (controller.verboseLogging) Debug.LogFormat("OnServerConnect\nID {0}\nAddress {1}\nHostID {2}", conn.connectionId, conn.address, conn.hostId);
+            if (MainController.s_Instance.verboseLogging) Debug.LogFormat("OnServerConnect\nID {0}\nAddress {1}\nHostID {2}", conn.connectionId, conn.address, conn.hostId);
 
             if (numPlayers >= maxConnections ||
                 controller.CurrentState != NetworkController.NetworkState.InLobby)
@@ -224,7 +225,7 @@ namespace App.Networking
             {
                 serverError(conn, errorCode);
             }
-            if (controller.verboseLogging) Debug.LogError("Server error : " + conn.hostId.ToString() + " : code - " + errorCode.ToString());
+            if (MainController.s_Instance.verboseLogging) Debug.LogError("Server error : " + conn.hostId.ToString() + " : code - " + errorCode.ToString());
         }
         public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
         {
@@ -242,7 +243,7 @@ namespace App.Networking
                 playerJoined(player);
             }
 
-            if (controller.verboseLogging) Debug.Log("Server Added player : " + conn.hostId.ToString() + /*" : playerprefab - " + player.name +*/ " : ID - " + playerControllerId);
+            if (MainController.s_Instance.verboseLogging) Debug.Log("Server Added player : " + conn.hostId.ToString() + /*" : playerprefab - " + player.name +*/ " : ID - " + playerControllerId);
         }
         public override void OnServerRemovePlayer(NetworkConnection conn, PlayerController player)
         {
@@ -257,12 +258,12 @@ namespace App.Networking
                 playerLeft(dtPlayer);
             }
 
-            if (controller.verboseLogging) Debug.Log("Server Removed player : " + conn.hostId.ToString() + " : player - " + player.gameObject.name);
+            if (MainController.s_Instance.verboseLogging) Debug.Log("Server Removed player : " + conn.hostId.ToString() + " : player - " + player.gameObject.name);
         }
         public override void OnServerReady(NetworkConnection conn)
         {
             base.OnServerReady(conn);
-            if (controller.verboseLogging) Debug.Log("Server is Ready : " + conn.hostId.ToString());
+            if (MainController.s_Instance.verboseLogging) Debug.Log("Server is Ready : " + conn.hostId.ToString());
         }
         public override void OnStartHost()
         {
@@ -273,17 +274,17 @@ namespace App.Networking
                 hostStarted();
             }
 
-            if (controller.verboseLogging) Debug.Log("Host has Started");
+            if (MainController.s_Instance.verboseLogging) Debug.Log("Host has Started");
         }
         public override void OnStopHost()
         {
             base.OnStopHost();
-            if (controller.verboseLogging) Debug.Log("Host Has Stopped");
+            if (MainController.s_Instance.verboseLogging) Debug.Log("Host Has Stopped");
         }
         public override void OnStartClient(NetworkClient client)
         {
             base.OnStartClient(client);
-            if (controller.verboseLogging) Debug.Log("client started on server : " + networkAddress);
+            if (MainController.s_Instance.verboseLogging) Debug.Log("client started on server : " + networkAddress);
         }
         public override void OnStopClient()
         {
@@ -292,7 +293,7 @@ namespace App.Networking
             {
                 clientStopped();
             }
-            if (controller.verboseLogging) Debug.Log("client ended");
+            if (MainController.s_Instance.verboseLogging) Debug.Log("client ended");
         }
         public override void OnStopServer()
         {
@@ -301,7 +302,7 @@ namespace App.Networking
             {
                 serverStopped();
             }
-            if(controller.verboseLogging) Debug.Log("Server Has Stopped");
+            if(MainController.s_Instance.verboseLogging) Debug.Log("Server Has Stopped");
         }
         #endregion
     }

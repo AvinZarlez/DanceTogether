@@ -1,13 +1,13 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
-using App.Controllers;
+using App.Utility;
 
 namespace App.Audio
 {
-    public class DanceTogetherAudioManager : MonoBehaviour
+    public class DanceTogetherAudioManager : Singleton<DanceTogetherAudioManager>
     {
-        private MainController controller;
+        //private MainController controller;
 
         [Header("Audio Mixer References")]
         public AudioMixerSnapshot inMenu;
@@ -30,11 +30,13 @@ namespace App.Audio
         private float m_TransitionOut;
 
         #region Monobehaviour Methods
-        private void Awake()
+        protected override void Awake()
         {
             float quarterNote = 2f;
             m_TransitionIn = quarterNote;
             m_TransitionOut = quarterNote * 4;
+
+            base.Awake();
         }
         #endregion
 
@@ -44,6 +46,8 @@ namespace App.Audio
         /// <summary>
         /// Init this from master Game controller
         /// </summary>
+        /// 
+        /*
         public void Init(MainController _controller)
         {
             controller = _controller;
@@ -54,6 +58,7 @@ namespace App.Audio
                 return;
             }
         }
+        */
         public void BeginMenuMusic()
         {
             if (menuSource.clip == null)

@@ -1,12 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using App.Controllers;
+using App.Utility;
+using App.Events;
 using System.Collections;
-using UnityEngine.Networking;
 
 namespace App.Networking
 {
-    public class NetworkController : MonoBehaviour
+    public class NetworkController : Singleton<NetworkController>
     {
 
         // networking states
@@ -25,16 +27,37 @@ namespace App.Networking
             private set;
         }
 
-        [SerializeField]
+        /// <summary>
+        /// Called When new DanceTogetherPlayer has been added by network manager.
+        /// </summary>
+        public event Action<DanceTogetherPlayer> PlayerRegisteredEvent;
+        /// <summary>
+        /// Called when a player has been deleted.
+        /// </summary>
+        public event Action<DanceTogetherPlayer> PlayerUnRegisteredEvent;
+        /// <summary>
+        /// Called by NetworkDiscovery sub controller, when a new discovery update has fired.
+        /// </summary>]
+        public event Action<List<LanConnectionInfo>> LanConnectionUpdateEvent;
+        /// <summary>
+        /// Called when LocalPlayer is ready.
+        /// </summary>
+        public event Action LocalPlayerReadyEvent;
+
+
+        /// <summary>
+        /// Game Message Event : used to send visual information about connection attempts
+        /// </summary>
+        [SerializeField, Header("Game Events")]
+        private GameEvent messageEvent;
+
+
+        [SerializeField, Header("Sub Controller References")]
         private DanceTogetherNetworkManager networkManager;
         [SerializeField]
         private DanceTogetherNetworkDiscovery networkDiscovery;
-        [SerializeField]
-        private GameListController gameListController;
-        [SerializeField]
-        private LobbyViewManager lobbyViewManager;
 
-        [SerializeField]
+        [SerializeField, Header("Active Player Details")]
         private List<DanceTogetherPlayer> playerList = new List<DanceTogetherPlayer>();
         public List<DanceTogetherPlayer> PlayerList
         {
@@ -65,29 +88,6 @@ namespace App.Networking
             }
         }
 
-        /// <summary>
-		/// Gets whether or not we're a server
-		/// </summary>
-		public static bool s_IsServer
-        {
-            get
-            {
-                return NetworkServer.active;
-            }
-        }
-
-        private MainController controller;
-
-        public MainController Controller
-        {
-            get { return controller; }
-        }
-
-        public bool verboseLogging
-        {
-            get { return controller.verboseLogging; }
-        }
-
         public DanceTogetherNetworkManager NetworkManager
         {
             get { return networkManager; }
@@ -98,22 +98,23 @@ namespace App.Networking
             get { return networkDiscovery; }
         }
 
-        public GameListController GameListController
+        protected override void Awake()
         {
-            get { return gameListController; }
-        }
-        public LobbyViewManager LobbyViewManager
-        {
-            get { return lobbyViewManager; }
-        }
+            if (networkManager == null)
+            {
+                Debug.LogWarning("Error 1 : Network Controller needs to be assigned reference to a DanceTogetherNetworkManager to work properly.");
+                return;
+            }
+            if(networkDiscovery == null)
+            {
+                Debug.LogWarning("Error 2 : Network Controller needs to be assigned reference to a DanceTogetherNetworkDiscovery to work properly.");
+                return;
+            }
 
-        public void Init(MainController _controller)
-        {
-            controller = _controller;
             networkManager.Init(this);
             networkDiscovery.Init(this);
-            gameListController?.Init(this);
-            lobbyViewManager?.Init(this);
+
+            base.Awake();
         }
 
         public void StartNewLanGame()
@@ -142,6 +143,7 @@ namespace App.Networking
 
         public void JoinSpecificGame(LanConnectionInfo _connectionInfo)
         {
+            messageEvent?.Raise("Joining Game");
             CurrentState = NetworkState.InLobby;
             networkManager.JoinGame(_connectionInfo);
 
@@ -187,6 +189,13 @@ namespace App.Networking
             }
         }
 
+        public void UpdateNewLanConnection(List<LanConnectionInfo> _lanInfo)
+        {
+            if (LanConnectionUpdateEvent != null)
+            {
+                LanConnectionUpdateEvent(_lanInfo);
+            }
+        }
 
         public void Reset()
         {
@@ -201,7 +210,7 @@ namespace App.Networking
         {
             if(_player == null)
             {
-                if (verboseLogging) Debug.LogWarning("A new Player Attempted to register, but was null.");
+                if (MainController.s_Instance.verboseLogging) Debug.LogWarning("A new Player Attempted to register, but was null.");
                 return;
             }
 
@@ -210,17 +219,22 @@ namespace App.Networking
                 playerList.Add(_player); // add to global 
                 _player.PlayerID = playerList.IndexOf(_player) + 1; // set player id number // assigns color as well.
 
-                lobbyViewManager?.AddNewLobbyIcon(_player);
+                //lobbyViewManager?.AddNewLobbyIcon(_player);
                 _player.playerReadyEvent += OnLocalPlayerReady;
+
+                if(PlayerRegisteredEvent != null)
+                {
+                    PlayerRegisteredEvent(_player);
+                }
 
                 if (_player.isLocalPlayer)
                 {
                     localPlayer = _player; // save local player
                 }
 
-                if (verboseLogging) Debug.Log("Registered DanceTogetherPlayer : ID " + _player.netId);
+                if (MainController.s_Instance.verboseLogging) Debug.Log("Registered DanceTogetherPlayer : ID " + _player.netId);
             }
-            else if(verboseLogging)
+            else if(MainController.s_Instance.verboseLogging)
             {
                 Debug.LogWarning("A new network player attempted to register, but is already registered : " + _player.name + " : ID - " + _player.netId);
             }
@@ -230,14 +244,16 @@ namespace App.Networking
         {
             if (_player == null)
             {
-                if (verboseLogging) Debug.LogWarning("A Player Attempted to unregister, but was null.");
+                if (MainController.s_Instance.verboseLogging) Debug.LogWarning("A Player Attempted to unregister, but was null.");
                 return;
             }
 
             if (playerList.Contains(_player))
             {
-                lobbyViewManager?.RemoveLobbyIcon(_player);
-                //controller?.PreparePlayerCallbacks(_player, false);
+                if(PlayerUnRegisteredEvent != null)
+                {
+                    PlayerUnRegisteredEvent(_player);
+                }
 
                 playerList.Remove(_player); // remove to global list
                 _player.playerReadyEvent -= OnLocalPlayerReady;
@@ -247,9 +263,9 @@ namespace App.Networking
                     localPlayer = null; // remove local player
                 }
 
-                if (verboseLogging) Debug.Log("Unregistered DanceTogetherPlayer : ID " + _player.netId);
+                if (MainController.s_Instance.verboseLogging) Debug.Log("Unregistered DanceTogetherPlayer : ID " + _player.netId);
             }
-            else if (verboseLogging)
+            else if (MainController.s_Instance.verboseLogging)
             {
                 Debug.LogWarning("A network player attempted to unregister, but is not currently registered : " + _player.name + " : ID - " + _player.netId);
             }
@@ -259,7 +275,10 @@ namespace App.Networking
         #region private CallBacks
         private void OnLocalPlayerReady(DanceTogetherPlayer _player)
         {
-            controller?.OnLocalPlayerReady();
+            if(LocalPlayerReadyEvent != null)
+            {
+                LocalPlayerReadyEvent();
+            }
         }
         #endregion
 
@@ -277,16 +296,30 @@ namespace App.Networking
             {
                 player.playerReadyEvent -= OnLocalPlayerReady;
             }
+
+
+        }
+        protected override void OnDestroy()
+        {
+            // clear action references
+            PlayerRegisteredEvent = null;
+            PlayerUnRegisteredEvent = null;
+            LanConnectionUpdateEvent = null;
+
+            base.OnDestroy();
         }
         #endregion
 
         #region AutoJoinSequence
         private IEnumerator AutoJoinSequence()
         {
+
             // call auto join callback here -TODO
             bool attemptingJoin = true;
             bool joinSuccess = false;
             int joinAttempts = 3; // track number of join search attempts. : we will try 3 times.
+
+            messageEvent?.Raise("Attempting to find an available game");
 
             //Reset(); // reset - stop any current server activity.
             yield return new WaitForSecondsRealtime(0.5f); // wait for reset : 500 milliseconds
@@ -300,8 +333,13 @@ namespace App.Networking
                 {
                     yield return new WaitForSecondsRealtime(1f); // wait for 1 second.
                     Debug.Log("join attempts : " + i);
-                    if (networkDiscovery.LanAdresses.Count > 0) // check if lanAdresses exist
+                    if (networkDiscovery.LanAdresses.Count > 0 && !joinSuccess) // check if lanAdresses exist
                     {
+
+                        messageEvent?.Raise("Game Found!");
+
+                        yield return new WaitForSeconds(1f);
+
                         networkManager.JoinGame(networkDiscovery.LanAdresses[0]);
                         joinSuccess = true; // join was success
                         attemptingJoin = false; // stop attempting to join
@@ -314,8 +352,12 @@ namespace App.Networking
             if (!joinSuccess)
             {
                 // join failed call back?
+                messageEvent?.Raise("No Games Found. Making Game!");
                 Debug.Log("Auto Join Failed to find a game in 3 seconds : Going to create game Meow.");
-                controller.CreateGame(); // tell master controller to create a new game.
+
+                yield return new WaitForSeconds(1f);
+
+                StartNewLanGame();
             }
             yield return null;
         }

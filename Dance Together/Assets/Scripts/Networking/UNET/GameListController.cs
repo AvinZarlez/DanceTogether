@@ -10,12 +10,14 @@ namespace App.Networking
         [SerializeField]
         private NetworkJoinButton gameListButton;
 
-        private NetworkController controller;
+        //private NetworkController controller;
 
+        /*
         public void Init(NetworkController _controller)
         {
             controller = _controller;
         }
+        */
 
         private Dictionary<LanConnectionInfo, NetworkJoinButton> availableGameButtons = new Dictionary<LanConnectionInfo, NetworkJoinButton>();
 
@@ -33,7 +35,7 @@ namespace App.Networking
                 {
                     // create button instance
                     NetworkJoinButton newButton = Instantiate(gameListButton, gameListContainer);
-                    newButton.Init(connection, controller);
+                    newButton.Init(connection);
                     // add kvp
                     availableGameButtons.Add(connection, newButton);
                 }
@@ -62,11 +64,12 @@ namespace App.Networking
 
         private void OnEnable()
         {
-            controller.NetworkDiscovery.UpdateMatchInfos();
+            NetworkController.s_Instance.LanConnectionUpdateEvent += RefreshGamesList;
         }
 
         private void OnDisable()
         {
+            NetworkController.s_Instance.LanConnectionUpdateEvent -= RefreshGamesList;
             Reset();
         }
 

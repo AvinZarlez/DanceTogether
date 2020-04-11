@@ -113,10 +113,13 @@ namespace App.Networking
 
         public void UpdateMatchInfos()
         {
-            controller?.GameListController?.RefreshGamesList(LanAdresses);
-
             if (!controller)
-                Debug.Log("Discovery server has not been set up with Init, or Controller is null.");
+            {
+                Debug.Log("Cannot Call UpdateMatchInfo: Discovery server has not been set up with Init, or Controller is null.");
+                return;
+            }
+
+            controller.UpdateNewLanConnection(LanAdresses);
         }
 
         private void OnDisable()

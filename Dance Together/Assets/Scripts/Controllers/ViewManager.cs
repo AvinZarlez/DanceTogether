@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using App.Events;
+using App.Utility;
 
 namespace App.Controllers
 {
-    public class ViewManager : MonoBehaviour
+    public class ViewManager : Singleton<ViewManager>
     {
         [SerializeField, Header("View Currently Showing")]
         private View currentView;
@@ -23,6 +24,7 @@ namespace App.Controllers
         public View CountDownView;
         public View PauseMenu;
         public View RulesMenu;
+        public View GameMessageView;
 
         public View CurrentView
         {
@@ -44,6 +46,7 @@ namespace App.Controllers
             // popup Views
             CountDownView?.CloseView();
             RulesMenu?.CloseView();
+            GameMessageView?.CloseView();
             //PauseMenu?.CloseView(); // pause menu is a special case menu.
         }
 
