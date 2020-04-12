@@ -64,12 +64,15 @@ namespace App.Networking
 
         private void OnEnable()
         {
-            NetworkController.s_Instance.LanConnectionUpdateEvent += RefreshGamesList;
+            if(NetworkController.s_InstanceExists)
+                NetworkController.s_Instance.LanConnectionUpdateEvent += RefreshGamesList;
         }
 
         private void OnDisable()
         {
-            NetworkController.s_Instance.LanConnectionUpdateEvent -= RefreshGamesList;
+            if (NetworkController.s_InstanceExists)
+                NetworkController.s_Instance.LanConnectionUpdateEvent -= RefreshGamesList;
+
             Reset();
         }
 

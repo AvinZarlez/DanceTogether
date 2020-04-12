@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using App.Utility;
@@ -27,8 +28,8 @@ namespace App.Networking {
         private bool isReady = false;
         [SerializeField ,SyncVar(hook = "OnSongId")]
         private int songID = -1;
-        [SerializeField, SyncVar]
-        private int selectedMatchSongId = -1; // The other player this player has picked as a match
+        //[SerializeField, SyncVar]
+        //private int selectedMatchSongId = -1; // The other player this player has picked as a match
         /// <summary>
         /// isActivePlayer is meant to be set by the Game Manager to track actively participating players. 
         /// Players who join the lobby after the game has started are marked to not count in game mechanics.
@@ -36,6 +37,11 @@ namespace App.Networking {
         /// </summary>
         [SerializeField, SyncVar]
         private bool isActivePlayer = false; // Mark the player Active if actively taking part in current game.
+
+        /// <summary>
+        /// used to store selected player/s List will be used to expand functionality in the future.
+        /// </summary>
+        public List<PlayerDataSnapShot> SelectedPlayers = new List<PlayerDataSnapShot>();
 
         /// <summary>
         /// Here is a player snap shot that may be passed, the snap shot will be used for basic data.
@@ -47,6 +53,7 @@ namespace App.Networking {
             get { return playerSnapShot; }
         }
 
+        /*
         /// <summary>
         /// Check if the song id selected is the same as the song id given.
         /// Note: if either song id or chosen id is left -1, bool will return false;
@@ -61,6 +68,7 @@ namespace App.Networking {
 
             return false;
         }
+        */
 
         #region SyncVar Hooks
         // Sync Var Hooks
@@ -137,10 +145,12 @@ namespace App.Networking {
         {
             get { return songID; }
         }
+        /*
         public int SelectedMatchSongId
         {
             get { return selectedMatchSongId; }
         }
+        */
         #endregion
 
         #region Monobehavior Methods
@@ -191,11 +201,13 @@ namespace App.Networking {
         {
             songID = value;
         }
-        [Command]
+        //[Command]
+        /*
         public void CmdSetSongMatchID(int value)
         {
             selectedMatchSongId = value;
         }
+        */
         [Command]
         public void CmdSetReady()
         {
@@ -210,7 +222,8 @@ namespace App.Networking {
         public void CmdResetPlayer()
         {
             songID = -1;
-            selectedMatchSongId = -1;
+            //selectedMatchSongId = -1;
+            SelectedPlayers.Clear();
             isReady = false;
             isActivePlayer = false;
         }

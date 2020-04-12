@@ -21,12 +21,6 @@ namespace App.Controllers
         public event Action GameCompleteEvent;
         public event Action<SongGenre> MusicGenreChanged;
 
-        [Header("Sub Managers")]
-        [SerializeField]
-        private EndGameManager endGameManager;
-        [SerializeField]
-        private PostGameManager postGameManager;
-
         //Audio Options
         [Header("Audio Genre Lists")]
         [SerializeField]
@@ -35,10 +29,6 @@ namespace App.Controllers
         {
             get { return availableMusicList; }
         }
-
-        //private MainController mainController;
-        //private NetworkController networkController;
-        //private DanceTogetherAudioManager audioController;
 
         /// <summary>
         /// The Index of Available Music Genres List
@@ -120,6 +110,32 @@ namespace App.Controllers
             get;
             private set;
         }
+        
+        /// <summary>
+        /// Method used find all players with same song id. Can be used as an Effective GroupID
+        /// </summary>
+        /// <param name="_value"></param>
+        /// <returns></returns>
+        public List<PlayerDataSnapShot> GetAllPlayersWithSongId(int _value, bool _filterLocal = false)
+        {
+            List<PlayerDataSnapShot> newGroup = new List<PlayerDataSnapShot>();
+
+            foreach (PlayerDataSnapShot pSnap in activePlayerData)
+            {
+                if(pSnap.SongID == _value)
+                {
+                    if(_filterLocal && pSnap.IsLocalPlayer)
+                    {
+                        // do nothing, player is local and needs to be filtered out.
+                    } else
+                    {
+                        newGroup.Add(pSnap);
+                    }
+                }
+            }
+
+            return newGroup;
+        }
 
         /// <summary>
         /// Check if all player have selected a match
@@ -135,7 +151,7 @@ namespace App.Controllers
                 // if any player checked 
                 foreach(DanceTogetherPlayer player in NetworkController.s_Instance.PlayerList)
                 {
-                    if (player.IsActivePlayer && player.SelectedMatchSongId != -1) // check only active players if made a partner selection
+                    if (player.IsActivePlayer && player.SelectedPlayers.Count > 0) // check only active players if made a partner selection
                         return false;
                 }
 
@@ -144,17 +160,6 @@ namespace App.Controllers
             }
         }
 
-        /// <summary>
-        /// As an alternative to the singleton pattern. Call When setting up MainController.
-        /// </summary>
-        public void Init(MainController _controller)
-        {
-            if (_controller == null)
-            {
-                Debug.LogWarning("Game Manager Failed to Init due to null MainController." );
-                return;
-            }
-        }
         /// <summary>
         /// Attempt to obtain the selected music track from current genre.
         /// Note: if current index cannot be retrieved, null will return.
@@ -219,6 +224,7 @@ namespace App.Controllers
             CurrentGameState = GameStates.Inactive;
         }
 
+        /*
         public PlayerDataSnapShot OtherPlayerWithSongID(int _songId)
         {
             foreach(PlayerDataSnapShot player in activePlayerData)
@@ -235,6 +241,12 @@ namespace App.Controllers
 
             Debug.LogWarning("No player found that matches the Local player's songID");
             return null;
+        }
+        */
+
+        private void Start()
+        {
+            NetworkController.s_Instance.PlayerRegisteredEvent += OnNewPlayerEvent;
         }
 
         /// <summary>
@@ -285,6 +297,12 @@ namespace App.Controllers
                     break;
             }
 
+        }
+
+        private void OnDestroy()
+        {
+            // clean up.
+            NetworkController.s_Instance.PlayerRegisteredEvent -= OnNewPlayerEvent;
         }
 
         /// <summary>
@@ -569,6 +587,15 @@ namespace App.Controllers
         {
             currentGenreIndex = _value;
             if(MusicGenreChanged != null)
+            {
+                MusicGenreChanged(GetCurrentTrackList().Genre);
+            }
+        }
+
+        private void OnNewPlayerEvent(DanceTogetherPlayer _player)
+        {
+            // do a call out for new players.
+            if (MusicGenreChanged != null)
             {
                 MusicGenreChanged(GetCurrentTrackList().Genre);
             }

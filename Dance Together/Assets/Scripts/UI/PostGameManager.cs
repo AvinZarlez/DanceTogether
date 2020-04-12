@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using App.Networking;
@@ -66,6 +67,9 @@ namespace App.Controllers
         /// </summary>
         private void OnEnable()
         {
+            if (!MainController.s_InstanceExists)
+                return;
+
             // Check controller status.
             if (MainController.s_Instance.GameController == null)
                 return;
@@ -87,22 +91,27 @@ namespace App.Controllers
             playerReadyImage.enabled = false;
 
             // Check player snapshots
-            PlayerDataSnapShot otherPlayer = MainController.s_Instance.GameController.OtherPlayerWithSongID(MainController.s_Instance.GameController.LocalPlayer.SelectedMatchSongId); // attempt to find and return the first player with same song.
-            if (otherPlayer == null)
+            //List<PlayerDataSnapShot> otherPlayer = MainController.s_Instance.GameController.GetAllPlayersWithSongId(NetworkController.s_Instance.LocalPlayer.SelectedMatchSongId); // attempt to find and return the first player with same song.
+            if (NetworkController.s_Instance.LocalPlayer == null)
             {
                 Debug.LogWarning("Data has failed to pass");
                 return;
             }
 
-            PlayerDataSnapShot correctPlayer = MainController.s_Instance.GameController.OtherPlayerWithSongID(MainController.s_Instance.GameController.LocalPlayer.SongID); // attempt to fine correct player
-            if (correctPlayer == null)
+            List<PlayerDataSnapShot> correctPlayers = MainController.s_Instance.GameController.GetAllPlayersWithSongId(NetworkController.s_Instance.LocalPlayer.SongID, true); // attempt to fine correct player
+            if (correctPlayers.Count < 1)
             {
-                Debug.LogWarning("Data has failed to pass");
+                Debug.LogWarning("Data has failed to pass - count was : " + correctPlayers.Count);
                 return;
             }
 
+            // for now we will just check the first player in the selected list. TODO support for multiple selections.
+            PlayerDataSnapShot firstSelectedPlayer = NetworkController.s_Instance.LocalPlayer.SelectedPlayers[0];
+
+            // for now we will just grab the first player in the group list
+            PlayerDataSnapShot firstCorrectPlayer = correctPlayers[0];
             // is correct?
-            if (MainController.s_Instance.GameController.LocalPlayer.CheckAnsweredCorrect())
+            if (NetworkController.s_Instance.LocalPlayer.SongID == firstSelectedPlayer.SongID)
             {
                 correctText.text = "Correct!";
                 correctText.color = Color.green;
@@ -116,13 +125,13 @@ namespace App.Controllers
 
             // song titles.
             songOneText.text = "You heard: " + MainController.s_Instance.GameController.AvailableMusicList[MainController.s_Instance.GameController.currentGenreIndex].MusicTrackList[MainController.s_Instance.GameController.LocalPlayer.SongID].TrackName; // local player song
-            songTwoText.text = "Your choice heard: " + MainController.s_Instance.GameController.AvailableMusicList[MainController.s_Instance.GameController.currentGenreIndex].MusicTrackList[MainController.s_Instance.GameController.LocalPlayer.SelectedMatchSongId].TrackName; // song of partner you chose.
+            songTwoText.text = "Your choice heard: " + MainController.s_Instance.GameController.AvailableMusicList[MainController.s_Instance.GameController.currentGenreIndex].MusicTrackList[firstCorrectPlayer.SongID].TrackName; // song of partner you chose.
 
-            partnerColorImage.color = otherPlayer.PlayerColor.Color;
-            partnerIdText.text = otherPlayer.PlayerID.ToString();
+            partnerColorImage.color = firstSelectedPlayer.PlayerColor.Color;
+            partnerIdText.text = firstSelectedPlayer.PlayerID.ToString();
 
-            partnerColorCorrectImage.color = correctPlayer.PlayerColor.Color;
-            partnerIdCorrectText.text = correctPlayer.PlayerID.ToString();
+            partnerColorCorrectImage.color = firstCorrectPlayer.PlayerColor.Color;
+            partnerIdCorrectText.text = firstCorrectPlayer.PlayerID.ToString();
 
             // set delegates
             NetworkController.s_Instance.LocalPlayer.playerReadyEvent += OnPlayerReadyAction;
@@ -143,6 +152,9 @@ namespace App.Controllers
             partnerIdCorrectText.text = "0";
 
             // remove delegates
+            if (!NetworkController.s_InstanceExists)
+                return; 
+
             if (NetworkController.s_Instance.LocalPlayer != null)
             {
                 NetworkController.s_Instance.LocalPlayer.playerReadyEvent -= OnPlayerReadyAction;

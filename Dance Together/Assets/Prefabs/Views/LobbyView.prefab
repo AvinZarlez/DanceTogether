@@ -567,7 +567,7 @@ MonoBehaviour:
   m_Script: {fileID: 1367256648, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Content: {fileID: 5058077446243356638}
+  m_Content: {fileID: 2559622848604970961}
   m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
@@ -1044,7 +1044,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 5058077446243356638}
+  - {fileID: 2559622848604970961}
   m_Father: {fileID: 5058077444889712351}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1756,7 +1756,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5058077446235284571}
+      - m_Target: {fileID: 0}
         m_MethodName: TogglePlayerReady
         m_Mode: 1
         m_Arguments:
@@ -2331,7 +2331,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5058077446235284572}
-  - component: {fileID: 5058077446235284571}
   - component: {fileID: 5058077446235284570}
   - component: {fileID: 5058077446235284573}
   m_Layer: 5
@@ -2367,25 +2366,6 @@ RectTransform:
   m_AnchoredPosition: {x: 2042, y: -901}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &5058077446235284571
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5058077446235284575}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0196481ff37583d4c934789c4cad6e5a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  localPlayerIcon: {fileID: 5058077444614725950}
-  remotePlayerIcon: {fileID: 7328620792387899458, guid: 9ac27f1e62e46ac47ac9922544b3b074,
-    type: 3}
-  iconDisplayParent: {fileID: 5058077445283622747}
-  readyButton: {fileID: 5058077445853269248}
-  genreButton: {fileID: 278367931284778865}
-  genreText: {fileID: 2425089314747970253}
 --- !u!225 &5058077446235284570
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2528,7 +2508,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5058077446235284571}
+      - m_Target: {fileID: 0}
         m_MethodName: ChangeGenre
         m_Mode: 1
         m_Arguments:
@@ -3012,7 +2992,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9ac27f1e62e46ac47ac9922544b3b074, type: 3}
---- !u!224 &5058077446243356638 stripped
+--- !u!224 &2559622848604970961 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7328620792387899459, guid: 9ac27f1e62e46ac47ac9922544b3b074,
     type: 3}

@@ -33,8 +33,8 @@ namespace App.Controllers {
         [SerializeField]
         private TextMeshProUGUI genreText;
 
-        private NetworkController networkController;
-        private DanceTogetherGameManager gameController;
+        //private NetworkController networkController;
+        //private DanceTogetherGameManager gameController;
 
         //private internal VARs
         private Dictionary<DanceTogetherPlayer, LobbyPlayerIcon> lobbyIcons = new Dictionary<DanceTogetherPlayer, LobbyPlayerIcon>();
@@ -64,7 +64,7 @@ namespace App.Controllers {
             {
                 localPlayerIcon.UpdateAll(_player.playerColor, _player.PlayerID);
             }
-            
+            Debug.Log("Called add icon");
         }
 
         public void RemoveLobbyIcon(DanceTogetherPlayer _player)
@@ -78,25 +78,18 @@ namespace App.Controllers {
                 Destroy(lobbyIcons[_player].gameObject); // destroy lobby icon
                 lobbyIcons.Remove(_player); // remove dictionary kvp.
             }
-
         }
 
-        private void Awake()
+        private void Start()
         {
-            if (NetworkController.s_InstanceExists)
-            {
-                networkController = NetworkController.s_Instance;
+            NetworkController.s_Instance.PlayerRegisteredEvent += OnPlayerRegisteredEvent;
+            NetworkController.s_Instance.PlayerUnRegisteredEvent += OnPlayerUnRegisteredEvent;
 
-                networkController.PlayerRegisteredEvent += OnPlayerRegisteredEvent;
-                networkController.PlayerUnRegisteredEvent += OnPlayerUnRegisteredEvent;
-            }
-            if (MainController.s_Instance.GameController != null)
-            {
-                gameController = MainController.s_Instance.GameController;
+            MainController.s_Instance.GameController.MusicGenreChanged += UpdateGenre; // attach to genre update event
+            UpdateGenre(MainController.s_Instance.GameController.GetCurrentTrackList().Genre); // refresh current interface.
 
-                gameController.MusicGenreChanged += UpdateGenre; // attach to genre update event
-                UpdateGenre(gameController.GetCurrentTrackList().Genre); // refresh current interface.
-            }
+
+            Debug.Log("Actually added listeners.");
         }
 
         /// <summary>
@@ -118,12 +111,13 @@ namespace App.Controllers {
                 lobbyIcons[_player].UpdateAll(_player.playerColor.Color, _player.PlayerID, _player.IsReady);
             }
 
-            genreButton.interactable = networkController.LocalPlayer.isServer; // allow user to use the genre button. they are the server.
+            genreButton.interactable = NetworkController.s_Instance.LocalPlayer.isServer; // allow user to use the genre button. they are the server.
         }
 
         private void UpdateGenre(SongGenre _genre)
         {
-            genreText.text = "Genre: " + _genre.name;
+            if(_genre != null)
+                genreText.text = "Genre: " + _genre.name;
         }
 
         private void OnPlayerRegisteredEvent(DanceTogetherPlayer _player)
@@ -143,11 +137,15 @@ namespace App.Controllers {
             }
         }
 
+        /*
         private void OnEnable()
         {
             StopAllCoroutines();
             StartCoroutine(DelayedInit());
+
+            Debug.Log("enable has called");
         }
+        */
         private void OnDestroy()
         {
             foreach(var kvp in lobbyIcons)
@@ -155,9 +153,9 @@ namespace App.Controllers {
                 kvp.Key.syncVarsChangedEvent -= UpdateIcons;
             }
 
-            if (gameController != null)
+            if (MainController.s_Instance.GameController != null)
             {
-                gameController.MusicGenreChanged -= UpdateGenre;
+                MainController.s_Instance.GameController.MusicGenreChanged -= UpdateGenre;
             }
         }
 
@@ -166,9 +164,9 @@ namespace App.Controllers {
         /// </summary>
         public void TogglePlayerReady()
         {
-            if(networkController.LocalPlayer != null)
+            if(NetworkController.s_Instance.LocalPlayer != null)
             {
-                networkController.LocalPlayer.CmdSetReady();
+                NetworkController.s_Instance.LocalPlayer.CmdSetReady();
             }
         }
         /// <summary>
@@ -176,9 +174,10 @@ namespace App.Controllers {
         /// </summary>
         public void ChangeGenre()
         {
-            gameController.CmdChangeMusicGenre();
+            MainController.s_Instance.GameController.CmdChangeMusicGenre();
         }
 
+        /*
         private IEnumerator DelayedInit()
         {
             yield return new WaitForSeconds(0.5f);
@@ -187,5 +186,6 @@ namespace App.Controllers {
             UpdateGenre(MainController.s_Instance.GameController.GetCurrentGenre());
             yield return null;
         }
+        */
     }
 }

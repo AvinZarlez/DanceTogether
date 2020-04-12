@@ -296,7 +296,7 @@ public class View:MonoBehaviour
         }
     }
 
-	void SetViewStatic()
+    void SetViewStatic()
 	{
 		// set registration points to 0,0 - note: only works if view is not using offset aka static
 		RectTransform _rect = GetComponent<RectTransform>();

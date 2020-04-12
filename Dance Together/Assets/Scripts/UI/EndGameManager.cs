@@ -72,9 +72,9 @@ namespace App.Controllers
 
         public void ChoosePlayer(PlayerDataSnapShot player)
         {
-            // set local view
-            //Debug.Log("local player ? : " + controller.LocalPlayer.PlayerID);
-            MainController.s_Instance.GameController.LocalPlayer.CmdSetSongMatchID(player.SongID);
+            //MainController.s_Instance.GameController.LocalPlayer.CmdSetSongMatchID(player.SongID);
+            NetworkController.s_Instance.LocalPlayer.SelectedPlayers.Clear();
+            NetworkController.s_Instance.LocalPlayer.SelectedPlayers.Add(player);
             continueButton.interactable = true;
             // close popup
             PopupView.CloseView();
@@ -85,13 +85,16 @@ namespace App.Controllers
 
         private void OnEnable()
         {
-            if(MainController.s_Instance.GameController.LocalPlayer == null)
+            if (!NetworkController.s_InstanceExists || !MainController.s_InstanceExists)
+                return;
+
+            if(NetworkController.s_Instance.LocalPlayer == null)
             {
                 Debug.LogWarning("Local Player is null");
                 return;
             }
-            playerColor.color = MainController.s_Instance.GameController.LocalPlayer.playerColor.Color;
-            playerID.text = MainController.s_Instance.GameController.LocalPlayer.PlayerID.ToString();
+            playerColor.color = NetworkController.s_Instance.LocalPlayer.playerColor.Color;
+            playerID.text = NetworkController.s_Instance.LocalPlayer.PlayerID.ToString();
             if (MainController.s_Instance.GameController.ActivePlayerData.Count > 1)
                 continueButton.interactable = false; // default behaviour.
             else
