@@ -45,7 +45,8 @@ namespace App.Controllers
                 if (!playerSS.IsLocalPlayer)
                 {
                     ChoosePlayerButton newButton = Instantiate(buttonPrefab, playerList);
-                    newButton.UpdateButtonInfo(this, playerSS);
+                    newButton.UpdateButtonInfo(playerSS);
+                    newButton.ButtonClickEvent += ChoosePlayer;
                     playerButtons.Add(newButton);
                 }
             }
@@ -57,6 +58,7 @@ namespace App.Controllers
         {
             foreach (ChoosePlayerButton button in playerButtons)
             {
+                button.ButtonClickEvent -= ChoosePlayer;
                 Destroy(button.gameObject);
             }
             playerButtons.Clear();
@@ -95,14 +97,28 @@ namespace App.Controllers
             }
             playerColor.color = NetworkController.s_Instance.LocalPlayer.playerColor.Color;
             playerID.text = NetworkController.s_Instance.LocalPlayer.PlayerID.ToString();
-            if (MainController.s_Instance.GameController.ActivePlayerData.Count > 1)
+
+            // if the active players are greater than 1, and the local player hasnt made any choice, set continue button to be innactive.
+            if (MainController.s_Instance.GameController.ActivePlayerData.Count > 1 && NetworkController.s_Instance.LocalPlayer.SelectedPlayers.Count <= 0)
                 continueButton.interactable = false; // default behaviour.
             else
-                continueButton.interactable = true; // for testing app with single player.
+                continueButton.interactable = true; // for testing app with single player. // else only 1 player in game, and cant choose. allow continue.
 
-            // reset the choose player button
-            choosenColorImage.color = Color.white;
-            choosenPlayerID.text = "Tap to Choose Player";
+            if(NetworkController.s_Instance.LocalPlayer.SelectedPlayers.Count > 0)
+            {
+                // get first selected player
+                PlayerDataSnapShot firstSelectedPlayer = NetworkController.s_Instance.LocalPlayer.SelectedPlayers[0];
+                // reset the choose player button
+                choosenColorImage.color = firstSelectedPlayer.PlayerColor.Color;
+                choosenPlayerID.text = firstSelectedPlayer.PlayerID.ToString();
+            } else
+            {
+                // reset the choose player button
+                choosenColorImage.color = Color.white;
+                choosenPlayerID.text = "Tap to Choose Player";
+            }
+
+
         }
     }
 }
