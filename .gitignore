@@ -1,3 +1,5 @@
 Builds/
 Dance Together/Assets/Private/
 Dance Together/Assets/Demigiant/
+*.wav
+*.wav.meta

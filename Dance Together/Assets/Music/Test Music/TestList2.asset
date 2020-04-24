@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51e992ed0de39fd428142864c41a4bf7, type: 3}
+  m_Name: TestList2
+  m_EditorClassIdentifier: 
+  description: A brief description of the track list.
+  genre: {fileID: 11400000, guid: 5a44798b0ef3366498c6e5d8a3d021fd, type: 2}
+  musicTrackList:
+  - {fileID: 11400000, guid: b07550be8c920cd4d8468a985eba358c, type: 2}
+  - {fileID: 11400000, guid: 5682db56ac33f1d47a414c3d38ddf36a, type: 2}
+  - {fileID: 11400000, guid: ccaa485bef8648e43a37fcd6590f2065, type: 2}
+  - {fileID: 11400000, guid: 6563f297fd1466d4a8ba92faeb134ed5, type: 2}
+  - {fileID: 11400000, guid: 44254ca6ce8642e49b4bf6f1c4a87678, type: 2}

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c216d2e4850820499d8baea800d33c3, type: 3}
+  m_Name: Basic Game Sounds
+  m_EditorClassIdentifier: 
+  sounds:
+    correct: {fileID: 8300000, guid: b7d1bd141abe12043bffbf6adbf19a72, type: 3}
+    wrong: {fileID: 8300000, guid: a20ffe6bb27de16488eee4591da32746, type: 3}
+    roundComplete: {fileID: 8300000, guid: d5b09899a1a069e4d9735c69635ef729, type: 3}
+    newRound: {fileID: 8300000, guid: 723d16891bba4d348b14d32e6bdd4192, type: 3}
+    findPartner: {fileID: 8300000, guid: c7314626505131c4ba259a9fa093eced, type: 3}
+    rules: {fileID: 8300000, guid: 0c5e94e5166fbf3499b3473856b25b6b, type: 3}
+    mainMenu: {fileID: 8300000, guid: 10b8282c832bcf747bde77224156ec3b, type: 3}
+    countDown: {fileID: 8300000, guid: da04d3dbd3099114986b31343e20cc61, type: 3}
