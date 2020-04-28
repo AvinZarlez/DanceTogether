@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 using App.Networking;
 using App.Audio;
 
@@ -33,8 +34,8 @@ namespace App.Controllers {
         [SerializeField]
         private TextMeshProUGUI genreText;
 
-        //private NetworkController networkController;
-        //private DanceTogetherGameManager gameController;
+        private NetworkController networkController;
+        private MainController mainController;
 
         //private internal VARs
         private Dictionary<DanceTogetherPlayer, LobbyPlayerIcon> lobbyIcons = new Dictionary<DanceTogetherPlayer, LobbyPlayerIcon>();
@@ -75,21 +76,33 @@ namespace App.Controllers {
             if (lobbyIcons.ContainsKey(_player)) // if lobby icon exists.
             {
                 _player.syncVarsChangedEvent -= UpdateIcons; // remove delegate reference
-                Destroy(lobbyIcons[_player].gameObject); // destroy lobby icon
+                if (lobbyIcons[_player].gameObject != null) // prevents error on app shutdown.
+                {
+                    Destroy(lobbyIcons[_player].gameObject); // destroy lobby icon
+                }
                 lobbyIcons.Remove(_player); // remove dictionary kvp.
             }
         }
 
         private void Start()
         {
-            NetworkController.s_Instance.PlayerRegisteredEvent += OnPlayerRegisteredEvent;
-            NetworkController.s_Instance.PlayerUnRegisteredEvent += OnPlayerUnRegisteredEvent;
+            if (NetworkController.s_InstanceExists)
+            {
+                networkController = NetworkController.s_Instance;
 
-            MainController.s_Instance.GameController.MusicGenreChanged += UpdateGenre; // attach to genre update event
+                networkController.PlayerRegisteredEvent += OnPlayerRegisteredAction;
+                networkController.PlayerUnRegisteredEvent += OnPlayerUnRegisteredAction;
+                networkController.NetworkManager.clientDisconnected += OnClientDisconnectedAction;
+            }
+
+            if (MainController.s_InstanceExists)
+            {
+                mainController = MainController.s_Instance;
+
+                mainController.GameController.MusicGenreChanged += UpdateGenre; // attach to genre update event
+            }
+
             UpdateGenre(MainController.s_Instance.GameController.GetCurrentTrackList().Genre); // refresh current interface.
-
-
-            Debug.Log("Actually added listeners.");
         }
 
         /// <summary>
@@ -102,8 +115,6 @@ namespace App.Controllers {
             {
                 localPlayerIcon.UpdateAll(_player.playerColor, _player.PlayerID);
                 readyButton.interactable = !_player.IsReady; // if ready, dont hit that button anymore : maybe this is harsh?
-
-                //genreButton.interactable = _player.isServer; // allow user to use the genre button. they are the server.
             }
 
             if (lobbyIcons.ContainsKey(_player))
@@ -120,13 +131,17 @@ namespace App.Controllers {
                 genreText.text = "Genre: " + _genre.name;
         }
 
-        private void OnPlayerRegisteredEvent(DanceTogetherPlayer _player)
+        private void OnPlayerRegisteredAction(DanceTogetherPlayer _player)
         {
             AddNewLobbyIcon(_player);
         }
-        private void OnPlayerUnRegisteredEvent(DanceTogetherPlayer _player)
+        private void OnPlayerUnRegisteredAction(DanceTogetherPlayer _player)
         {
             RemoveLobbyIcon(_player);
+        }
+        private void OnClientDisconnectedAction(NetworkConnection conn)
+        {
+            Reset();
         }
 
         public void RefreshIcons()
@@ -137,25 +152,26 @@ namespace App.Controllers {
             }
         }
 
-        /*
-        private void OnEnable()
-        {
-            StopAllCoroutines();
-            StartCoroutine(DelayedInit());
-
-            Debug.Log("enable has called");
-        }
-        */
         private void OnDestroy()
         {
-            foreach(var kvp in lobbyIcons)
+            foreach (var kvp in lobbyIcons)
             {
                 kvp.Key.syncVarsChangedEvent -= UpdateIcons;
             }
 
-            if (MainController.s_Instance.GameController != null)
+            if(networkController != null)
             {
-                MainController.s_Instance.GameController.MusicGenreChanged -= UpdateGenre;
+                networkController.PlayerRegisteredEvent -= OnPlayerRegisteredAction;
+                networkController.PlayerUnRegisteredEvent -= OnPlayerUnRegisteredAction;
+                networkController.NetworkManager.clientDisconnected -= OnClientDisconnectedAction;
+            }
+
+            if (mainController != null)
+            {
+                if (mainController.GameController != null)
+                {
+                    mainController.GameController.MusicGenreChanged -= UpdateGenre;
+                }
             }
         }
 
@@ -177,15 +193,11 @@ namespace App.Controllers {
             MainController.s_Instance.GameController.CmdChangeMusicGenre();
         }
 
-        /*
-        private IEnumerator DelayedInit()
+        public void Reset()
         {
-            yield return new WaitForSeconds(0.5f);
             readyButton.interactable = true;
-            RefreshIcons();
-            UpdateGenre(MainController.s_Instance.GameController.GetCurrentGenre());
-            yield return null;
         }
-        */
+
+        
     }
 }

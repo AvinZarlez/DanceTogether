@@ -56,6 +56,8 @@ public class ActiveGameViewManager : MonoBehaviour
                 playerButtons.Add(playerSS,newButton);
             }
         }
+
+        Debug.Log("active players found : " + MainController.s_Instance.GameController.ActivePlayerData.Count);
     }
 
     public void ClearPlayerList()

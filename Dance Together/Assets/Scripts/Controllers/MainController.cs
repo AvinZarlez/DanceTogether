@@ -73,7 +73,7 @@ namespace App.Controllers
         // Public functionality
         public void AutoConnect()
         {
-            NetworkController.s_Instance.AutoJoinGame();
+            networkController?.AutoJoinGame();
             //networkManager.minPlayers = currentGameType.Data.MinPlayers;
             //networkManager.AutoConnect();
             //lobbyEnterEvent?.Raise();
