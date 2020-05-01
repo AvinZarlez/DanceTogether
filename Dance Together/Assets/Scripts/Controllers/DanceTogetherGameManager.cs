@@ -246,7 +246,10 @@ namespace App.Controllers
 
         private void Start()
         {
-            NetworkController.s_Instance.PlayerRegisteredEvent += OnNewPlayerEvent;
+            if (NetworkController.s_InstanceExists)
+            {
+                NetworkController.s_Instance.PlayerRegisteredEvent += OnNewPlayerEvent;
+            }
         }
 
         /// <summary>
@@ -302,7 +305,10 @@ namespace App.Controllers
         private void OnDestroy()
         {
             // clean up.
-            NetworkController.s_Instance.PlayerRegisteredEvent -= OnNewPlayerEvent;
+            if (NetworkController.s_InstanceExists)
+            {
+                NetworkController.s_Instance.PlayerRegisteredEvent -= OnNewPlayerEvent;
+            }
         }
 
         /// <summary>
