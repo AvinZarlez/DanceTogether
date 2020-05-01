@@ -1,11 +1,4 @@
 Builds/
 Dance Together/Assets/Private/
 Dance Together/Assets/Demigiant/
-*.wav
-*.wav.meta
-Dance Together/Assets/Scripts/Controllers/GameManager.cs
-Dance Together/Assets/Scripts/Controllers/GameManager.cs.meta
-Dance Together/Assets/Scripts/ScriptableObjects/GameCommandList.cs
-Dance Together/Assets/Scripts/ScriptableObjects/GameCommandList.cs.meta
 Dance Together/Assets/Private.meta
-Dance Together/Assets/TextMesh Pro.meta
