@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using UnityEngine;
+using UnityEngine.Audio;
 
 [RequireComponent(typeof(ParticleSystem))]
 public class AudioParticleController : MonoBehaviour
@@ -29,7 +30,11 @@ public class AudioParticleController : MonoBehaviour
 
         emission.rateOverTime = spectrum.Max() * 200;
 
-        var test = psEmitter.forceOverLifetime;
-        test.y = spectrum.Max() * 10000;
+        var forceLifetime = psEmitter.forceOverLifetime;
+        forceLifetime.y = spectrum.Max() * 10000;
+
+        var main = psEmitter.main; // mark main as a var, as this is the only way to save back data.
+        audioSourceOutput.outputAudioMixerGroup.audioMixer.GetFloat("GameMusicVolume", out float volOut); // get actual dB volume from mixer group.
+        main.startSize = Mathf.InverseLerp(-80f, 0f, volOut) * 250f; // convert dB into a 0-1 range and multiply by size factor. 
     }
 }
