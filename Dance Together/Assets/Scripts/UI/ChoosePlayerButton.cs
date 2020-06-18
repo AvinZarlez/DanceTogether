@@ -31,7 +31,7 @@ public class ChoosePlayerButton : MonoBehaviour
         get { return isSelected; }
     }
 
-    public void UpdateButtonInfo(PlayerDataSnapShot _player)
+    public void UpdateButtonInfo(PlayerDataSnapShot _player, bool isButton = true)
     {
         if (_player.PlayerID == -1)
             return;
@@ -43,6 +43,10 @@ public class ChoosePlayerButton : MonoBehaviour
         buttonColorImage.color = player.PlayerColor.Color; // set image of button to player color.
 
         selectedImage.gameObject.SetActive(false);
+
+        // let us toggle the button use. this is so we can use this prefab as an icon or a button.
+        Button localButton = GetComponentInChildren<Button>();
+        localButton.enabled = isButton;
     }
 
     public void SelectPlayer(bool _isSelected, bool _correct)
