@@ -88,7 +88,7 @@ public class ActiveGameViewManager : MonoBehaviour
             }
         }
 
-        Debug.Log("active players found : " + MainController.s_Instance.GameController.ActivePlayerData.Count);
+        //Debug.Log("active players found : " + MainController.s_Instance.GameController.ActivePlayerData.Count);
     }
 
     /// <summary>
@@ -119,7 +119,6 @@ public class ActiveGameViewManager : MonoBehaviour
     /// <param name="_player"></param>
     public void ChoosePlayer(PlayerDataSnapShot _player)
     {
-        Debug.Log("choose player has been called");
         // does local player have selected player in list already?
         if (NetworkController.s_Instance.LocalPlayer.SelectedPlayers.Contains(_player))
         {
@@ -134,8 +133,6 @@ public class ActiveGameViewManager : MonoBehaviour
                 Destroy(chosenPlayerButtons[_player].gameObject);
                 chosenPlayerButtons.Remove(_player);
             }
-
-            Debug.Log("contains player");
         } else
         {
             if(!chosenPlayerButtons.ContainsKey(_player))
