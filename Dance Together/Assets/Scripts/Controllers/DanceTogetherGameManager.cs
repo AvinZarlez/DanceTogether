@@ -454,6 +454,8 @@ namespace App.Controllers
             // set game time to the length noted in CurrentGameType
             currentGameTime = MainController.s_Instance.CurrentGameType.Data.GameTime;
 
+            LocalPlayer.SelectedPlayers.Clear();
+
             if (GameBeginEvent != null)
             {
                 GameBeginEvent();
