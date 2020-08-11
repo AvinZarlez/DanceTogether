@@ -18,7 +18,7 @@ namespace App.Controllers
         public View LobbyMenu;
         public View GameActiveMenu;
         public View GamePostMenu;
-        public View GameEndMenu;
+        //public View GameEndMenu;
 
         [Header("Tracked Popup Views")]
         public View CountDownView;
@@ -41,7 +41,7 @@ namespace App.Controllers
             LobbyMenu?.CloseView();
             GameActiveMenu?.CloseView();
             GamePostMenu?.CloseView();
-            GameEndMenu?.CloseView();
+            //GameEndMenu?.CloseView();
 
             // popup Views
             CountDownView?.CloseView();
@@ -110,12 +110,14 @@ namespace App.Controllers
                     Screen.sleepTimeout = SleepTimeout.NeverSleep;
                     break;
                 case GameEventPayLoad.States.GameActive:
+                    GameActiveMenu.GetComponent<ActiveGameViewManager>().GameIsActive(true);
                     ShowSpecificView(GameActiveMenu);
                     // set screen to stay awake
                     Screen.sleepTimeout = SleepTimeout.NeverSleep;
                     break;
                 case GameEventPayLoad.States.GameEnded:
-                    ShowSpecificView(GameEndMenu);
+                    GameActiveMenu.GetComponent<ActiveGameViewManager>().GameIsActive(false);
+                    ShowSpecificView(GameActiveMenu);
                     // set screen to stay awake
                     Screen.sleepTimeout = SleepTimeout.NeverSleep;
                     break;

@@ -17,20 +17,20 @@ namespace App.Controllers
         [SerializeField]
         private TextMeshProUGUI songOneText;
         [SerializeField]
-        private TextMeshProUGUI songTwoText;
+        private RectTransform contentChosen;
+        [SerializeField]
+        private RectTransform contentActual;
 
-        [SerializeField]
-        private Image partnerColorImage;
-        [SerializeField]
-        private TextMeshProUGUI partnerIdText;
-        [SerializeField]
-        private Image partnerColorCorrectImage;
-        [SerializeField]
-        private TextMeshProUGUI partnerIdCorrectText;
         [SerializeField]
         private Button lobbyReturnButton;
         [SerializeField]
         private Image playerReadyImage;
+
+        [SerializeField, Header("Prefab References")]
+        private ChoosePlayerButton selectablePlayerButton;
+
+        private Dictionary<PlayerDataSnapShot, ChoosePlayerButton> chosenPlayerIcons = new Dictionary<PlayerDataSnapShot, ChoosePlayerButton>();
+        //private Dictionary<PlayerDataSnapShot, ChoosePlayerButton> actualPlayerIcons = new Dictionary<PlayerDataSnapShot, ChoosePlayerButton>();
 
         public void PlayerReady()
         {
@@ -91,7 +91,6 @@ namespace App.Controllers
             playerReadyImage.enabled = false;
 
             // Check player snapshots
-            //List<PlayerDataSnapShot> otherPlayer = MainController.s_Instance.GameController.GetAllPlayersWithSongId(NetworkController.s_Instance.LocalPlayer.SelectedMatchSongId); // attempt to find and return the first player with same song.
             if (NetworkController.s_Instance.LocalPlayer == null)
             {
                 Debug.LogWarning("Data has failed to pass");
@@ -125,13 +124,20 @@ namespace App.Controllers
 
             // song titles.
             songOneText.text = "You heard: " + MainController.s_Instance.GameController.AvailableMusicList[MainController.s_Instance.GameController.currentGenreIndex].MusicTrackList[MainController.s_Instance.GameController.LocalPlayer.SongID].TrackName; // local player song
-            songTwoText.text = "Your choice heard: " + MainController.s_Instance.GameController.AvailableMusicList[MainController.s_Instance.GameController.currentGenreIndex].MusicTrackList[firstCorrectPlayer.SongID].TrackName; // song of partner you chose.
 
-            partnerColorImage.color = firstSelectedPlayer.PlayerColor.Color;
-            partnerIdText.text = firstSelectedPlayer.PlayerID.ToString();
+            // Create new chosen player Icons.
+            foreach (PlayerDataSnapShot playerSS in NetworkController.s_Instance.LocalPlayer.SelectedPlayers)
+            {
+                ChoosePlayerButton newButton = Instantiate(selectablePlayerButton, contentChosen);
+                newButton.UpdateButtonInfo(playerSS, false);
+            }
 
-            partnerColorCorrectImage.color = firstCorrectPlayer.PlayerColor.Color;
-            partnerIdCorrectText.text = firstCorrectPlayer.PlayerID.ToString();
+            // Create new actual player Icons.
+            foreach (PlayerDataSnapShot playerSS in correctPlayers)
+            {
+                ChoosePlayerButton newButton = Instantiate(selectablePlayerButton, contentActual);
+                newButton.UpdateButtonInfo(playerSS, false);
+            }
 
             // set delegates
             NetworkController.s_Instance.LocalPlayer.playerReadyEvent += OnPlayerReadyAction;
@@ -143,13 +149,17 @@ namespace App.Controllers
             correctText.color = Color.white;
 
             songOneText.text = "Song Title 1";
-            songTwoText.text = "Song Title 2";
 
-            partnerColorImage.color = Color.white;
-            partnerIdText.text = "0";
+            // remove icons
+            foreach(RectTransform child in contentActual)
+            {
+                Destroy(child.gameObject);
+            }
 
-            partnerColorCorrectImage.color = Color.white;
-            partnerIdCorrectText.text = "0";
+            foreach(RectTransform child in contentChosen)
+            {
+                Destroy(child.gameObject);
+            }
 
             // remove delegates
             if (!NetworkController.s_InstanceExists)
