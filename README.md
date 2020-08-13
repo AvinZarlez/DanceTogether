@@ -108,6 +108,10 @@ Yes! See [CONTRIBUTE](Contribute.md) file for details.
 
 This game was created by [Tobiah Zarlez](http://www.TobiahZ.com).
 
+### Who also contributed code?
+
+- Brandon Sweatman
+
 ### Who also contributed art assets?
 
 - Desiree Dixon
